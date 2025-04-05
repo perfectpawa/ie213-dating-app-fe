@@ -1,8 +1,16 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: white; /* Adding this for better text visibility on dark background */
+}
+
 #root {
-  max-width: 1280px;
+  max-width: 1980px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+  /* The background-color here might be redundant now */
+  background-color: black;
 }
 
 .logo {
