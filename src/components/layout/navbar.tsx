@@ -40,31 +40,36 @@ const Navbar = () => {
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
               <div className="p-3 border-b border-gray-700">
-                <h3 className="font-semibold text-white">Notifications</h3>
+                <h3 className="font-semibold text-white">Thông báo</h3>
               </div>
               <div className="max-h-80 overflow-y-auto">
                 {[1, 2, 3].map((item) => (
                   <div key={item} className="p-3 hover:bg-gray-700 border-b border-gray-700 cursor-pointer">
                     <div className="flex items-start gap-3">
                       <img 
-                        src={`https://source.unsplash.com/random/40x40?portrait&${item}`}
+                        src={`https://randomuser.me/api/portraits/${item % 2 === 0 ? 'women' : 'men'}/${item + 10}.jpg`}
                         alt="User" 
                         className="w-10 h-10 rounded-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.onerror = null;
+                          target.src = `https://ui-avatars.com/api/?name=User&background=1a3f3e&color=4edcd8`;
+                        }}
                       />
                       <div>
                         <p className="text-sm text-white">
                           <span className="font-semibold">
                             {["Alex", "Emma", "Michael"][item-1]}
-                          </span> {["liked your profile", "sent you a message", "is now connected with you"][item-1]}
+                          </span> {["đã thích hồ sơ của bạn", "đã gửi tin nhắn cho bạn", "đang kết nối với bạn"][item-1]}
                         </p>
-                        <p className="text-xs text-gray-400">2 hours ago</p>
+                        <p className="text-xs text-gray-400 text-left">2 tiếng trước</p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="p-2 text-center border-t border-gray-700">
-                <button className="text-sm text-[#4edcd8] hover:underline">View all notifications</button>
+                <button className="text-sm text-[#4edcd8] hover:underline mr-0.25">Hiện tất cả tin nhắn</button>
               </div>
             </div>
           )}
@@ -76,11 +81,18 @@ const Navbar = () => {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => setShowProfileDropdown(!showProfileDropdown)}
           >
-            <img 
-              src="https://source.unsplash.com/random/40x40?portrait" 
-              alt="Profile" 
-              className="w-8 h-8 rounded-full object-cover border border-gray-700"
-            />
+            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#4edcd8] ring-2 ring-gray-800">
+              <img 
+                src="https://avatars.githubusercontent.com/u/36991471?v=4" 
+                alt="Profile" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = `https://ui-avatars.com/api/?name=Nam+Chill&background=1a3f3e&color=4edcd8`;
+                }}
+              />
+            </div>
             <span className="hidden md:block text-sm font-medium text-white">Nam Chill</span>
             <ChevronDown size={16} className="text-gray-300" />
           </div>
@@ -89,14 +101,14 @@ const Navbar = () => {
           {showProfileDropdown && (
             <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
               <Link to="/profile" className="block px-4 py-2 hover:bg-gray-700 text-sm text-white">
-                My Profile
+                Hồ sơ của tôi
               </Link>
               <Link to="/settings" className="block px-4 py-2 hover:bg-gray-700 text-sm text-white">
-                Settings
+                Cài đặt
               </Link>
               <div className="border-t border-gray-700"></div>
               <button className="w-full text-left px-4 py-2 hover:bg-gray-700 text-sm text-red-400">
-                Logout
+                Đăng xuất
               </button>
             </div>
           )}
