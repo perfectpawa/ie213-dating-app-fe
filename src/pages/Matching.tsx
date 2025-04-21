@@ -1,7 +1,7 @@
 import React from "react";
-import MatchingOpponentsList from "../components/MatchingOpponentsList";
-import MatchingSwiperList from "@/components/MatchingSwiperList";
-import MatchingCard from "@/components/MatchingCard";
+import MatchingOpponentsList from "../components/Matching/MatchingOpponentsList";
+import MatchingSwiperList from "../components/Matching/MatchingSwiperList";
+import MatchingCard from "../components/Matching/MatchingCard";
 
 const Matching = () => {
   return (
