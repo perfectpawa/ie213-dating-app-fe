@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import { Search, Menu, Bell, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
+import NotificationModal from "../notifications/notification";
 
 const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  
+  const handleViewAllNotifications = () => {
+    // Logic to navigate to all notifications page would go here
+    console.log("View all notifications clicked");
+    // You could use react-router navigate here if you had a notifications page
+  };
   
   return (
     <header className="flex justify-between items-center p-4 bg-gray-900 shadow-md w-full">
@@ -36,43 +43,44 @@ const Navbar = () => {
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">3</span>
           </div>
           
-          {/* Dropdown for notifications */}
-          {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
-              <div className="p-3 border-b border-gray-700">
-                <h3 className="font-semibold text-white">Thông báo</h3>
-              </div>
-              <div className="max-h-80 overflow-y-auto">
-                {[1, 2, 3].map((item) => (
-                  <div key={item} className="p-3 hover:bg-gray-700 border-b border-gray-700 cursor-pointer">
-                    <div className="flex items-start gap-3">
-                      <img 
-                        src={`https://randomuser.me/api/portraits/${item % 2 === 0 ? 'women' : 'men'}/${item + 10}.jpg`}
-                        alt="User" 
-                        className="w-10 h-10 rounded-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.onerror = null;
-                          target.src = `https://ui-avatars.com/api/?name=User&background=1a3f3e&color=4edcd8`;
-                        }}
-                      />
-                      <div>
-                        <p className="text-sm text-white">
-                          <span className="font-semibold">
-                            {["Alex", "Emma", "Michael"][item-1]}
-                          </span> {["đã thích hồ sơ của bạn", "đã gửi tin nhắn cho bạn", "đang kết nối với bạn"][item-1]}
-                        </p>
-                        <p className="text-xs text-gray-400 text-left">2 tiếng trước</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="p-2 text-center border-t border-gray-700">
-                <button className="text-sm text-[#4edcd8] hover:underline mr-0.25">Hiện tất cả tin nhắn</button>
-              </div>
-            </div>
-          )}
+          {/* Using the enhanced Notification Modal component with custom props */}
+          <NotificationModal 
+            isOpen={showNotifications} 
+            onClose={() => setShowNotifications(false)}
+            onViewAll={handleViewAllNotifications}
+            notifications={[
+              {
+                id: 1,
+                user: {
+                  name: "Alex",
+                  avatar: "https://randomuser.me/api/portraits/men/11.jpg"
+                },
+                type: 'like',
+                time: "2 tiếng trước",
+                read: false
+              },
+              {
+                id: 2,
+                user: {
+                  name: "Emma",
+                  avatar: "https://randomuser.me/api/portraits/women/12.jpg"
+                },
+                type: 'message',
+                time: "3 tiếng trước",
+                read: true
+              },
+              {
+                id: 3,
+                user: {
+                  name: "Michael",
+                  avatar: "https://randomuser.me/api/portraits/men/13.jpg"
+                },
+                type: 'connection',
+                time: "5 tiếng trước",
+                read: false
+              }
+            ]}
+          />
         </div>
         
         {/* User profile */}

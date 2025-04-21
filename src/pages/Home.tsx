@@ -64,7 +64,7 @@ const Home = () => {
               </div>
             ) : (
               users.map((user, index) => (
-                <div key={index} className="bg-gray-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105 hover:shadow-xl">
+                <div key={index} className="bg-gray-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105 hover:shadow-xl flex flex-col">
                   <div className="h-60 bg-gray-700 relative">
                     <img 
                       src={user.picture.large} 
@@ -80,17 +80,19 @@ const Home = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="p-5">
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {["Du Lịch", "Âm Nhạc", "Thể Thao", "Nghệ Thuật", "Ẩm Thực"].slice(index, index + 3).map((tag, i) => (
+                  <div className="p-5 flex flex-col justify-between" style={{ height: "200px" }}>
+                    <div className="flex flex-wrap gap-2">
+                      {["Du Lịch khắp các hành tinh", "Âm Nhạc hay nhất quả đất", "Thể Thao vô địch", "Nghệ Thuật tuyệt đối", "Ẩm Thực Hàn quốc siêu ngon và cay nồng"].slice(index, index + 3).map((tag, i) => (
                         <span key={i} className="px-3 py-1 bg-[#1a3f3e] text-[#4edcd8] rounded-full text-xs font-medium">
                           {tag}
                         </span>
                       ))}
                     </div>
-                    <button className="w-full px-4 py-3 bg-[#4edcd8] text-white rounded-lg font-medium hover:bg-[#3bc0bd] transition-colors duration-300">
-                      Xem Hồ Sơ
-                    </button>
+                    <div className="mt-auto">
+                      <button className="w-full px-4 py-3 bg-[#4edcd8] text-white rounded-lg font-medium hover:bg-[#3bc0bd] transition-colors duration-300">
+                        Xem Hồ Sơ
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))
