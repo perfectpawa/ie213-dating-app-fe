@@ -1,4 +1,3 @@
-import React from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 const SettingMessageRespond = () => {

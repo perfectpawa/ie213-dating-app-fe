@@ -1,6 +1,6 @@
 import LeftSideSetting from "@/components/Setting/LeftSideSetting";
 import RightSideSetting from "@/components/Setting/RightSideSetting";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Setting = () => {
   const [activeTab, setActiveTab] = useState("profile");

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { User, Heart, MessageCircle } from "lucide-react";
 import Layout from "../components/layout/layout";
 
