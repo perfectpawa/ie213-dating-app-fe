@@ -18,10 +18,10 @@ const Matching = () => {
             <MatchingCard />
             <MatchingCard />
           </div>
-          <div className="h-full flex-1">
-            <MatchingOpponentsList />
-            <MatchingSwiperList />
-          </div>
+          {/*<div className="h-full flex-1">*/}
+          {/*  <MatchingOpponentsList />*/}
+          {/*  <MatchingSwiperList />*/}
+          {/*</div>*/}
         </div>
       </Layout>
   );

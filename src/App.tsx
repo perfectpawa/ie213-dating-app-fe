@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Matching from "@/pages/Matching.tsx";
 import Setting from "@/pages/Setting.tsx";
+import Chat from "@/pages/Chat.tsx";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
           age={27}
         />
         } />
-        <Route path="/messages" element={<div>Messages Page (Coming Soon)</div>} />
+        <Route path="/messages" element={<Chat/>} />
         <Route path="/discover" element={<Matching/>} />
         <Route path="/setting" element={<Setting/>} />
     </Routes>
