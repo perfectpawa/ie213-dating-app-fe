@@ -1,12 +1,13 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import LeftSideSetting from "./components/Setting/LeftSideSetting.tsx";
-import RightSideSetting from "./components/Setting/RightSideSetting.tsx";
-import Setting from "./pages/Setting.tsx";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import './index.css'
+import App from './App.tsx'
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Setting />
-  </StrictMode>
-);
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
+)

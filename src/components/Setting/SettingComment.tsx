@@ -2,8 +2,8 @@ import React from "react";
 
 const SettingComment = () => {
   return (
-    <div className="w-[706px]">
-      <h2 className="text-[20px] font-bold mb-6 mt-6">Bình luận</h2>
+    <div className="bg-black text-white w-[706px] text-left">
+      <h2 className="text-[20px] font-bold mb-6">Bình luận</h2>
       <div
         role="radiogroup"
         aria-labelledby="comment-permission-label"
@@ -11,7 +11,7 @@ const SettingComment = () => {
       >
         <div
           id="comment-permission-label"
-          className="font-bold text-[14px] mb-3"
+          className="font-bold text-[14px] mb-3 text-gray-400"
         >
           Cho phép bình luận của
         </div>
@@ -63,7 +63,7 @@ const SettingComment = () => {
         </label>
       </div>
       <div className="flex justify-between items-center mb-2">
-        <div className="text-sm font-normal">
+        <div className="text-sm font-bold text-gray-400">
           Cho phép bình luận bằng file GIF của
         </div>
         <label className="relative inline-block w-10 h-5 cursor-pointer">
@@ -77,7 +77,7 @@ const SettingComment = () => {
           <span className="absolute left-[2px] top-[2px] w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></span>
         </label>
       </div>
-      <div className="text-xs text-[#a0a8b9]">
+      <div className="text-xs text-gray-500">
         Mọi người sẽ có thể bình luận bằng file GIF về bài viết và thước phim
         của bạn.
       </div>

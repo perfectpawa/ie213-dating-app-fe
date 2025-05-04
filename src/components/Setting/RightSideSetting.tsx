@@ -25,6 +25,6 @@ const RightSideSetting: React.FC<RightSideSettingProps> = ({ activeTab }) => {
     }
   };
 
-  return <div>{renderContent()}</div>;
+  return <div className="w-[70%]">{renderContent()}</div>;
 };
 export default RightSideSetting;

@@ -19,14 +19,14 @@ const LeftSideSetting: React.FC<LeftSideSettingProps> = ({
   setActiveTab,
 }) => {
   return (
-    <div className="max-w-[320px] h-screen overflow-y-auto p-4">
+    <div className="bg-black text-white w-[30%] h-screen overflow-y-auto text-left">
       <h1 className="text-[25px] font-bold mb-2">Cài đặt</h1>
-      <p className="text-[13px] leading-[18px] text-gray-600 font-bold mb-2 select-none">
+      <p className="text-[13px] leading-[18px] text-gray-400 font-bold mb-2 select-none">
         Cách bạn dùng Instagram
       </p>
 
       <button
-        className="flex items-center mb-4 rounded-sm hover:bg-[#efefef] px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none"
+        className="flex items-center mb-4 rounded-sm hover:bg-[#efefef] px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none"
         type="button"
         onClick={() => setActiveTab("profile")}
       >
@@ -35,7 +35,7 @@ const LeftSideSetting: React.FC<LeftSideSettingProps> = ({
       </button>
 
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
         onClick={() => setActiveTab("")}
       >
@@ -43,12 +43,12 @@ const LeftSideSetting: React.FC<LeftSideSettingProps> = ({
         <span>Thông báo</span>
       </button>
 
-      <p className="text-[13px] leading-[18px] text-gray-600 font-bold text-[#8e8e8e] mb-2 select-none">
+      <p className="text-[13px] leading-[18px] text-gray-400 font-bold text-[#8e8e8e] mb-2 select-none">
         Ai có thể xem nội dung của bạn
       </p>
 
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
         onClick={() => setActiveTab("private")}
       >
@@ -56,19 +56,19 @@ const LeftSideSetting: React.FC<LeftSideSettingProps> = ({
         <span>Quyền riêng tư của tài khoản</span>
       </button>
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
         onClick={() => setActiveTab("block")}
       >
         <GoBlocked className="text-2xl mr-2" />
         <span>Đã chặn</span>
       </button>
-      <p className="text-[13px] leading-[18px] text-[#8e8e8e] mb-2 select-none text-gray-600 font-bold">
+      <p className="text-[13px] leading-[18px] mb-2 select-none text-gray-400 font-bold">
         Cách người khác có thể tương tác với bạn
       </p>
 
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
         onClick={() => setActiveTab("message")}
       >
@@ -76,7 +76,7 @@ const LeftSideSetting: React.FC<LeftSideSettingProps> = ({
         <span>Tin nhắn và lượt phản hồi tin</span>
       </button>
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
         onClick={() => setActiveTab("comment")}
       >
@@ -84,29 +84,29 @@ const LeftSideSetting: React.FC<LeftSideSettingProps> = ({
         <span>Bình luận</span>
       </button>
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
       >
         <BsPersonFillSlash className="text-2xl mr-2" />
         Tài khoản bị hạn chế
       </button>
-      <p className="text-[13px] leading-[18px] mb-2 select-none text-gray-600 font-bold">
+      <p className="text-[13px] leading-[18px] mb-2 select-none text-gray-400 font-bold">
         Ứng dụng và file phương tiện của bạn
       </p>
 
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
       >
         <HiLanguage className="text-2xl mr-2" />
         <span>Ngôn ngữ</span>
       </button>
-      <p className="text-[13px] leading-[18px] mb-2 select-none text-gray-600 font-bold">
+      <p className="text-[13px] leading-[18px] mb-2 select-none text-gray-400 font-bold">
         Thông tin khác và hỗ trợ
       </p>
 
       <button
-        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#262626] focus:outline-none hover:bg-[#efefef] rounded-sm"
+        className="flex items-center mb-4 px-3 py-2 w-full text-[15px] leading-[20px] text-[#efefef] hover:text-black focus:outline-none hover:bg-[#efefef] rounded-sm"
         type="button"
       >
         <IoIosHelpBuoy className="text-2xl mr-2" />
