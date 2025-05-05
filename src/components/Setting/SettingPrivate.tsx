@@ -2,8 +2,8 @@ import React from "react";
 
 const SettingPrivate = () => {
   return (
-    <div className="w-[706px] mx-auto">
-      <h1 className="text-[20px] font-bold mb-6 mt-6">
+    <div className="bg-black text-white w-[706px] mx-auto text-left">
+      <h1 className="text-[20px] font-bold mb-6">
         Quyền riêng tư của tài khoản
       </h1>
       <div className="flex items-center justify-between border border-gray-300 rounded-2xl px-5 py-3 mb-4 max-w-3xl">

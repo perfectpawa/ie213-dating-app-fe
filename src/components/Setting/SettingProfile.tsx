@@ -2,11 +2,9 @@ import React from "react";
 
 const SettingProfile = () => {
   return (
-    <div className="w-[706px]">
-      <h2 className="text-[20px] font-bold mb-6 mt-6">
-        Chỉnh sửa trang cá nhân
-      </h2>
-      <section className="bg-gray-200 rounded-xl flex items-center gap-4 p-4">
+    <div className="bg-black text-white w-[706px] text-left">
+      <h2 className="text-[20px] font-bold mb-6">Chỉnh sửa trang cá nhân</h2>
+      <section className="bg-gray-800 rounded-xl flex items-center gap-4 p-4">
         <img
           src="https://storage.googleapis.com/a1aa/image/4e33d127-9e04-4f39-7cc5-d48c43593390.jpg"
           alt="Avatar of a dog wearing sunglasses and holding a croissant"
@@ -22,7 +20,7 @@ const SettingProfile = () => {
         </div>
         <button
           type="button"
-          className="bg-[#0095f6] text-white font-bold text-[14px] px-4 py-2 rounded-lg flex-shrink-0"
+          className="bg-[#4edcd8] text-white font-bold text-[14px] px-4 py-2 rounded-lg flex-shrink-0"
         >
           Đổi ảnh
         </button>
@@ -70,7 +68,7 @@ const SettingProfile = () => {
       </form>
       <button
         type="button"
-        className="bg-[#0095f6] text-white font-bold text-[14px] px-4 py-2 rounded-lg flex-shrink-0 mt-6 justify-right w-full"
+        className="bg-[#4edcd8] text-white font-bold text-[14px] px-4 py-2 rounded-lg flex-shrink-0 mt-6 justify-right w-full"
       >
         Lưu
       </button>

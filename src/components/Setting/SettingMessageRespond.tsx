@@ -3,8 +3,8 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 const SettingMessageRespond = () => {
 
   return (
-    <div className="w-[706px]">
-      <h2 className="text-[20px] font-bold mb-6 mt-6">
+    <div className="bg-black text-white w-[706px] text-left">
+      <h2 className="text-[20px] font-bold mb-6">
         Tin nhắn và lượt phản hồi tin
       </h2>
       <h3 className="font-bold text-[14px] mb-3">
