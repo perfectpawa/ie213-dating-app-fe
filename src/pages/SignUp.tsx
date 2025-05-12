@@ -1,9 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
-import Particles from "react-tsparticles";
-import { loadSlim } from "tsparticles-slim";
-import type { Engine } from "tsparticles-engine";
+import ParticlesBackground from '../components/layout/ParticlesBackground';
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -14,25 +12,37 @@ const SignUp: React.FC = () => {
     agreeTerms: false
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   
   const navigate = useNavigate();
 
-  // Particles initialization
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
-  }, []);
+  const passwordRequirements = [
+    { text: "Ít nhất 8 ký tự", met: formData.password.length >= 8 },
+    { text: "Ít nhất 1 chữ hoa (A-Z)", met: /[A-Z]/.test(formData.password) },
+    { text: "Ít nhất 1 chữ thường (a-z)", met: /[a-z]/.test(formData.password) },
+    { text: "Ít nhất 1 số (0-9)", met: /\d/.test(formData.password) },
+    { text: "Ít nhất 1 ký tự đặc biệt (!@#$...)", met: /[!@#$%^&*(),.?":{}|<>]/.test(formData.password) }
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+    
+    if (validationErrors[name]) {
+      setValidationErrors({
+        ...validationErrors,
+        [name]: false
+      });
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
   };
 
-  // Password strength indicator
   const getPasswordStrength = (password: string): { strength: number, message: string } => {
     if (!password) return { strength: 0, message: "Vui lòng nhập mật khẩu" };
     if (password.length < 8) return { strength: 1, message: "Mật khẩu yếu" };
@@ -53,30 +63,79 @@ const SignUp: React.FC = () => {
   const passwordCheck = getPasswordStrength(formData.password);
   const passwordsMatch = formData.password === formData.confirmPassword;
 
+  const validateForm = () => {
+    const errors: Record<string, boolean> = {};
+    let isValid = true;
+    
+    if (!formData.email) {
+      errors.email = true;
+      isValid = false;
+    }
+    
+    if (!formData.username) {
+      errors.username = true;
+      isValid = false;
+    }
+    
+    if (!formData.password) {
+      errors.password = true;
+      isValid = false;
+    }
+    
+    if (!formData.confirmPassword) {
+      errors.confirmPassword = true;
+      isValid = false;
+    }
+    
+    if (!formData.agreeTerms) {
+      errors.agreeTerms = true;
+      isValid = false;
+    }
+    
+    setValidationErrors(errors);
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // First validate form
+    if (!validateForm()) {
+      setError('Vui lòng điền đầy đủ thông tin');
+      return;
+    }
+    
     if (formData.password !== formData.confirmPassword) {
       setError('Mật khẩu không khớp');
+      setValidationErrors({
+        ...validationErrors,
+        confirmPassword: true
+      });
       return;
     }
     
     if (passwordCheck.strength < 2) {
       setError('Mật khẩu không đủ mạnh');
+      setValidationErrors({
+        ...validationErrors,
+        password: true
+      });
       return;
     }
     
     if (!formData.agreeTerms) {
       setError('Bạn cần đồng ý với điều khoản sử dụng');
+      setValidationErrors({
+        ...validationErrors,
+        agreeTerms: true
+      });
       return;
     }
     
     setLoading(true);
     setError('');
     
-    // Simulate API call
     setTimeout(() => {
-      // Replace with actual registration logic
       navigate('/onboarding');
       setLoading(false);
     }, 1500);
@@ -84,55 +143,8 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4 relative overflow-hidden">
-      {/* Particles background */}
-            <Particles
-              id="tsparticles"
-              init={particlesInit}
-              options={{
-                fpsLimit: 60,
-                particles: {
-                  color: {
-                    value: "#4edcd8"
-                  },
-                  links: {
-                    color: "#4edcd8",
-                    distance: 150,
-                    enable: true,
-                    opacity: 0.3,
-                    width: 1
-                  },
-                  move: {
-                    enable: true,
-                    outModes: {
-                      default: "bounce"
-                    },
-                    random: true,
-                    speed: 1,
-                    straight: false
-                  },
-                  number: {
-                    density: {
-                      enable: true,
-                      area: 800
-                    },
-                    value: 40
-                  },
-                  opacity: {
-                    value: 0.5
-                  },
-                  shape: {
-                    type: "circle"
-                  },
-                  size: {
-                    value: { min: 1, max: 3 }
-                  }
-                },
-                detectRetina: true
-              }}
-              className="absolute inset-0 z-0"
-            />
-
-      {/* Sign up form container with higher z-index */}
+      <ParticlesBackground />
+      {/* SignUp form container */}
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-5 mt-2">
           <h1 className="text-4xl font-bold text-white mb-2">Đăng Ký</h1>
@@ -155,7 +167,7 @@ const SignUp: React.FC = () => {
               type="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className={`w-full bg-gray-800 border ${validationErrors.email ? 'border-red-500 animate-shake' : 'border-gray-700'} text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors`}
               placeholder="Nhập email của bạn"
               required
             />
@@ -169,7 +181,7 @@ const SignUp: React.FC = () => {
               type="text"
               value={formData.username}
               onChange={handleChange}
-              className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className={`w-full bg-gray-800 border ${validationErrors.username ? 'border-red-500 animate-shake' : 'border-gray-700'} text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors`}
               placeholder="Tên của bạn"
               required
             />
@@ -184,8 +196,9 @@ const SignUp: React.FC = () => {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                className={`w-full bg-gray-800 border ${validationErrors.password ? 'border-red-500 animate-shake' : 'border-gray-700'} text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors`}
                 placeholder="••••••••"
+                autoComplete="new-password"
                 required
               />
               <button
@@ -196,26 +209,26 @@ const SignUp: React.FC = () => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+            
+            {/* Password requirements list */}
             {formData.password && (
-              <div className="mt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-400">{passwordCheck.message}</span>
-                </div>
-                <div className="flex space-x-1">
-                  {[1, 2, 3, 4].map((segment) => (
-                    <div 
-                      key={segment}
-                      className={`h-1.5 flex-1 rounded-full ${
-                        passwordCheck.strength >= segment 
-                          ? segment <= 1 ? "bg-red-500" 
-                            : segment <= 2 ? "bg-yellow-500" 
-                            : segment <= 3 ? "bg-green-400" 
-                            : "bg-green-500"
-                          : "bg-gray-700"
-                      }`}
-                    />
+              <div className="mt-2 p-3 bg-gray-800 rounded-md">
+                <p className="text-xs text-gray-300 mb-2">Mật khẩu phải có:</p>
+                <ul className="space-y-1">
+                  {passwordRequirements.map((req, index) => (
+                    <li 
+                      key={index} 
+                      className={`text-xs flex items-center ${req.met ? 'text-green-400' : 'text-gray-400'}`}
+                    >
+                      {req.met ? (
+                        <CheckCircle2 size={12} className="mr-1.5" />
+                      ) : (
+                        <span className="w-3 h-3 mr-1.5 inline-block border border-gray-400 rounded-full" />
+                      )}
+                      {req.text}
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             )}
           </div>
@@ -226,20 +239,28 @@ const SignUp: React.FC = () => {
               <input
                 id="confirmPassword"
                 name="confirmPassword"
-                type={showPassword ? "text" : "password"}
+                type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                // autoComplete="new-password"
-                // autoCapitalize="current-password"      
-                // spellCheck="false"
+                autoComplete="new-password"
                 className={`w-full bg-gray-800 border ${
+                  validationErrors.confirmPassword ? 'border-red-500 animate-shake' :
                   formData.confirmPassword 
                     ? passwordsMatch ? "border-green-500" : "border-red-500" 
                     : "border-gray-700"
-                } text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent`}
+                } text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors`}
                 placeholder="••••••••"
                 required
               />
+              {/* Show eye icon for confirm password */}
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className={`absolute inset-y-0 ${formData.confirmPassword ? 'right-8' : 'right-0'} pr-3 flex items-center text-gray-400 hover:text-white`}
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+              
               {/* Show validation icon only if there's content in the field */}
               {formData.confirmPassword && (
                 <span className="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -259,11 +280,11 @@ const SignUp: React.FC = () => {
               type="checkbox"
               checked={formData.agreeTerms}
               onChange={handleChange}
-              className="h-4 w-4 rounded bg-gray-800 border-gray-700 text-teal-500 focus:ring-teal-500"
+              className={`h-4 w-4 rounded bg-gray-800 border-gray-700 ${validationErrors.agreeTerms ? 'ring-2 ring-red-500' : ''} text-teal-500 focus:ring-teal-500`}
               required
             />
-            <label htmlFor="agreeTerms" className="ml-2 block text-sm text-gray-400">
-              Tôi đồng ý với <button className="text-teal-400 hover:text-teal-300 cursor-pointer">Điều khoản</button> và <button className="text-teal-400 hover:text-teal-300 cursor-pointer">Chính sách bảo mật</button>
+            <label htmlFor="agreeTerms" className={`ml-2 block text-sm ${validationErrors.agreeTerms ? 'text-red-300' : 'text-gray-400'}`}>
+              Tôi đồng ý với <button type="button" className="text-teal-400 hover:text-teal-300 cursor-pointer">Điều khoản</button> và <button type="button" className="text-teal-400 hover:text-teal-300 cursor-pointer">Chính sách bảo mật</button>
             </label>
           </div>
           
@@ -288,17 +309,34 @@ const SignUp: React.FC = () => {
           <p className="text-gray-400">
             Đã có tài khoản?{" "}
             <Link 
-            to="/signin" 
-            className="font-medium text-teal-400 hover:text-teal-300"
-            onClick={(e) => {
+              to="/signin" 
+              className="font-medium text-teal-400 hover:text-teal-300"
+              onClick={(e) => {
                 e.preventDefault();
                 const target = e.currentTarget;
                 target.classList.add("opacity-50");
                 setTimeout(() => {
-                window.location.href = "/Signin";
+                  window.location.href = "/Signin";
                 }, 500);
-              }}>
+              }}
+            >
               Đăng nhập
+            </Link>
+          </p>
+          <p className="text-gray-400 mt-2">
+            <Link 
+              to="/forgot-password" 
+              className="font-medium text-gray-500 hover:text-gray-400"
+              onClick={(e) => {
+                e.preventDefault();
+                const target = e.currentTarget;
+                target.classList.add("opacity-50");
+                setTimeout(() => {
+                  window.location.href = "/forgot-password";
+                }, 500);
+              }}
+            >
+              Quên mật khẩu?
             </Link>
           </p>
         </div>

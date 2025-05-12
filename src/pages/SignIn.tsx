@@ -1,9 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, AtSign, Lock } from 'lucide-react';
-import Particles from "react-tsparticles";
-import { loadSlim } from "tsparticles-slim";
-import type { Engine } from "tsparticles-engine";
+import ParticlesBackground from '../components/layout/ParticlesBackground';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -15,21 +13,13 @@ const SignIn: React.FC = () => {
   
   const navigate = useNavigate();
 
-  // Particles initialization
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     
-    // Simulate API call
     setTimeout(() => {
-      // Replace with actual authentication logic
       if (email === 'admin123@gmail.com' && password === 'admin123') {
-        // setError('Đăng nhập thành công!');
         navigate('/home');
       } else {
         setError('Email hoặc mật khẩu không đúng');
@@ -40,55 +30,8 @@ const SignIn: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4 relative overflow-hidden">
-      {/* Particles background */}
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={{
-          fpsLimit: 60,
-          particles: {
-            color: {
-              value: "#4edcd8"
-            },
-            links: {
-              color: "#4edcd8",
-              distance: 150,
-              enable: true,
-              opacity: 0.3,
-              width: 1
-            },
-            move: {
-              enable: true,
-              outModes: {
-                default: "bounce"
-              },
-              random: true,
-              speed: 1,
-              straight: false
-            },
-            number: {
-              density: {
-                enable: true,
-                area: 800
-              },
-              value: 40
-            },
-            opacity: {
-              value: 0.5
-            },
-            shape: {
-              type: "circle"
-            },
-            size: {
-              value: { min: 1, max: 3 }
-            }
-          },
-          detectRetina: true
-        }}
-        className="absolute inset-0 z-0"
-      />
-      
-      {/* Login form container with higher z-index */}
+      <ParticlesBackground />
+      {/* Login form container */}
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Đăng Nhập</h1>
