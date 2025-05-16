@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
 import ParticlesBackground from '../components/layout/ParticlesBackground';
+import { useAuth } from '../hooks/useAuth';
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ const SignUp: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   
   const navigate = useNavigate();
+  const { signUp } = useAuth();
 
   const passwordRequirements = [
     { text: "Ít nhất 8 ký tự", met: formData.password.length >= 8 },
@@ -135,10 +137,14 @@ const SignUp: React.FC = () => {
     setLoading(true);
     setError('');
     
-    setTimeout(() => {
+    try {
+      await signUp(formData.email, formData.password);
       navigate('/onboarding');
+    } catch (err) {
+      setError('Đăng ký không thành công. Vui lòng thử lại.');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, AtSign, Lock } from 'lucide-react';
 import ParticlesBackground from '../components/layout/ParticlesBackground';
+import { useAuth } from '../hooks/useAuth';
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,20 +13,21 @@ const SignIn: React.FC = () => {
   const [error, setError] = useState('');
   
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     
-    setTimeout(() => {
-      if (email === 'admin123@gmail.com' && password === 'admin123') {
-        navigate('/home');
-      } else {
-        setError('Email hoặc mật khẩu không đúng');
-      }
+    try {
+      await login(email, password);
+      navigate('/home');
+    } catch (err) {
+      setError('Email hoặc mật khẩu không đúng');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
