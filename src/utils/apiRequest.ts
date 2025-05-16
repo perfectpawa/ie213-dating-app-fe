@@ -44,6 +44,7 @@ export const apiRequest = async <T>(
       }
       authHeader = {
         Authorization: `Bearer ${session.access_token}`,
+        'X-User-ID': session.user.id, // Include Supabase user ID for backend reference
       };
     }
 
@@ -91,7 +92,7 @@ export const apiRequest = async <T>(
   }
 };
 
-// Convenience methods for common HTTP methods
+// Generic API methods
 export const api = {
   get: <T>(endpoint: string, options?: Omit<RequestOptions, 'method' | 'body'>) =>
     apiRequest<T>(endpoint, { ...options, method: 'GET' }),
@@ -111,26 +112,22 @@ export const api = {
 
 // Example usage:
 /*
-// GET request
-const { data, error } = await api.get<User>('/users/me');
+// After Supabase signup, create user in backend
+const { data: { user } } = await supabase.auth.signUp({ email, password });
+if (user) {
+  const { data, error } = await userApi.createUser({
+    auth_id: user.id,
+    email: user.email!,
+    username: username,
+  });
+}
 
-// POST request with body
-const { data, error } = await api.post<ResponseType>('/users', {
-  name: 'John Doe',
-  email: 'john@example.com'
-});
+// Get current user profile
+const { data: user, error } = await userApi.getCurrentUser();
 
-// PUT request with custom headers
-const { data, error } = await api.put<ResponseType>('/users/123', {
-  name: 'John Doe'
-}, {
-  headers: {
-    'Custom-Header': 'value'
-  }
-});
-
-// DELETE request without authentication
-const { data, error } = await api.delete<ResponseType>('/users/123', {
-  requiresAuth: false
+// Update user profile
+const { data: updatedUser, error } = await userApi.updateUser(userId, {
+  username: 'newUsername',
+  bio: 'New bio'
 });
 */ 
