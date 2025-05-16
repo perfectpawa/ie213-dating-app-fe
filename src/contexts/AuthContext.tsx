@@ -43,6 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     auth_id: supabaseUser.id,
                     email: supabaseUser.email!,
                     username: supabaseUser.email!.split('@')[0],
+                    completeSetup: false,
                 });
 
                 if (createError) throw createError;
@@ -131,6 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 auth_id: supabaseUser.id,
                 email: supabaseUser.email!,
                 username,
+                completeSetup: false,
             });
 
             if (profileError) throw profileError;

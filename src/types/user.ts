@@ -6,6 +6,7 @@ export interface User {
   full_name?: string;
   avatar_url?: string;
   bio?: string;
+  completeSetup: boolean;  // Flag to track if user has completed profile setup
   created_at: string;
   updated_at: string;
   // Add other user fields as needed
@@ -18,6 +19,7 @@ export interface CreateUserDto {
   full_name?: string;
   avatar_url?: string;
   bio?: string;
+  completeSetup: boolean;
 }
 
 export interface UpdateUserDto {
@@ -25,4 +27,5 @@ export interface UpdateUserDto {
   full_name?: string;
   avatar_url?: string;
   bio?: string;
+  completeSetup?: boolean;
 } 
