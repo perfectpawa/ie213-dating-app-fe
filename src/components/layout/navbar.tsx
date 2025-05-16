@@ -115,9 +115,20 @@ const Navbar = () => {
                 Cài đặt
               </Link>
               <div className="border-t border-gray-700"></div>
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-700 text-sm text-red-400">
+                <Link 
+                to="/Signin" 
+                className="block px-4 py-2 hover:bg-gray-700 text-sm text-red-400 cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = e.currentTarget;
+                  target.classList.add("opacity-50");
+                  setTimeout(() => {
+                  window.location.href = "/Signin";
+                  }, 500);
+                }}
+                >
                 Đăng xuất
-              </button>
+                </Link>
             </div>
           )}
         </div>

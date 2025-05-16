@@ -5,10 +5,14 @@ import Profile from './pages/Profile';
 import Matching from "@/pages/Matching.tsx";
 import Setting from "@/pages/Setting.tsx";
 import Chat from "@/pages/Chat.tsx";
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   return (
     <Routes>
+        <Route path="/home" element={<Home />} />
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={
         <Profile
@@ -22,6 +26,9 @@ function App() {
         <Route path="/messages" element={<Chat/>} />
         <Route path="/discover" element={<Matching/>} />
         <Route path="/setting" element={<Setting/>} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   );
 }

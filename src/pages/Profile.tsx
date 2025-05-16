@@ -18,6 +18,25 @@ const Profile: React.FC<ProfileProps> = ({
   age,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  
+  // Array of interests with highlighted ones
+  const userInterests = [
+    { name: "gaming", highlighted: true },
+    { name: "anime", highlighted: true },
+    { name: "music", highlighted: false },
+    { name: "film", highlighted: false },
+    { name: "photo", highlighted: false },
+    { name: "leon", highlighted: false },
+    { name: "japan", highlighted: false },
+    { name: "vietnam", highlighted: false },
+    { name: "punch", highlighted: false },
+    { name: "kick", highlighted: false },
+    { name: "gun", highlighted: false },
+    { name: "knife", highlighted: false },
+    { name: "sport", highlighted: false },
+    { name: "football", highlighted: false },
+    { name: "isekai", highlighted: false },
+  ];
 
   return (
     <Layout>
@@ -70,22 +89,7 @@ const Profile: React.FC<ProfileProps> = ({
               </div>
             </div>
 
-            {/* Interests
-            <div className="mt-6">
-              <h2 className=" text-xl font-semibold text-white mb-2">
-                Sở thích
-              </h2>
-              <div className="flex flex-wrap gap-2 mt-4 ">
-                {interests.map((interest, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-[#4edcd8] text-black rounded-full text-sm transition-transform duration-300 transform hover:scale-110 peer"
-                  >
-                    {interest}
-                  </span>
-                ))}
-              </div>
-            </div> */}
+
           </div>
         </div>
 
@@ -96,51 +100,20 @@ const Profile: React.FC<ProfileProps> = ({
               Sở thích
             </h2>
             <div className="flex flex-wrap gap-2 mt-3">
-              <span className="px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 text-black rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 cursor-pointer">
-                #gaming
-              </span>
-              <span className="px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 text-black rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 cursor-pointer">
-                #anime
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #music
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #film
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #photo
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #leon
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #japan
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #vietnam
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #punch
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #kick
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #gun
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #knife
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #sport
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #football
-              </span>
-              <span className="px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:scale-105 transition-transform duration-300 border border-gray-700 cursor-pointer">
-                #isekai
-              </span>
+              {userInterests.map((interest, index) => (
+                <span
+                  key={index}
+                  className={`
+                    px-4 py-2 rounded-full text-sm font-medium 
+                    hover:scale-105 transition-transform duration-300 cursor-pointer
+                    ${interest.highlighted 
+                      ? "bg-gradient-to-r from-teal-400 to-teal-500 text-black" 
+                      : "bg-black text-white border border-gray-700"}
+                  `}
+                >
+                  #{interest.name}
+                </span>
+              ))}
             </div>
           </div>
         </div>
