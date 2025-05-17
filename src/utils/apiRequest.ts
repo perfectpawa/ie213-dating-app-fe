@@ -31,7 +31,7 @@ export const apiRequest = async <T>(
     method = 'GET',
     headers = {},
     body,
-    requiresAuth = true,
+    requiresAuth = false,
   } = options;
 
   try {

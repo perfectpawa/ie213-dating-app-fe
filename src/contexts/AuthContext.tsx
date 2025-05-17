@@ -40,10 +40,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             } else {
                 // If user doesn't exist in backend, create it
                 const { data: newUser, error: createError } = await userApi.createUser({
-                    auth_id: supabaseUser.id,
-                    email: supabaseUser.email!,
-                    username: supabaseUser.email!.split('@')[0],
-                    completeSetup: false,
+                    auth_id: supabaseUser.id!,
+                    email: supabaseUser.email!
                 });
 
                 if (createError) throw createError;
@@ -131,7 +129,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const { error: profileError } = await userApi.createUser({
                 auth_id: supabaseUser.id,
                 email: supabaseUser.email!,
-                username,
                 completeSetup: false,
             });
 

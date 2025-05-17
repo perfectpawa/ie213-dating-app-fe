@@ -6,7 +6,7 @@ export const userApi = {
    * Create a new user
    */
   createUser: (userData: CreateUserDto) =>
-    api.post<User>('/users', userData),
+    api.post<User>('/users/create', userData),
 
   /**
    * Update user profile
@@ -24,7 +24,7 @@ export const userApi = {
    * Get user by auth_id
    */
   getUserByAuthId: (authId: string) =>
-    api.get<User>(`/users/auth/${authId}`),
+    api.get<User>(`/users/${authId}`),
 
   /**
    * Delete user account

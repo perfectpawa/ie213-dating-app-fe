@@ -79,89 +79,89 @@ const CompleteSetupProtectedRoute = ({ children }: { children: React.ReactNode }
   return <>{children}</>;
 };
 
-// function App() {
-//   return (
-//     <Routes>
-//       {/* Public Routes */}
-//       <Route path="/signin" element={
-//         <PublicRoute>
-//           <SignIn />
-//         </PublicRoute>
-//       } />
-//       <Route path="/signup" element={
-//         <PublicRoute>
-//           <SignUp />
-//         </PublicRoute>
-//       } />
-//       <Route path="/forgot-password" element={
-//         <PublicRoute>
-//           <ForgotPassword />
-//         </PublicRoute>
-//       } />
-
-//       {/* Profile Completion Route */}
-//       <Route path="/complete-profile" element={
-//         <SetupProtectedRoute>
-//           <CompleteProfile />
-//         </SetupProtectedRoute>
-//       } />
-
-//       {/* Protected Routes that require completeSetup */}
-//       <Route path="/home" element={
-//         <CompleteSetupProtectedRoute>
-//           <Home />
-//         </CompleteSetupProtectedRoute>
-//       } />
-//       <Route path="/profile" element={
-//         <CompleteSetupProtectedRoute>
-//           <Profile
-//             username="Ada Wong"
-//             bio="Play with boys and kill zombies"
-//             interests={["Punching", "Killing", "Eating", "Sleeping", "Movies"]}
-//             location="Raccoon City"
-//             age={27}
-//           />
-//         </CompleteSetupProtectedRoute>
-//       } />
-//       <Route path="/messages" element={
-//         <CompleteSetupProtectedRoute>
-//           <Chat />
-//         </CompleteSetupProtectedRoute>
-//       } />
-//       <Route path="/discover" element={
-//         <CompleteSetupProtectedRoute>
-//           <Matching />
-//         </CompleteSetupProtectedRoute>
-//       } />
-//       <Route path="/setting" element={
-//         <CompleteSetupProtectedRoute>
-//           <Setting />
-//         </CompleteSetupProtectedRoute>
-//       } />
-
-//       {/* Redirect root to home if authenticated, otherwise to signin */}
-//       <Route path="/" element={<Navigate to="/home" replace />} />
-
-//       {/* Catch all route - redirect to home */}
-//       <Route path="*" element={<Navigate to="/home" replace />} />
-//     </Routes>
-//   );
-// }
-
 function App() {
   return (
     <Routes>
-      <Route path="/complete-profile" element={<CompleteProfile />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/profile" element={<Profile username="Ada Wong" bio="Play with boys and kill zombies" interests={["Punching", "Killing", "Eating", "Sleeping", "Movies"]} location="Raccoon City" age={27} />} />
-      <Route path="/messages" element={<Chat />} />
-      <Route path="/discover" element={<Matching />} />
-      <Route path="/setting" element={<Setting />} />
+      {/* Public Routes */}
+      <Route path="/signin" element={
+        <PublicRoute>
+          <SignIn />
+        </PublicRoute>
+      } />
+      <Route path="/signup" element={
+        <PublicRoute>
+          <SignUp />
+        </PublicRoute>
+      } />
+      <Route path="/forgot-password" element={
+        <PublicRoute>
+          <ForgotPassword />
+        </PublicRoute>
+      } />
+
+      {/* Profile Completion Route */}
+      <Route path="/complete-profile" element={
+        <SetupProtectedRoute>
+          <CompleteProfile />
+        </SetupProtectedRoute>
+      } />
+
+      {/* Protected Routes that require completeSetup */}
+      <Route path="/home" element={
+        <CompleteSetupProtectedRoute>
+          <Home />
+        </CompleteSetupProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <CompleteSetupProtectedRoute>
+          <Profile
+            username="Ada Wong"
+            bio="Play with boys and kill zombies"
+            interests={["Punching", "Killing", "Eating", "Sleeping", "Movies"]}
+            location="Raccoon City"
+            age={27}
+          />
+        </CompleteSetupProtectedRoute>
+      } />
+      <Route path="/messages" element={
+        <CompleteSetupProtectedRoute>
+          <Chat />
+        </CompleteSetupProtectedRoute>
+      } />
+      <Route path="/discover" element={
+        <CompleteSetupProtectedRoute>
+          <Matching />
+        </CompleteSetupProtectedRoute>
+      } />
+      <Route path="/setting" element={
+        <CompleteSetupProtectedRoute>
+          <Setting />
+        </CompleteSetupProtectedRoute>
+      } />
+
+      {/* Redirect root to home if authenticated, otherwise to signin */}
+      <Route path="/" element={<Navigate to="/home" replace />} />
+
+      {/* Catch all route - redirect to home */}
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }
+
+// function App() {
+//   return (
+//     <Routes>
+//       <Route path="/complete-profile" element={<CompleteProfile />} />
+//       <Route path="/signin" element={<SignIn />} />
+//       <Route path="/signup" element={<SignUp />} />
+//       <Route path="/forgot-password" element={<ForgotPassword />} />
+//       <Route path="/home" element={<Home />} />
+//       <Route path="/profile" element={<Profile username="Ada Wong" bio="Play with boys and kill zombies" interests={["Punching", "Killing", "Eating", "Sleeping", "Movies"]} location="Raccoon City" age={27} />} />
+//       <Route path="/messages" element={<Chat />} />
+//       <Route path="/discover" element={<Matching />} />
+//       <Route path="/setting" element={<Setting />} />
+//     </Routes>
+//   );
+// }
 
 export default App;
