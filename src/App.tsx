@@ -27,13 +27,13 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
   // If user is authenticated, redirect to home or complete profile
   if (user) {
-    return <Navigate to={user.completeSetup ? "/home" : "/complete-profile"} replace />;
+    return <Navigate to={user.completeProfile ? "/home" : "/complete-profile"} replace />;
   }
 
   return <>{children}</>;
 };
 
-// Protected route that checks for completeSetup
+// Protected route that checks for completeProfile
 const SetupProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
 
@@ -49,14 +49,14 @@ const SetupProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/signin" replace />;
   }
 
-  if (user.completeSetup) {
+  if (user.completeProfile) {
     return <Navigate to="/home" replace />;
   }
 
   return <>{children}</>;
 };
 
-// Protected route that requires completeSetup
+// Protected route that requires completeProfile
 const CompleteSetupProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
 
@@ -72,7 +72,7 @@ const CompleteSetupProtectedRoute = ({ children }: { children: React.ReactNode }
     return <Navigate to="/signin" replace />;
   }
 
-  if (!user.completeSetup) {
+  if (!user.completeProfile) {
     return <Navigate to="/complete-profile" replace />;
   }
 
@@ -106,7 +106,7 @@ function App() {
         </SetupProtectedRoute>
       } />
 
-      {/* Protected Routes that require completeSetup */}
+      {/* Protected Routes that require completeProfile */}
       <Route path="/home" element={
         <CompleteSetupProtectedRoute>
           <Home />

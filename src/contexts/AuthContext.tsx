@@ -13,6 +13,7 @@ interface AuthContextType {
     signUp: (email: string, password: string, username: string) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (data: Partial<User>) => Promise<void>;
+    completeProfile: (data: Partial<User>) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,10 +31,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setLoading(true);
 
             // Get user by auth_id
-            const { data: user, error: fetchError } = await userApi.getUserByAuthId(supabaseUser.id);
-            
+            const { data: response, error: fetchError } = await userApi.getUserByAuthId(supabaseUser.id);
+
             if (fetchError) throw fetchError;
-            
+
+            const { data } = response || {};
+            const user = data?.user;
+
             // If user exists, set it
             if (user) {
                 setUser(user);
@@ -168,7 +172,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (!user) throw new Error('No user logged in');
 
             const { data: updatedUser, error: updateError } = 
-                await userApi.updateUser(user.id, data);
+                await userApi.updateUser(user._id, data);
             
             if (updateError) throw updateError;
             setUser(updatedUser);
@@ -181,6 +185,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const completeProfile = async (data: Partial<User>) => {
+        try {
+            setError(null);
+            setLoading(true);
+            if (!user) throw new Error('No user logged in');
+
+            const { data: updatedUser, error: completeError } =
+                await userApi.completeProfile(user._id, data);
+
+            if (completeError) throw completeError;
+            setUser(updatedUser);
+        } catch (err) {
+            console.error('Profile completion error:', err);
+            setError(err instanceof Error ? err : new Error('Profile completion failed'));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <AuthContext.Provider 
             value={{ 
@@ -191,7 +215,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 login, 
                 signUp, 
                 logout,
-                updateProfile
+                updateProfile,
+                completeProfile,
             }}
         >
             {children}

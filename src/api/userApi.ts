@@ -12,7 +12,13 @@ export const userApi = {
    * Update user profile
    */
   updateUser: (userId: string, userData: UpdateUserDto) =>
-    api.patch<User>(`/users/${userId}`, userData),
+    api.post<User>(`/users/${userId}/`, userData),
+
+  /**
+   * Complete user profile
+   */
+  completeProfile: (userId: string, userData: UpdateUserDto) =>
+    api.post<User>(`/users/${userId}/complete-profile`, userData),
 
   /**
    * Get user by ID
@@ -24,7 +30,7 @@ export const userApi = {
    * Get user by auth_id
    */
   getUserByAuthId: (authId: string) =>
-    api.get<User>(`/users/${authId}`),
+    api.get<User>(`/users/auth/${authId}`),
 
   /**
    * Delete user account

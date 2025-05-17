@@ -22,9 +22,9 @@ const SignIn: React.FC = () => {
     
     try {
       await login(email, password);
-      navigate('/home');
+        navigate('/home');
     } catch (err) {
-      setError('Email hoặc mật khẩu không đúng');
+        setError('Email hoặc mật khẩu không đúng');
     } finally {
       setLoading(false);
     }
