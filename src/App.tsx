@@ -114,13 +114,7 @@ function App() {
       } />
       <Route path="/profile" element={
         <CompleteSetupProtectedRoute>
-          <Profile
-            username="Ada Wong"
-            bio="Play with boys and kill zombies"
-            interests={["Punching", "Killing", "Eating", "Sleeping", "Movies"]}
-            location="Raccoon City"
-            age={27}
-          />
+          <Profile />
         </CompleteSetupProtectedRoute>
       } />
       <Route path="/messages" element={

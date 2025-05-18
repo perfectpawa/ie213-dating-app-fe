@@ -3,7 +3,7 @@ export interface User {
   auth_id: string;      // Supabase auth ID
   email: string;
   completeProfile: boolean;  // Flag to track if user has completed profile setup
-  username?: string;    // User's display name
+  user_name?: string;    // User's display name
   full_name?: string;   // User's full name
   gender?: string;      // User's gender
   bio?: string;        // User's biography

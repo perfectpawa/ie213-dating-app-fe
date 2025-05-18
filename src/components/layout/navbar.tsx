@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { Search, Menu, Bell, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NotificationModal from "../notifications/notification";
+import { useAuth } from "../../hooks/useAuth";
+import avatarPlaceholder from '../../assets/avatar_holder.png';
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   
@@ -12,6 +16,20 @@ const Navbar = () => {
     console.log("View all notifications clicked");
     // You could use react-router navigate here if you had a notifications page
   };
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      await logout();
+      navigate('/signin');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+  
+  if (!user) {
+    return null;
+  }
   
   return (
     <header className="flex justify-between items-center p-4 bg-gray-900 shadow-md w-full">
@@ -91,17 +109,17 @@ const Navbar = () => {
           >
             <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#4edcd8] ring-2 ring-gray-800">
               <img 
-                src="https://avatars.githubusercontent.com/u/36991471?v=4" 
-                alt="Profile" 
+                src={user.profile_picture || avatarPlaceholder}
+                alt={user.user_name || 'Profile'} 
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null;
-                  target.src = `https://ui-avatars.com/api/?name=Nam+Chill&background=1a3f3e&color=4edcd8`;
+                  target.src = avatarPlaceholder;
                 }}
               />
             </div>
-            <span className="hidden md:block text-sm font-medium text-white">Nam Chill</span>
+            <span className="hidden md:block text-sm font-medium text-white">{user.user_name}</span>
             <ChevronDown size={16} className="text-gray-300" />
           </div>
           
@@ -111,24 +129,16 @@ const Navbar = () => {
               <Link to="/profile" className="block px-4 py-2 hover:bg-gray-700 text-sm text-white">
                 Hồ sơ của tôi
               </Link>
-              <Link to="/settings" className="block px-4 py-2 hover:bg-gray-700 text-sm text-white">
+              <Link to="/setting" className="block px-4 py-2 hover:bg-gray-700 text-sm text-white">
                 Cài đặt
               </Link>
               <div className="border-t border-gray-700"></div>
-                <Link 
-                to="/Signin" 
-                className="block px-4 py-2 hover:bg-gray-700 text-sm text-red-400 cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const target = e.currentTarget;
-                  target.classList.add("opacity-50");
-                  setTimeout(() => {
-                  window.location.href = "/Signin";
-                  }, 500);
-                }}
-                >
+              <button 
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 hover:bg-gray-700 text-sm text-red-400 cursor-pointer"
+              >
                 Đăng xuất
-                </Link>
+              </button>
             </div>
           )}
         </div>

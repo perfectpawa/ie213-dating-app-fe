@@ -1,22 +1,12 @@
 import React, { useState } from "react";
 import Layout from "../components/layout/layout";
 import { Pencil, Camera } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
-interface ProfileProps {
-  username: string;
-  bio?: string;
-  interests?: string[];
-  location?: string;
-  age?: number;
-}
+import avatarPlaceholder from '../assets/avatar_holder.png';
 
-const Profile: React.FC<ProfileProps> = ({
-  username,
-  bio,
-  interests = [],
-  location,
-  age,
-}) => {
+const Profile: React.FC = () => {
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   
   // Array of interests with highlighted ones
@@ -37,6 +27,10 @@ const Profile: React.FC<ProfileProps> = ({
     { name: "football", highlighted: false },
     { name: "isekai", highlighted: false },
   ];
+
+  if (!user) {
+    return null; // or a loading state
+  }
 
   return (
     <Layout>
@@ -63,8 +57,8 @@ const Profile: React.FC<ProfileProps> = ({
             {/* Avatar */}
             <div className="absolute -top-16 left-6">
               <img
-                src="https://pbs.twimg.com/profile_images/3398056307/6949ebc8091957497f8a577ab29e5ca1_400x400.jpeg"
-                alt={`${username}'s avatar`}
+                src={user.profile_picture || avatarPlaceholder}
+                alt={`${user.username}'s avatar`}
                 className="w-32 h-32 rounded-full border-4 border-gray-800 object-cover"
               />
               <span className="absolute bottom-0 right-0 p-1.5 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700" onClick={() => document.getElementById('avatar-upload')?.click()}>
@@ -76,20 +70,17 @@ const Profile: React.FC<ProfileProps> = ({
             {/* Profile Details */}
             <div className="mt-12">
               <div className="flex items-baseline gap-3">
-                <h1 className="text-3xl font-bold text-white">{username}</h1>
+                <h1 className="text-3xl font-bold text-white">{user.username}</h1>
                 <span className="text-gray-400">
-                {age} - {location}
-              </span>
+                  {user.full_name}
+                </span>
               </div>
-
 
               {/* Bio */}
               <div className="mt-3.5">
-                <p className="flex flex-row mt-8 text-white">{bio}</p>
+                <p className="flex flex-row mt-8 text-white">{user.bio}</p>
               </div>
             </div>
-
-
           </div>
         </div>
 
@@ -119,25 +110,25 @@ const Profile: React.FC<ProfileProps> = ({
         </div>
 
         <div className="mt-6 bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-        {/* Photos Section */}
-        <div className="mx-5 mt-6 mb-8 ">
-          <h2 className="text-xl font-semibold text-white mb-4">Ảnh</h2>
-          <div className="grid grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <div
-                key={item}
-                className="aspect-square bg-gray-800 rounded-lg overflow-hidden"
-              >
-                <img
-                  src={`https://picsum.photos/600/450?random=${item}`}
-                  alt="Gallery"
-                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110 peer"
-                />
-              </div>
-            ))}
+          {/* Photos Section */}
+          <div className="mx-5 mt-6 mb-8 ">
+            <h2 className="text-xl font-semibold text-white mb-4">Ảnh</h2>
+            <div className="grid grid-cols-3 gap-4">
+              {[1, 2, 3, 4, 5, 6].map((item) => (
+                <div
+                  key={item}
+                  className="aspect-square bg-gray-800 rounded-lg overflow-hidden"
+                >
+                  <img
+                    src={`https://picsum.photos/600/450?random=${item}`}
+                    alt="Gallery"
+                    className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110 peer"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </Layout>
   );

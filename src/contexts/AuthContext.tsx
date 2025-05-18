@@ -38,6 +38,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const { data } = response || {};
             const user = data?.user;
 
+            console.log(user);
+
             // If user exists, set it
             if (user) {
                 setUser(user);
@@ -133,7 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const { error: profileError } = await userApi.createUser({
                 auth_id: supabaseUser.id,
                 email: supabaseUser.email!,
-                completeSetup: false,
+                completeProfile: false,
             });
 
             if (profileError) throw profileError;
