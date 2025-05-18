@@ -10,10 +10,11 @@ interface AuthContextType {
     loading: boolean;
     error: Error | null;
     login: (email: string, password: string) => Promise<void>;
-    signUp: (email: string, password: string, username: string) => Promise<void>;
+    signUp: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     updateProfile: (data: Partial<User>) => Promise<void>;
     completeProfile: (data: Partial<User>) => Promise<void>;
+    resendVerificationEmail: (email: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -121,7 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const signUp = async (email: string, password: string, username: string) => {
+    const signUp = async (email: string, password: string) => {
         try {
             setError(null);
             setLoading(true);
@@ -209,20 +210,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    const resendVerificationEmail = async (email: string) => {
+        try {
+            setError(null);
+            setLoading(true);
+
+            const { error: resendError } = await supabase.auth.resend({
+                type: 'signup',
+                email,
+            });
+
+            if (resendError) throw resendError;
+        } catch (err) {
+            console.error('Resend verification email error:', err);
+            setError(err instanceof Error ? err : new Error('Failed to resend verification email'));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const value = {
+        user,
+        session,
+        loading,
+        error,
+        login,
+        signUp,
+        logout,
+        updateProfile,
+        completeProfile,
+        resendVerificationEmail,
+    };
+
     return (
-        <AuthContext.Provider 
-            value={{ 
-                user, 
-                session, 
-                loading, 
-                error,
-                login, 
-                signUp, 
-                logout,
-                updateProfile,
-                completeProfile,
-            }}
-        >
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

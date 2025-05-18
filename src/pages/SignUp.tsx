@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, CheckCircle2, AlertCircle, Mail } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
 import AuthLayout from '../components/layout/AuthLayout';
 import { useAuth } from '../hooks/useAuth';
 
@@ -9,14 +9,12 @@ const SignUp: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    username: '',
     agreeTerms: false
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   
   const navigate = useNavigate();
@@ -72,11 +70,6 @@ const SignUp: React.FC = () => {
     
     if (!formData.email) {
       errors.email = true;
-      isValid = false;
-    }
-    
-    if (!formData.username) {
-      errors.username = true;
       isValid = false;
     }
     
@@ -139,7 +132,7 @@ const SignUp: React.FC = () => {
     setError('');
     
     try {
-      await signUp(formData.email, formData.password, formData.username);
+      await signUp(formData.email, formData.password);
       navigate('/verify-email', { state: { email: formData.email } });
     } catch (err) {
       setError('Đăng ký không thành công. Vui lòng thử lại.');
@@ -147,29 +140,6 @@ const SignUp: React.FC = () => {
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <AuthLayout>
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-teal-500/20 mb-4">
-            <Mail size={32} className="text-teal-400" />
-          </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Kiểm tra email của bạn</h1>
-          <p className="text-gray-400 mb-6">
-            Chúng tôi đã gửi một email xác nhận đến {formData.email}. 
-            Vui lòng kiểm tra hộp thư của bạn và nhấp vào liên kết xác nhận để hoàn tất đăng ký.
-          </p>
-          <Link 
-            to="/signin" 
-            className="inline-block bg-gradient-to-r from-teal-400 to-teal-500 text-black font-bold py-3 px-6 rounded-lg hover:from-teal-500 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50 transition-colors"
-          >
-            Quay lại đăng nhập
-          </Link>
-        </div>
-      </AuthLayout>
-    );
-  }
 
   return (
     <AuthLayout>
@@ -196,20 +166,6 @@ const SignUp: React.FC = () => {
             onChange={handleChange}
             className={`w-full bg-gray-800 border ${validationErrors.email ? 'border-red-500 animate-shake' : 'border-gray-700'} text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors`}
             placeholder="Nhập email của bạn"
-            required
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="username" className="block text-left text-sm font-medium text-gray-300 mb-1">Tên hiển thị</label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            value={formData.username}
-            onChange={handleChange}
-            className={`w-full bg-gray-800 border ${validationErrors.username ? 'border-red-500 animate-shake' : 'border-gray-700'} text-white rounded-lg py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors`}
-            placeholder="Tên của bạn"
             required
           />
         </div>
