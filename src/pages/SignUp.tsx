@@ -139,8 +139,8 @@ const SignUp: React.FC = () => {
     setError('');
     
     try {
-      await signUp(formData.email, formData.password);
-      setSuccess(true);
+      await signUp(formData.email, formData.password, formData.username);
+      navigate('/verify-email', { state: { email: formData.email } });
     } catch (err) {
       setError('Đăng ký không thành công. Vui lòng thử lại.');
     } finally {

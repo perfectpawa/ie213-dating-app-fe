@@ -58,7 +58,7 @@ const Profile: React.FC = () => {
             <div className="absolute -top-16 left-6">
               <img
                 src={user.profile_picture || avatarPlaceholder}
-                alt={`${user.username}'s avatar`}
+                alt={`${user.user_name}'s avatar`}
                 className="w-32 h-32 rounded-full border-4 border-gray-800 object-cover"
               />
               <span className="absolute bottom-0 right-0 p-1.5 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700" onClick={() => document.getElementById('avatar-upload')?.click()}>
@@ -70,7 +70,7 @@ const Profile: React.FC = () => {
             {/* Profile Details */}
             <div className="mt-12">
               <div className="flex items-baseline gap-3">
-                <h1 className="text-3xl font-bold text-white">{user.username}</h1>
+                <h1 className="text-3xl font-bold text-white">{user.user_name}</h1>
                 <span className="text-gray-400">
                   {user.full_name}
                 </span>
