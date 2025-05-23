@@ -4,6 +4,7 @@ import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
 import AuthLayout from '../components/layout/AuthLayout';
 import { useAuth } from '../hooks/useAuth';
 
+
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -27,6 +28,7 @@ const SignUp: React.FC = () => {
     { text: "Ít nhất 1 số (0-9)", met: /\d/.test(formData.password) },
     { text: "Ít nhất 1 ký tự đặc biệt (!@#$...)", met: /[!@#$%^&*(),.?":{}|<>]/.test(formData.password) }
   ];
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

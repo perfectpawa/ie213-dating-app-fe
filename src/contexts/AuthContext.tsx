@@ -1,6 +1,12 @@
 ﻿import { createContext, useEffect, useState, ReactNode } from "react";
 import { User } from "../types/user";
 import { authApi } from "../api/authApi";
+import { useDispatch } from 'react-redux';
+import { setAuthUser } from "../store/authSlice";
+
+
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 interface AuthContextType {
     user: User | null;
@@ -10,6 +16,7 @@ interface AuthContextType {
     signUp: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     resendOTP: (email: string) => Promise<void>;
+    completeProfile: (data: any) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,10 +26,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
+    const dispatch = useDispatch();
+
+    const stateUser = useSelector((state: RootState) => state?.auth.user);
+
     useEffect(() => {
         const checkUser = async () => {
             try {
                 setLoading(true);
+
+                setUser(stateUser)
 
             } catch (err) {
                 console.error('Error fetching user:', err);
@@ -35,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         checkUser();
     }, []);
 
+
     const login = async (email: string, password: string) => {
         try {
             setError(null);
@@ -46,7 +60,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             
             setUser(data.user as User);
 
-            console.log("Login successful:", data.user);
+            dispatch(setAuthUser(data.user as User));
+
         } catch (err) {
             console.error('Login error:', err);
             setError(err instanceof Error ? err : new Error('Login failed'));
@@ -66,6 +81,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (!data?.user) throw new Error('No user data received from signup');
 
             setUser(data.user as User);
+
+            dispatch(setAuthUser(data.user as User));
+
         } catch (err) {
             console.error('Signup error:', err);
             setError(err instanceof Error ? err : new Error('Signup failed'));
@@ -112,6 +130,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const completeProfile = async (data: any) => {
+        try {
+            setError(null);
+            setLoading(true);
+            const { error: completeError } = await authApi.completeProfile(data);
+
+            if (completeError) throw completeError;
+        } catch (err) {
+            console.error('Complete profile error:', err);
+            setError(err instanceof Error ? err : new Error('Failed to complete profile'));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const value = {
         user,
         loading,
@@ -120,6 +154,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signUp,
         logout,
         resendOTP,
+        completeProfile
     };
 
     return (

@@ -40,4 +40,11 @@ export const authApi = {
             data: { email },
         });
     },
+
+    completeProfile: async (data: any) => {
+        return apiRequest<void>('/users/complete-profile', {
+            method: 'POST',
+            data,
+        });
+    },
 };
