@@ -7,7 +7,7 @@ const CompleteProfile = () => {
   const { user, completeProfile } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
-    username: user?.username || "",
+    username: user?.user_name || "",
     full_name: user?.full_name || "",
     gender: user?.gender || "",
     bio: user?.bio || "",

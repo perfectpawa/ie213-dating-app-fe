@@ -1,124 +1,58 @@
 ﻿import { createContext, useEffect, useState, ReactNode } from "react";
-import { Session, User as SupabaseUser } from "@supabase/supabase-js";
-import { supabase } from "../services/supabaseClient";
 import { User } from "../types/user";
-import { userApi } from "../api/userApi";
+import { authApi } from "../api/authApi";
 
 interface AuthContextType {
     user: User | null;
-    session: Session | null;
     loading: boolean;
     error: Error | null;
     login: (email: string, password: string) => Promise<void>;
     signUp: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    updateProfile: (data: Partial<User>) => Promise<void>;
-    completeProfile: (data: Partial<User>) => Promise<void>;
-    resendVerificationEmail: (email: string) => Promise<void>;
+    resendOTP: (email: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [session, setSession] = useState<Session | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
-    // Fetch user profile from backend
-    const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
-        try {
-            setError(null);
-            setLoading(true);
-
-            // Get user by auth_id
-            const { data: response, error: fetchError } = await userApi.getUserByAuthId(supabaseUser.id);
-
-            if (fetchError) throw fetchError;
-
-            const { data } = response || {};
-            const user = data?.user;
-
-            console.log(user);
-
-            // If user exists, set it
-            if (user) {
-                setUser(user);
-            } else {
-                // If user doesn't exist in backend, create it
-                const { data: newUser, error: createError } = await userApi.createUser({
-                    auth_id: supabaseUser.id!,
-                    email: supabaseUser.email!
-                });
-
-                if (createError) throw createError;
-                setUser(newUser);
-            }
-        } catch (err) {
-            console.error('Error fetching user profile:', err);
-            setError(err instanceof Error ? err : new Error('Failed to fetch user profile'));
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        const fetchSession = async () => {
+        const checkUser = async () => {
             try {
-                const { data } = await supabase.auth.getSession();
-                setSession(data.session);
+                setLoading(true);
 
-                console.log('Session:', data.session);
-
-                if (data.session?.user) {
-                    await fetchUserProfile(data.session.user);
-                }
             } catch (err) {
-                console.error('Error fetching session:', err);
-                setError(err instanceof Error ? err : new Error('Failed to fetch session'));
+                console.error('Error fetching user:', err);
+                setUser(null);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchSession();
-
-        const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-            setSession(session);
-            
-            if (session?.user) {
-                await fetchUserProfile(session.user);
-            } else {
-                setUser(null);
-            }
-        });
-
-        return () => {
-            listener.subscription.unsubscribe();
-        };
+        checkUser();
     }, []);
 
     const login = async (email: string, password: string) => {
         try {
             setError(null);
-            setLoading(true);
+            // setLoading(true);
+            const { data, error: loginError } = await authApi.login(email, password);
 
-            // 1. Login with Supabase
-            const { data: { user: supabaseUser }, error: authError } = 
-                await supabase.auth.signInWithPassword({ email, password });
+            if (loginError) throw loginError;
+            if (!data?.user) throw new Error('No user data received from login');
             
-            if (authError) throw authError;
-            if (!supabaseUser) throw new Error('No user returned from login');
+            setUser(data.user as User);
 
-            // 2. Fetch user profile from backend
-            await fetchUserProfile(supabaseUser);
+            console.log("Login successful:", data.user);
         } catch (err) {
             console.error('Login error:', err);
             setError(err instanceof Error ? err : new Error('Login failed'));
             throw err;
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     };
 
@@ -126,25 +60,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             setError(null);
             setLoading(true);
+            const { data, error: signupError } = await authApi.signup(email, password);
 
-            // 1. Sign up with Supabase
-            const { data: { user: supabaseUser }, error: authError } = 
-                await supabase.auth.signUp({ email, password });
-            
-            if (authError) throw authError;
-            if (!supabaseUser) throw new Error('No user returned from signup');
+            if (signupError) throw signupError;
+            if (!data?.user) throw new Error('No user data received from signup');
 
-            // 2. Create user in backend
-            const { error: profileError } = await userApi.createUser({
-                auth_id: supabaseUser.id,
-                email: supabaseUser.email!,
-                completeProfile: false,
-            });
-
-            if (profileError) throw profileError;
-
-            // 3. Fetch the created user profile
-            await fetchUserProfile(supabaseUser);
+            setUser(data.user as User);
         } catch (err) {
             console.error('Signup error:', err);
             setError(err instanceof Error ? err : new Error('Signup failed'));
@@ -158,9 +79,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
             setError(null);
             setLoading(true);
-            await supabase.auth.signOut();
+            const { error: logoutError } = await authApi.logout();
+            
+            if (logoutError) throw logoutError;
+            
             setUser(null);
-            setSession(null);
+            // Clear both cookie and localStorage
+            document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            localStorage.removeItem('token');
         } catch (err) {
             console.error('Logout error:', err);
             setError(err instanceof Error ? err : new Error('Logout failed'));
@@ -170,60 +96,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const updateProfile = async (data: Partial<User>) => {
+    const resendOTP = async (email: string) => {
         try {
             setError(null);
             setLoading(true);
-            if (!user) throw new Error('No user logged in');
-
-            const { data: updatedUser, error: updateError } = 
-                await userApi.updateUser(user._id, data);
+            const { error: resendError } = await authApi.resendOTP(email);
             
-            if (updateError) throw updateError;
-            setUser(updatedUser);
-        } catch (err) {
-            console.error('Profile update error:', err);
-            setError(err instanceof Error ? err : new Error('Profile update failed'));
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const completeProfile = async (data: Partial<User>) => {
-        try {
-            setError(null);
-            setLoading(true);
-            if (!user) throw new Error('No user logged in');
-
-            const { data: updatedUser, error: completeError } =
-                await userApi.completeProfile(user._id, data);
-
-            if (completeError) throw completeError;
-            setUser(updatedUser);
-        } catch (err) {
-            console.error('Profile completion error:', err);
-            setError(err instanceof Error ? err : new Error('Profile completion failed'));
-            throw err;
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    const resendVerificationEmail = async (email: string) => {
-        try {
-            setError(null);
-            setLoading(true);
-
-            const { error: resendError } = await supabase.auth.resend({
-                type: 'signup',
-                email,
-            });
-
             if (resendError) throw resendError;
         } catch (err) {
-            console.error('Resend verification email error:', err);
-            setError(err instanceof Error ? err : new Error('Failed to resend verification email'));
+            console.error('Resend OTP error:', err);
+            setError(err instanceof Error ? err : new Error('Failed to resend OTP'));
             throw err;
         } finally {
             setLoading(false);
@@ -232,15 +114,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const value = {
         user,
-        session,
         loading,
         error,
         login,
         signUp,
         logout,
-        updateProfile,
-        completeProfile,
-        resendVerificationEmail,
+        resendOTP,
     };
 
     return (

@@ -8,15 +8,10 @@ interface PublicRouteProps {
 }
 
 const PublicRoute = ({ children }: PublicRouteProps) => {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
   if (loading) {
     return <LoadingSpinner />;
-  }
-
-  // If user is authenticated, redirect to home or complete profile
-  if (user) {
-    return <Navigate to={user.completeProfile ? "/home" : "/complete-profile"} replace />;
   }
 
   return <>{children}</>;
