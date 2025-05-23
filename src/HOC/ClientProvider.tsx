@@ -6,6 +6,7 @@ import {Persistor, persistStore} from 'redux-persist'
 import {PersistGate} from 'redux-persist/integration/react'
 
 import store from '../store/store';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const ClientProvider = ({ children }: { children: React.ReactNode }) => {
 
@@ -17,11 +18,11 @@ const ClientProvider = ({ children }: { children: React.ReactNode }) => {
     }, [])
 
     if (!persistor) {
-        return null;
+        return <LoadingSpinner />;
     }
 
     return <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
             {children}
         </PersistGate>
     </Provider>

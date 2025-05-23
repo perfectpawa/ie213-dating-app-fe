@@ -10,6 +10,7 @@ export interface User {
 }
 
 export interface UpdateUserDto {
+  id?: string;
   username?: string;
   full_name?: string;
   gender?: string;

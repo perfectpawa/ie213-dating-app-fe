@@ -1,5 +1,5 @@
 ﻿import { createContext, useEffect, useState, ReactNode } from "react";
-import { User } from "../types/user";
+import {UpdateUserDto, User} from "../types/user";
 import { authApi } from "../api/authApi";
 import { useDispatch } from 'react-redux';
 import { setAuthUser } from "../store/authSlice";
@@ -16,7 +16,7 @@ interface AuthContextType {
     signUp: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     resendOTP: (email: string) => Promise<void>;
-    completeProfile: (data: any) => Promise<void>;
+    completeProfile: (data: UpdateUserDto) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -130,13 +130,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const completeProfile = async (data: any) => {
+    const completeProfile = async (data: UpdateUserDto) => {
         try {
             setError(null);
             setLoading(true);
-            const { error: completeError } = await authApi.completeProfile(data);
+            const { data: responseData, error: completeError } = await authApi.completeProfile(data);
 
             if (completeError) throw completeError;
+            if (!responseData?.user) throw new Error('No user data received after completing profile');
+
+            // Update both local state and Redux store
+            const updatedUser = responseData.user as User;
+            setUser(updatedUser);
+            dispatch(setAuthUser(updatedUser));
+
         } catch (err) {
             console.error('Complete profile error:', err);
             setError(err instanceof Error ? err : new Error('Failed to complete profile'));

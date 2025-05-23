@@ -1,10 +1,11 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
-  const { user, completeProfile } = useAuth();
+  const { user, completeProfile, loading: authLoading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     username: user?.user_name || "",
@@ -17,6 +18,10 @@ const CompleteProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(user?.profile_picture || null);
 
+  if (authLoading) {
+    return <LoadingSpinner />;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -24,6 +29,7 @@ const CompleteProfile = () => {
 
     try {
       await completeProfile({
+        id: user?._id,
         ...formData,
         completeProfile: true,
       });

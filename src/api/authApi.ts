@@ -1,5 +1,5 @@
 import { apiRequest } from '../utils/apiRequest';
-import { User } from '../types/user';
+import {UpdateUserDto, User} from '../types/user';
 
 interface AuthResponse {
     user: User;
@@ -42,9 +42,28 @@ export const authApi = {
     },
 
     completeProfile: async (data: any) => {
-        return apiRequest<void>('/users/complete-profile', {
+        const formData = new FormData();
+        
+        // Add text fields
+        formData.append('user_name', data.username);
+        formData.append('full_name', data.full_name);
+        formData.append('gender', data.gender);
+        formData.append('bio', data.bio);
+        
+        // Add profile picture if it exists
+        if (data.profile_picture && data.profile_picture.startsWith('data:')) {
+            // Convert base64 to blob
+            const response = await fetch(data.profile_picture);
+            const blob = await response.blob();
+            formData.append('profilePic', blob, 'profile.jpg');
+        }
+
+        return apiRequest<AuthResponse>(`/users/${data.id}/complete-profile`, {
             method: 'POST',
-            data,
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
         });
     },
 };
