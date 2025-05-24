@@ -12,7 +12,6 @@ export const usePosts = (userId: string) => {
             setLoading(true);
             setError(null);
             const response = await postApi.getUserPosts(userId);
-            console.log('Fetched posts:', response.data.data.posts);
             setUserPosts(response.data.data.posts);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch posts');
@@ -25,9 +24,13 @@ export const usePosts = (userId: string) => {
     const createPost = async (content: string, image: File) => {
         try {
             setError(null);
+
             const response = await postApi.createPost(content, image);
-            setUserPosts(prevPosts => [response.data.posts[0], ...prevPosts]);
-            return response.data.posts[0];
+
+            const post = response.data.data.post;
+
+            setUserPosts(prevPosts => [post, ...prevPosts]);
+
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to create post');
             throw err;

@@ -110,7 +110,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        {/* Photos Section */}
+          {/* Photos Section */}
         <PhotosSection userId={user._id} />
       </div>
     </Layout>
