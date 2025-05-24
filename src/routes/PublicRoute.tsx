@@ -8,10 +8,14 @@ interface PublicRouteProps {
 }
 
 const PublicRoute = ({ children }: PublicRouteProps) => {
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
 
   if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (user?.isVerified) {
+    return <Navigate to="/home" replace />;
   }
 
   return <>{children}</>;

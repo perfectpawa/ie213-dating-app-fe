@@ -2,6 +2,7 @@ export interface User {
   _id: string;           // Backend user ID
   email: string;
   completeProfile: boolean;  // Flag to track if user has completed profile setup
+  isVerified: boolean;  // Flag to track if user has verified their email
   user_name?: string;    // User's display name
   full_name?: string;   // User's full name
   gender?: string;      // User's gender
