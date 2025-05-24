@@ -8,6 +8,13 @@ interface PostsResponse {
     };
 }
 
+interface PostResponse {
+    status: string;
+    data: {
+        post: Post;
+    };
+}
+
 export const postApi = {
     getUserPosts: async (userId: string) => {
         return apiRequest<PostsResponse>(`/posts/user/${userId}`, {
@@ -20,7 +27,7 @@ export const postApi = {
         formData.append('content', content);
         formData.append('image', image);
 
-        return apiRequest<PostsResponse>('/posts', {
+        return apiRequest<PostResponse>('/posts', {
             method: 'POST',
             data: formData,
             headers: {
@@ -36,8 +43,21 @@ export const postApi = {
     },
 
     toggleLike: async (postId: string) => {
-        return apiRequest<PostsResponse>(`/posts/${postId}/like`, {
+        return apiRequest<PostResponse>(`/posts/${postId}/like`, {
             method: 'POST',
+        });
+    },
+
+    getFeedPosts: async () => {
+        return apiRequest<PostsResponse>('/posts/except-own', {
+            method: 'GET',
+        });
+    },
+
+    addComment: async (postId: string, comment: string) => {
+        return apiRequest<PostResponse>(`/posts/${postId}/comment`, {
+            method: 'POST',
+            data: { comment },
         });
     },
 };
