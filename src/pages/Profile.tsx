@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Layout from "../components/layout/layout";
 import { Pencil, Camera } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import PhotosSection from "../components/profile/PhotosSection";
 
 import avatarPlaceholder from '../assets/avatar_holder.png';
 
@@ -109,26 +110,8 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-6 bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-          {/* Photos Section */}
-          <div className="mx-5 mt-6 mb-8 ">
-            <h2 className="text-xl font-semibold text-white mb-4">Ảnh</h2>
-            <div className="grid grid-cols-3 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((item) => (
-                <div
-                  key={item}
-                  className="aspect-square bg-gray-800 rounded-lg overflow-hidden"
-                >
-                  <img
-                    src={`https://picsum.photos/600/450?random=${item}`}
-                    alt="Gallery"
-                    className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110 peer"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* Photos Section */}
+        <PhotosSection userId={user._id} />
       </div>
     </Layout>
   );
