@@ -2,7 +2,7 @@
 import {UpdateUserDto, User} from "../types/user";
 import { authApi } from "../api/authApi";
 import { useDispatch } from 'react-redux';
-import { setAuthUser } from "../store/authSlice";
+import { setAuthUser, clearAuthUser } from "../store/authSlice";
 
 
 import { useSelector } from 'react-redux';
@@ -16,7 +16,7 @@ interface AuthContextType {
     signUp: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     resendOTP: (email: string) => Promise<void>;
-    completeProfile: (data: UpdateUserDto) => Promise<void>;
+    completeProfile: (data: FormData) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +34,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const checkUser = async () => {
             try {
                 setLoading(true);
-
                 setUser(stateUser)
 
             } catch (err) {
@@ -130,14 +129,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const completeProfile = async (data: UpdateUserDto) => {
+    const completeProfile = async (data: FormData) => {
         try {
             setError(null);
             setLoading(true);
-            const { data: responseData, error: completeError } = await authApi.completeProfile(data);
+
+            if (!user) throw new Error('User not found');
+
+            const { data: responseData, error: completeError } = await authApi.completeProfile(user._id, data);
 
             if (completeError) throw completeError;
             if (!responseData?.user) throw new Error('No user data received after completing profile');
+
+            console.log(responseData.user);
 
             // Update both local state and Redux store
             const updatedUser = responseData.user as User;

@@ -6,6 +6,12 @@ interface AuthResponse {
     token: string;
 }
 
+interface CompleteProfileResponse {
+    status: string;
+    message: string;
+    user: User;
+}
+
 export const authApi = {
     login: async (email: string, password: string) => {
         return apiRequest<AuthResponse>('/users/login', {
@@ -41,26 +47,10 @@ export const authApi = {
         });
     },
 
-    completeProfile: async (data: any) => {
-        const formData = new FormData();
-        
-        // Add text fields
-        formData.append('user_name', data.username);
-        formData.append('full_name', data.full_name);
-        formData.append('gender', data.gender);
-        formData.append('bio', data.bio);
-        
-        // Add profile picture if it exists
-        if (data.profile_picture && data.profile_picture.startsWith('data:')) {
-            // Convert base64 to blob
-            const response = await fetch(data.profile_picture);
-            const blob = await response.blob();
-            formData.append('profilePic', blob, 'profile.jpg');
-        }
-
-        return apiRequest<AuthResponse>(`/users/${data.id}/complete-profile`, {
+    completeProfile: async (user_id: string, data: any) => {
+        return apiRequest<CompleteProfileResponse>(`/users/${user_id}/complete-profile`, {
             method: 'POST',
-            data: formData,
+            data: data,
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

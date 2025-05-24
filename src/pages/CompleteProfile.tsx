@@ -8,11 +8,11 @@ const CompleteProfile = () => {
   const { user, completeProfile, loading: authLoading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
-    username: user?.user_name || "",
+    user_name: user?.user_name || "",
     full_name: user?.full_name || "",
     gender: user?.gender || "",
     bio: user?.bio || "",
-    profile_picture: user?.profile_picture || "",
+    profile_picture: null as File | null,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,11 +28,16 @@ const CompleteProfile = () => {
     setError(null);
 
     try {
-      await completeProfile({
-        id: user?._id,
-        ...formData,
-        completeProfile: true,
-      });
+      const submitData = new FormData();
+      submitData.append("user_name", formData.user_name);
+      submitData.append("full_name", formData.full_name);
+      submitData.append("gender", formData.gender);
+      submitData.append("bio", formData.bio);
+      if (formData.profile_picture) {
+        submitData.append("profile_picture", formData.profile_picture);
+      }
+
+      await completeProfile(submitData);
       navigate("/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update profile");
@@ -62,7 +67,7 @@ const CompleteProfile = () => {
         setPreviewUrl(reader.result as string);
         setFormData(prev => ({
           ...prev,
-          avatar_url: reader.result as string
+          profile_picture: file
         }));
       };
       reader.readAsDataURL(file);
@@ -112,9 +117,9 @@ const CompleteProfile = () => {
             </label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              id="user_name"
+              name="user_name"
+              value={formData.user_name}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
