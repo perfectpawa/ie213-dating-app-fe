@@ -1,23 +1,37 @@
 import React, { useState } from "react";
 import Layout from "../components/layout/layout";
 import { Pencil, Camera } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import PhotosSection from "../components/profile/PhotosSection";
 
-interface ProfileProps {
-  username: string;
-  bio?: string;
-  interests?: string[];
-  location?: string;
-  age?: number;
-}
+import avatarPlaceholder from '../assets/avatar_holder.png';
 
-const Profile: React.FC<ProfileProps> = ({
-  username,
-  bio,
-  interests = [],
-  location,
-  age,
-}) => {
+const Profile: React.FC = () => {
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  
+  // Array of interests with highlighted ones
+  const userInterests = [
+    { name: "gaming", highlighted: true },
+    { name: "anime", highlighted: true },
+    { name: "music", highlighted: false },
+    { name: "film", highlighted: false },
+    { name: "photo", highlighted: false },
+    { name: "leon", highlighted: false },
+    { name: "japan", highlighted: false },
+    { name: "vietnam", highlighted: false },
+    { name: "punch", highlighted: false },
+    { name: "kick", highlighted: false },
+    { name: "gun", highlighted: false },
+    { name: "knife", highlighted: false },
+    { name: "sport", highlighted: false },
+    { name: "football", highlighted: false },
+    { name: "isekai", highlighted: false },
+  ];
+
+  if (!user) {
+    return null; // or a loading state
+  }
 
   return (
     <Layout>
@@ -44,8 +58,8 @@ const Profile: React.FC<ProfileProps> = ({
             {/* Avatar */}
             <div className="absolute -top-16 left-6">
               <img
-                src="https://pbs.twimg.com/profile_images/3398056307/6949ebc8091957497f8a577ab29e5ca1_400x400.jpeg"
-                alt={`${username}'s avatar`}
+                src={user.profile_picture || avatarPlaceholder}
+                alt={`${user.user_name}'s avatar`}
                 className="w-32 h-32 rounded-full border-4 border-gray-800 object-cover"
               />
               <span className="absolute bottom-0 right-0 p-1.5 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700" onClick={() => document.getElementById('avatar-upload')?.click()}>
@@ -57,61 +71,47 @@ const Profile: React.FC<ProfileProps> = ({
             {/* Profile Details */}
             <div className="mt-12">
               <div className="flex items-baseline gap-3">
-                <h1 className="text-3xl font-bold text-white">{username}</h1>
+                <h1 className="text-3xl font-bold text-white">{user.user_name}</h1>
                 <span className="text-gray-400">
-                {age} - {location}
-              </span>
+                  {user.full_name}
+                </span>
               </div>
-
 
               {/* Bio */}
               <div className="mt-3.5">
-                {/* <h2 className="flex flex-row text-xl font-semibold text-white mb-2">
-                  About me
-                </h2> */}
-                <p className="flex flex-row text-gray-400">{bio}</p>
-              </div>
-            </div>
-
-            {/* Interests */}
-            <div className="mt-6">
-              <h2 className=" text-xl font-semibold text-white mb-2">
-                Interests
-              </h2>
-              <div className="flex flex-wrap gap-2 mt-4 ">
-                {interests.map((interest, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-[#4edcd8] text-black rounded-full text-sm transition-transform duration-300 transform hover:scale-110 peer"
-                  >
-                    {interest}
-                  </span>
-                ))}
+                <p className="flex flex-row mt-8 text-white">{user.bio}</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="mt-6 bg-gray-900 rounded-lg shadow-lg overflow-hidden">
-        {/* Photos Section */}
-        <div className="mx-5 mt-5 mb-8 ">
-          <h2 className="text-xl font-semibold text-white mb-4">Photos</h2>
-          <div className="grid grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <div
-                key={item}
-                className="aspect-square bg-gray-800 rounded-lg overflow-hidden"
-              >
-                <img
-                  src={`https://picsum.photos/600/450?random=${item}`}
-                  alt="Gallery"
-                  className="w-full h-full object-cover transition-transform duration-300 transform hover:scale-110 peer"
-                />
-              </div>
-            ))}
+          {/* Interests */}
+          <div className="px-6 py-5">
+            <h2 className="text-xl font-semibold text-white mb-4">
+              Sở thích
+            </h2>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {userInterests.map((interest, index) => (
+                <span
+                  key={index}
+                  className={`
+                    px-4 py-2 rounded-full text-sm font-medium 
+                    hover:scale-105 transition-transform duration-300 cursor-pointer
+                    ${interest.highlighted 
+                      ? "bg-gradient-to-r from-teal-400 to-teal-500 text-black" 
+                      : "bg-black text-white border border-gray-700"}
+                  `}
+                >
+                  #{interest.name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+
+          {/* Photos Section */}
+        <PhotosSection userId={user._id} />
       </div>
     </Layout>
   );
