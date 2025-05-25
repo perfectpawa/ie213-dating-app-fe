@@ -44,7 +44,7 @@ export const postApi = {
 
     toggleLike: async (postId: string) => {
         return apiRequest<PostResponse>(`/posts/${postId}/like`, {
-            method: 'POST',
+            method: 'GET',
         });
     },
 

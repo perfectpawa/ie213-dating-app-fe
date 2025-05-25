@@ -1,6 +1,8 @@
+import { User } from './user';
+
 export interface Post {
     _id: string;
-    user: string;
+    user: User;
     content: string;
     image: string;
     likes: string[];
@@ -10,7 +12,7 @@ export interface Post {
 
 export interface Comment {
     _id: string;
-    user: string;
+    user: User;
     content: string;
     createdAt: string;
 } 
