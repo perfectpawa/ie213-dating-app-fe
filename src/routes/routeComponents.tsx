@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
+import UserProfile from '../pages/UserProfile';
 import Matching from '../pages/Matching';
 import Setting from '../pages/Setting';
 import Chat from '../pages/Chat';
@@ -47,6 +48,11 @@ export const routeComponents = {
   profile: (
     <ProtectedRoute>
       <Profile />
+    </ProtectedRoute>
+  ),
+  userProfile: (
+    <ProtectedRoute>
+      <UserProfile />
     </ProtectedRoute>
   ),
   messages: (

@@ -3,6 +3,7 @@ import { Post } from '../types/post';
 import { Heart, MessageCircle } from 'lucide-react';
 import { formatDate } from '../utils/date';
 import { useAuth } from '../hooks/useAuth';
+import { useProfile } from '../hooks/useProfile';
 
 interface PostCardProps {
     post: Post;
@@ -12,6 +13,8 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefresh }) => {
     const { user } = useAuth();
+    const { navigateToProfile } = useProfile();
+
     const handleLike = async () => {
         await onLikeToggle(post._id);
         await onRefresh();
@@ -23,14 +26,20 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
         <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:shadow-xl mx-auto w-[400px]">
             {/* User Info */}
             <div className="p-3 flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700">
+                <div 
+                    className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigateToProfile(post.user._id)}
+                >
                     <img 
                         src={post.user.profile_picture || '/default-avatar.png'} 
                         alt={`${post.user.user_name || post.user.full_name || 'Anonymous'}'s profile`}
                         className="w-full h-full object-cover"
                     />
                 </div>
-                <div>
+                <div 
+                    className="cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigateToProfile(post.user._id)}
+                >
                     <h3 className="font-semibold text-white text-sm">{post.user.user_name || post.user.full_name || 'Anonymous'}</h3>
                     <p className="text-xs text-gray-400">{formatDate(post.createdAt)}</p>
                 </div>

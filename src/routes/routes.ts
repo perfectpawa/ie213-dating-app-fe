@@ -34,6 +34,10 @@ export const routes = [
     element: routeComponents.profile,
   },
   {
+    path: '/profile/:userId',
+    element: routeComponents.userProfile,
+  },
+  {
     path: '/messages',
     element: routeComponents.messages,
   },
