@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Search, Menu, Bell, ChevronDown } from "lucide-react";
+import { Search, Bell, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationModal from "../notifications/notification";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth.ts";
+import { useNotifications } from "@/hooks/useNotifications.ts";
 import avatarPlaceholder from '../../assets/avatar_holder.png';
 
 const Navbar = () => {
@@ -10,11 +11,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   
   const handleViewAllNotifications = () => {
-    // Logic to navigate to all notifications page would go here
     console.log("View all notifications clicked");
-    // You could use react-router navigate here if you had a notifications page
   };
 
   const handleLogout = async (e: React.MouseEvent) => {
@@ -26,124 +26,122 @@ const Navbar = () => {
       console.error('Logout failed:', error);
     }
   };
+
+  const handleNotificationClick = async (notificationId: string) => {
+    try {
+      await markAsRead([notificationId]);
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  };
   
   if (!user) {
     return null;
   }
-  
+
   return (
-    <header className="flex justify-between items-center p-4 bg-gray-900 shadow-md w-full">
-      
-      {/* Center section: Thanh tìm kiếm */}
-      <div className="hidden md:block flex-1 max-w-md mx-4">
-        <div className="relative">
-          <input 
-            type="text" 
-            placeholder="Search for people, interests..."
-            className="w-full py-2 px-4 pl-10 bg-gray-800 rounded-full text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#4edcd8]"
-          />
-          <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        </div>
-      </div>
-      
-      {/* Right section: Thông báo và hồ sơ người dùng */}
-      <div className="flex items-center gap-4">
-        {/* Mobile search icon */}
-        <Search size={24} className="cursor-pointer md:hidden text-gray-300 hover:text-[#4edcd8]" />
-        
-        {/* Notifications */}
-        <div className="relative">
-          <div 
-            className="relative cursor-pointer"
-            onClick={() => setShowNotifications(!showNotifications)}
-          >
-            <Bell size={24} className="text-gray-300 hover:text-[#4edcd8]" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">3</span>
+    <nav className="bg-gray-900 border-b border-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Center - Search */}
+          <div className="flex-1 flex items-center justify-center px-2 lg:ml-6 lg:justify-end">
+            <div className="max-w-lg w-full lg:max-w-xs">
+              <label htmlFor="search" className="sr-only">
+                Search
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="search"
+                  name="search"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-md leading-5 bg-gray-800 text-gray-300 placeholder-gray-400 focus:outline-none focus:placeholder-gray-500 focus:ring-1 focus:ring-[#4edcd8] focus:border-[#4edcd8] sm:text-sm"
+                  placeholder="Search"
+                  type="search"
+                />
+              </div>
+            </div>
           </div>
-          
-          {/* Using the enhanced Notification Modal component with custom props */}
-          <NotificationModal 
-            isOpen={showNotifications} 
-            onClose={() => setShowNotifications(false)}
-            onViewAll={handleViewAllNotifications}
-            notifications={[
-              {
-                id: 1,
-                user: {
-                  name: "Alex",
-                  avatar: "https://randomuser.me/api/portraits/men/11.jpg"
-                },
-                type: 'like',
-                time: "2 tiếng trước",
-                read: false
-              },
-              {
-                id: 2,
-                user: {
-                  name: "Emma",
-                  avatar: "https://randomuser.me/api/portraits/women/12.jpg"
-                },
-                type: 'message',
-                time: "3 tiếng trước",
-                read: true
-              },
-              {
-                id: 3,
-                user: {
-                  name: "Michael",
-                  avatar: "https://randomuser.me/api/portraits/men/13.jpg"
-                },
-                type: 'connection',
-                time: "5 tiếng trước",
-                read: false
-              }
-            ]}
-          />
-        </div>
-        
-        {/* User profile */}
-        <div className="relative">
-          <div 
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-          >
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-[#4edcd8] ring-2 ring-gray-800">
-              <img 
-                src={user.profile_picture || avatarPlaceholder}
-                alt={user.user_name || 'Profile'} 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = avatarPlaceholder;
-                }}
+
+          {/* Right side */}
+          <div className="flex items-center gap-4">
+            {/* Notifications */}
+            <div className="relative">
+              <div 
+                className="relative cursor-pointer"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <Bell size={24} className="text-gray-300 hover:text-[#4edcd8]" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
+              
+              <NotificationModal 
+                isOpen={showNotifications} 
+                onClose={() => setShowNotifications(false)}
+                onViewAll={handleViewAllNotifications}
+                notifications={notifications.map(notification => ({
+                  id: notification._id,
+                  user: {
+                    name: notification.sender.user_name || notification.sender.full_name || 'Anonymous',
+                    avatar: notification.sender.profile_picture || `https://ui-avatars.com/api/?name=${notification.sender.user_name || notification.sender.full_name}&background=1a3f3e&color=4edcd8`
+                  },
+                  type: notification.type,
+                  time: new Date(notification.createdAt).toLocaleString(),
+                  read: notification.read
+                }))}
+                onNotificationClick={handleNotificationClick}
+                onMarkAllAsRead={markAllAsRead}
               />
             </div>
-            <span className="hidden md:block text-sm font-medium text-white">{user.user_name}</span>
-            <ChevronDown size={16} className="text-gray-300" />
-          </div>
-          
-          {/* Profile dropdown */}
-          {showProfileDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
-              <Link to="/profile" className="block px-4 py-2 hover:bg-gray-700 text-sm text-white">
-                Hồ sơ của tôi
-              </Link>
-              <Link to="/setting" className="block px-4 py-2 hover:bg-gray-700 text-sm text-white">
-                Cài đặt
-              </Link>
-              <div className="border-t border-gray-700"></div>
-              <button 
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2 hover:bg-gray-700 text-sm text-red-400 cursor-pointer"
+            
+            {/* User profile */}
+            <div className="relative">
+              <button
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                className="flex items-center gap-2 focus:outline-none"
               >
-                Đăng xuất
+                <img
+                  src={user.profile_picture || avatarPlaceholder}
+                  alt="Profile"
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+                <ChevronDown className="h-5 w-5 text-gray-300" />
               </button>
+
+              {showProfileDropdown && (
+                <div className="absolute z-40 right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    >
+                      Your Profile
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    >
+                      Settings
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
 
