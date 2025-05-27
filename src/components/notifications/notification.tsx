@@ -6,7 +6,7 @@ interface Notification {
     name: string;
     avatar: string;
   };
-  type: 'like' | 'message' | 'connection' | 'match';
+  type: 'like' | 'message' | 'swipe' | 'match';
   time: string;
   read: boolean;
 }
@@ -28,8 +28,6 @@ const NotificationModal: React.FC<NotificationProps> = ({
   onNotificationClick,
   onMarkAllAsRead
 }) => {
-  if (!isOpen) return null;
-
   // Create a local state copy of notifications to manage read status
   const [localNotifications, setLocalNotifications] = useState<Notification[]>([]);
   
@@ -44,8 +42,8 @@ const NotificationModal: React.FC<NotificationProps> = ({
         return 'liked your post';
       case 'message':
         return 'sent you a message';
-      case 'connection':
-        return 'wants to connect with you';
+      case 'swipe':
+        return 'swiped on your profile';
       case 'match':
         return 'matched with you';
       default:
@@ -71,6 +69,8 @@ const NotificationModal: React.FC<NotificationProps> = ({
     }
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
