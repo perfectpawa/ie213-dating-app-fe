@@ -1,61 +1,42 @@
 import React, { useState, useEffect } from 'react';
+import { userApi } from '../api/userApi';
+import { User } from '../types/user';
+import {Link} from "react-router-dom";
 
-interface RandomUser {
-  name: {
-    first: string;
-    last: string;
-  };
-  location: {
-    city: string;
-    state: string;
-    country: string;
-  };
-  dob: {
-    age: number;
-  };
-  picture: {
-    large: string;
-    medium: string;
-    thumbnail: string;
-  };
-}
 
 interface ProfileCardProps {
-  user: RandomUser;
-  index: number;
+  user: User;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ user, index }) => {
-  const tags = ["Du Lịch", "Âm Nhạc", "Thể Thao"];
+const ProfileCard: React.FC<ProfileCardProps> = ({ user }) => {
 
   return (
     <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105 hover:shadow-xl">
       <div className="aspect-[3/4] bg-gray-700 relative">
         <img 
-          src={user.picture.large} 
-          alt={`${user.name.first}'s profile`}
+          src={user.profile_picture}
+          alt={`${user.full_name}'s profile`}
           className="w-full h-full object-cover"
         />
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
           <h3 className="font-semibold text-sm text-white">
-            {user.name.first}, {user.dob.age}
+            {user.full_name}
           </h3>
-          <p className="text-xs text-gray-300">
-            {user.location.city}
-          </p>
         </div>
       </div>
       <div className="p-2">
-        <div className="flex flex-wrap gap-1 mb-1">
-          {tags.slice(index, index + 1).map((tag, i) => (
-            <span key={i} className="px-1.5 py-0.5 bg-[#1a3f3e] text-[#4edcd8] rounded-full text-xs font-medium">
-              {tag}
-            </span>
-          ))}
-        </div>
-        <button className="w-full px-2 py-1.5 bg-[#4edcd8] text-white rounded-lg text-xs font-medium hover:bg-[#3bc0bd] transition-colors duration-300">
-          Xem Hồ Sơ
-        </button>
+        {/*<div className="flex flex-wrap gap-1 mb-1">*/}
+        {/*  {tags.slice(index, index + 1).map((tag, i) => (*/}
+        {/*    <span key={i} className="px-1.5 py-0.5 bg-[#1a3f3e] text-[#4edcd8] rounded-full text-xs font-medium">*/}
+        {/*      {tag}*/}
+        {/*    </span>*/}
+        {/*  ))}*/}
+        {/*</div>*/}
+        <Link to={`/profile/${user._id}`}>
+          <div className="w-full px-2 py-1.5 bg-[#4edcd8] text-white rounded-lg text-xs font-medium hover:bg-[#3bc0bd] transition-colors duration-300">
+            Xem Hồ Sơ
+          </div>
+        </Link>
       </div>
     </div>
   );
@@ -68,33 +49,36 @@ const LoadingSpinner: React.FC = () => (
   </div>
 );
 
-const useRandomUsers = (count: number = 3) => {
-  const [users, setUsers] = useState<RandomUser[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export const FeaturedProfiles: React.FC = () => {
+  const [recommendedUsers, setRecommendedUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchRecommendedUsers = async () => {
       try {
-        const response = await fetch(`https://randomuser.me/api/?results=${count}&nat=us`);
-        const data = await response.json();
-        setUsers(data.results);
+        const { data } = await userApi.getOtherUsers();
+
+        console.log(data);
+
+        if (data?.status === 'success') {
+          setRecommendedUsers(data.data.users);
+        } else {
+          setError('Không thể tải người dùng nổi bật');
+        }
       } catch (error) {
-        setError('Failed to fetch users');
-        console.error('Error fetching users:', error);
+        console.error('Error fetching recommended users:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
-  }, [count]);
+    fetchRecommendedUsers().catch(
+        (error) => console.error('Error in useEffect:', error)
+    );
+  }, []);
 
-  return { users, loading, error };
-};
 
-export const FeaturedProfiles: React.FC = () => {
-  const { users, loading, error } = useRandomUsers(6);
 
   return (
     <section className="col-span-1">
@@ -110,8 +94,8 @@ export const FeaturedProfiles: React.FC = () => {
         ) : error ? (
           <div className="col-span-2 text-red-500 text-center p-4">{error}</div>
         ) : (
-          users.map((user, index) => (
-            <ProfileCard key={user.picture.large} user={user} index={index} />
+          recommendedUsers.map((user, index) => (
+            <ProfileCard key={index} user={user} />
           ))
         )}
       </div>
