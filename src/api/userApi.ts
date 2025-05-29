@@ -1,5 +1,6 @@
 import { apiRequest } from '../utils/apiRequest';
-import { User } from '../types/user';
+import { User, InteractedUser } from '../types/user';
+import { get } from 'http';
 
 interface UserResponse {
     status: string;
@@ -13,6 +14,14 @@ interface ListUserResponse {
     data: {
         users: User[];
     };
+}
+
+interface InteractedUsersResponse {
+    status: string;
+    data: {
+        users: InteractedUser[];
+    };
+
 }
 
 export const userApi = {
@@ -33,6 +42,11 @@ export const userApi = {
     },
     getSwipedUsers: async () => {
         return apiRequest<ListUserResponse>(`/users/swiped-users`, {
+            method: 'GET',
+        });
+    },
+    getInteractedUsers: async () => {
+        return apiRequest<InteractedUsersResponse>(`/users/interacted-users`, {
             method: 'GET',
         });
     }

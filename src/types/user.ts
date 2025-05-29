@@ -47,3 +47,8 @@ export interface UpdateUserDto {
     genderPreference?: string[];
   };
 }
+
+export interface InteractedUser {
+  user: User;           // The user object
+  status: 'swiped' | 'matched';
+}

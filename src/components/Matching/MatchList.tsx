@@ -1,12 +1,10 @@
 import React from "react";
-import { Match } from "../../types/swipe";
-import { Heart, MessageSquare, Search } from "lucide-react";
+import { Heart, MessageSquare, Search, ThumbsUp } from "lucide-react";
 import { Link } from "react-router-dom";
-import { User } from "../../types/user";
+import { InteractedUser, User } from "../../types/user";
 
 interface MatchListProps {
-  swipedUsers: User[];
-  matches: Match[];
+  interactedUsers: InteractedUser[];
   loading: boolean;
 }
 
@@ -50,7 +48,7 @@ interface UserCardProps {
   id: string;
   name: string;
   profilePicture?: string;
-  to: string;
+  status: 'matched' | 'swiped';
   showUnreadCount?: number;
   showMessageIcon?: boolean;
 }
@@ -59,11 +57,15 @@ const UserCard: React.FC<UserCardProps> = ({
   id,
   name,
   profilePicture,
-  to,
+  status,
   showUnreadCount,
   showMessageIcon,
 }) => (
-  <Link to={to} key={id} className="block group">
+  <Link  
+    key={id} 
+    className="block group"
+    to={status === 'matched' ? `/chat/${id}` : `/profile/${id}`}
+  >
     <div className="bg-gray-700 rounded-lg p-2 transition-all hover:bg-gray-600">
       <div className="relative aspect-square rounded-lg overflow-hidden mb-2">
         {profilePicture ? (
@@ -77,8 +79,15 @@ const UserCard: React.FC<UserCardProps> = ({
             <span className="text-white">No Image</span>
           </div>
         )}
-        <div className="absolute bottom-1 right-1 bg-[#49cdca] p-1 rounded-full">
-          <Heart size={14} className="text-white" />
+        {/* background is yellow when swipe */}
+        <div className="absolute bottom-1 right-1 bg-[#49cdca] p-1 rounded-full"
+          style={{ backgroundColor: status === 'matched' ? '#49cdca' : '#f59e0b' }}
+        >
+          {status === 'matched' ? (
+            <Heart size={14} className="text-white" />
+          ) : (
+            <ThumbsUp size={14} className="text-white" />
+          )}
         </div>
         {showUnreadCount && showUnreadCount > 0 && (
           <div className="absolute top-1 left-1 bg-green-500 rounded-full px-1.5 py-0.5 text-xs text-white font-bold">
@@ -110,41 +119,28 @@ const SectionHeader: React.FC<{ title: string; count: number }> = ({ title, coun
   </h3>
 );
 
-const MatchList: React.FC<MatchListProps> = ({ swipedUsers, matches, loading }) => {
+const MatchList: React.FC<MatchListProps> = ({ interactedUsers, loading }) => {
   if (loading) {
     return <LoadingState />;
   }
 
-  if (matches.length === 0) {
+  if (interactedUsers.length === 0) {
     return <EmptyState />;
   }
 
   return (
     <div className="bg-gray-800 rounded-lg shadow-md p-4">
-      <SectionHeader title="Những lượt ghép đôi của bạn" count={matches.length} />
+      <SectionHeader title="Những lượt ghép đôi của bạn" count={interactedUsers.length} />
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {matches.map((match) => (
+        {interactedUsers.map((interaction) => (
           <UserCard
-            key={match.matchId}
-            id={match.matchId}
-            name={match.otherUser?.user_name || "User"}
-            profilePicture={match.otherUser?.profile_picture}
-            to={`/chat/${match.matchId}`}
-            showUnreadCount={match.unreadCount}
-            showMessageIcon={!!match.latestMessage}
-          />
-        ))}
-      </div>
-
-      <SectionHeader title="Những lượt thích đã gửi" count={swipedUsers.length} />
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {swipedUsers.map((user) => (
-          <UserCard
-            key={user._id}
-            id={user._id}
-            name={user.user_name || "User"}
-            profilePicture={user.profile_picture}
-            to={`/profile/${user._id}`}
+            key={interaction.user._id}
+            id={interaction.user._id}
+            name={interaction.user.user_name || "User"}
+            profilePicture={interaction.user.profile_picture}
+            status={interaction.status}
+            showUnreadCount={0}
+            showMessageIcon={true}
           />
         ))}
       </div>

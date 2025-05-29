@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { swipeApi } from '../api/swipeApi';
 import { userApi } from '@/api/userApi';
-import { User } from '../types/user';
+import { User, InteractedUser } from '../types/user';
 import { Match, Swipe } from '../types/swipe';
 import { useAuth } from './useAuth';
 
@@ -22,6 +22,7 @@ export const useSwipe = () => {
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     const [swipedUsers, setSwipedUsers] = useState<User[]>([]);
+    const [interactedUsers, setInteractedUsers] = useState<InteractedUser[]>([]);
     
     // Add a ref to track initial load
     const initialLoadComplete = useRef(false);
@@ -89,8 +90,7 @@ export const useSwipe = () => {
                 setMatches(response.data.data.matches);
             }
 
-            console.log(await userApi.getMatchedUsers())
-
+            console.log(response);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch matches');
             console.error('Error fetching matches:', err);
@@ -116,6 +116,25 @@ export const useSwipe = () => {
         } finally {
             setLoading(false);
         }
+    }, [user?._id]);
+
+    const fetchInteractedUsers = useCallback(async () => {
+        if (!user?._id) return;
+
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await userApi.getInteractedUsers();
+            if (response.data?.data?.users) {
+                setInteractedUsers(response.data.data.users);
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to fetch interacted users');
+            console.error('Error fetching interacted users:', err);
+        } finally {
+            setLoading(false);
+        }
+
     }, [user?._id]);
 
     // Load more profiles when running low - with debounce
@@ -148,6 +167,7 @@ export const useSwipe = () => {
             fetchPotentialMatches(true);
             fetchMatches();
             fetchSwipedUsers();
+            fetchInteractedUsers();
         }
     }, [user?._id, fetchPotentialMatches, fetchMatches, fetchSwipedUsers]);
 
@@ -216,6 +236,7 @@ export const useSwipe = () => {
         currentProfile,
         matches,
         swipedUsers,
+        interactedUsers,
         loading,
         refreshing,
         error,
