@@ -9,7 +9,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-950 p-4 relative overflow-hidden">
       <ParticlesBackground />
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full relative z-10">
         {children}
       </div>
     </div>

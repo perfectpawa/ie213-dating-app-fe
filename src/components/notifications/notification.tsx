@@ -1,4 +1,6 @@
 import React, {useState, useEffect} from "react";
+import { SwipeNotification } from "./SwipeNotifications";
+import SwipeNotifications from "./SwipeNotifications";
 
 interface Notification {
   id: number;
@@ -15,19 +17,24 @@ interface NotificationProps {
   isOpen: boolean;
   onClose: () => void;
   notifications?: Notification[];
+  swipeNotifications?: SwipeNotification[];
   onViewAll?: () => void;
+  onMarkSwipeAsRead?: (id: string) => void;
 }
 
 const NotificationModal: React.FC<NotificationProps> = ({ 
   isOpen, 
   onClose,
   notifications = [],
-  onViewAll 
+  swipeNotifications = [],
+  onViewAll,
+  onMarkSwipeAsRead = () => {} 
 }) => {
   if (!isOpen) return null;
 
   // Create a local state copy of notifications to manage read status
   const [localNotifications, setLocalNotifications] = useState<Notification[]>([]);
+  const [activeTab, setActiveTab] = useState<'all' | 'swipes'>('all');
   
   // Initialize local notifications when props change
   useEffect(() => {
@@ -98,7 +105,6 @@ const NotificationModal: React.FC<NotificationProps> = ({
     }
     onClose();
   };
-
   return (
     <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
       <div className="px-3 py-2 border-gray-700 flex justify-between items-center">
@@ -113,54 +119,69 @@ const NotificationModal: React.FC<NotificationProps> = ({
       <div className="px-4 py-1 border-b border-gray-700 flex flex-row items-center">
         <div className="flex gap-6 pb-1">
           <button 
-        className="pl-1 cursor-pointer hover:text-[#4edcd8] font-semibold text-white text-xs flex items-center gap-1"
-        onClick={markallAsRead}
+            className={`pl-1 cursor-pointer font-semibold text-xs flex items-center gap-1 ${
+              activeTab === 'all' ? 'text-[#4edcd8]' : 'text-white hover:text-[#4edcd8]'
+            }`}
+            onClick={() => setActiveTab('all')}
           > 
-        Tất cả
+            Tất cả
           </button>
           <button 
-        className="cursor-pointer hover:text-[#4edcd8] font-semibold text-white text-xs flex items-center gap-1"
-        onClick={markallAsRead}
+            className={`cursor-pointer font-semibold text-xs flex items-center gap-1 ${
+              activeTab === 'swipes' ? 'text-[#4edcd8]' : 'text-white hover:text-[#4edcd8]'
+            }`}
+            onClick={() => setActiveTab('swipes')}
           > 
-        Đã đọc
+            Lượt Thích
           </button>
         </div>
       </div>
 
       <div className="max-h-80 overflow-y-auto">
-        {localNotifications.length === 0 ? (
-          <div className="p-6 text-center text-gray-400">
-            Không có thông báo mới
-          </div>
-        ) : (
-          localNotifications.map((notification) => (
-            <div 
-              key={notification.id} 
-              className={`py-3 px-4 hover:bg-gray-700 border-b border-gray-700 cursor-pointer transition-all duration-200 ease-in-out ${!notification.read ? 'bg-gray-700/40' : ''}`}
-            >
-              <div className="flex items-start gap-3">
-                <img 
-                  src={notification.user.avatar}
-                  alt={notification.user.name} 
-                  className="w-10 h-10 rounded-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = `https://ui-avatars.com/api/?name=${notification.user.name}&background=1a3f3e&color=4edcd8`;
-                  }}
-                />
-                <div>
-                  <p className="text-sm text-white">
-                    <span className="font-bold text-l">
-                      {notification.user.name}
-                    </span>{' '}
-                    <span className="text-sm text-gray-100">{getNotificationText(notification.type)}</span>
-                  </p>
-                  <p className="text-xs text-gray-400 text-left">{notification.time}</p>
+        {/* All tab or standard notifications */}
+        {activeTab === 'all' && (
+          localNotifications.length === 0 ? (
+            <div className="p-6 text-center text-gray-400">
+              Không có thông báo mới
+            </div>
+          ) : (
+            localNotifications.map((notification) => (
+              <div 
+                key={notification.id} 
+                className={`py-3 px-4 hover:bg-gray-700 border-b border-gray-700 cursor-pointer transition-all duration-200 ease-in-out ${!notification.read ? 'bg-gray-700/40' : ''}`}
+              >
+                <div className="flex items-start gap-3">
+                  <img 
+                    src={notification.user.avatar}
+                    alt={notification.user.name} 
+                    className="w-10 h-10 rounded-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = `https://ui-avatars.com/api/?name=${notification.user.name}&background=1a3f3e&color=4edcd8`;
+                    }}
+                  />
+                  <div>
+                    <p className="text-sm text-white">
+                      <span className="font-bold text-l">
+                        {notification.user.name}
+                      </span>{' '}
+                      <span className="text-sm text-gray-100">{getNotificationText(notification.type)}</span>
+                    </p>
+                    <p className="text-xs text-gray-400 text-left">{notification.time}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            ))
+          )
+        )}
+
+        {/* Swipes tab */}
+        {activeTab === 'swipes' && (
+          <SwipeNotifications
+            notifications={swipeNotifications}
+            onMarkAsRead={onMarkSwipeAsRead}
+          />
         )}
       </div>
       

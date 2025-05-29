@@ -3,10 +3,12 @@ import { Search, Menu, Bell, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationModal from "../notifications/notification";
 import { useAuth } from "../../hooks/useAuth";
+import { useNotifications } from "../../contexts/NotificationContext";
 import avatarPlaceholder from '../../assets/avatar_holder.png';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { swipeNotifications, markSwipeNotificationAsRead, unreadSwipeCount } = useNotifications();
   const navigate = useNavigate();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -30,16 +32,14 @@ const Navbar = () => {
   if (!user) {
     return null;
   }
-  
-  return (
-    <header className="flex justify-between items-center p-4 bg-gray-900 shadow-md w-full">
+    return (
+    <header className="flex justify-between items-center p-4 bg-gray-900 shadow-md w-full relative z-20">
       
       {/* Center section: Thanh tìm kiếm */}
       <div className="hidden md:block flex-1 max-w-md mx-4">
-        <div className="relative">
-          <input 
+        <div className="relative">          <input 
             type="text" 
-            placeholder="Search for people, interests..."
+            placeholder="Tìm kiếm mọi người, sở thích..."
             className="w-full py-2 px-4 pl-10 bg-gray-800 rounded-full text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#4edcd8]"
           />
           <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -47,25 +47,29 @@ const Navbar = () => {
       </div>
       
       {/* Right section: Thông báo và hồ sơ người dùng */}
-      <div className="flex items-center gap-4">
-        {/* Mobile search icon */}
+      <div className="flex items-center gap-4">        {/* Mobile search icon */}
         <Search size={24} className="cursor-pointer md:hidden text-gray-300 hover:text-[#4edcd8]" />
         
         {/* Notifications */}
-        <div className="relative">
-          <div 
+        <div className="relative">          <div 
             className="relative cursor-pointer"
             onClick={() => setShowNotifications(!showNotifications)}
           >
             <Bell size={24} className="text-gray-300 hover:text-[#4edcd8]" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">3</span>
+            {unreadSwipeCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                {unreadSwipeCount}
+              </span>
+            )}
           </div>
           
-          {/* Using the enhanced Notification Modal component with custom props */}
+          {/* Using the enhanced Notification Modal component with swipe notifications */}
           <NotificationModal 
             isOpen={showNotifications} 
             onClose={() => setShowNotifications(false)}
             onViewAll={handleViewAllNotifications}
+            swipeNotifications={swipeNotifications}
+            onMarkSwipeAsRead={markSwipeNotificationAsRead}
             notifications={[
               {
                 id: 1,
@@ -135,7 +139,7 @@ const Navbar = () => {
               <div className="border-t border-gray-700"></div>
               <button 
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 hover:bg-gray-700 text-sm text-red-400 cursor-pointer"
+                className="w-full px-4 py-2 hover:bg-gray-700 text-sm text-red-400 cursor-pointer text-center"
               >
                 Đăng xuất
               </button>

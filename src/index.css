@@ -9,6 +9,100 @@
   20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale {
+  0% { transform: scale(0.5); opacity: 0; }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes swipeLeft {
+  from { transform: translateX(0) rotate(0); opacity: 1; }
+  to { transform: translateX(-120%) rotate(-20deg); opacity: 0; }
+}
+
+@keyframes swipeRight {
+  from { transform: translateX(0) rotate(0); opacity: 1; }
+  to { transform: translateX(120%) rotate(20deg); opacity: 0; }
+}
+
+@keyframes swipeUp {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to { transform: translateY(-120%) scale(0.8); opacity: 0; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-scale {
+  animation: scale 0.5s ease-in-out;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 5s ease-in infinite;
+}
+
+.animate-confetti {
+  animation: confetti 5s ease-out forwards;
+}
+
+.shadow-glow-pink {
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.7);
+}
+
+.shadow-glow-blue {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Swipe animations */
+.swipe-left {
+  animation: swipeLeft 0.3s ease-out forwards;
+}
+
+.swipe-right {
+  animation: swipeRight 0.3s ease-out forwards;
+}
+
+.swipe-up {
+  animation: swipeUp 0.3s ease-out forwards;
+}
+
 ::-ms-reveal,
 ::-ms-clear {
   display: none !important;
@@ -83,10 +177,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-.animate-shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-}
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -133,6 +223,7 @@
     @apply bg-background text-foreground;
   }
 }
+
 
 @tailwind base;
 @tailwind components;

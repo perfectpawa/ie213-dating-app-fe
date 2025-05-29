@@ -20,9 +20,8 @@ export const Feed: React.FC = () => {
     }
 
     if (posts.length === 0) {
-        return (
-            <div className="text-center p-4 text-gray-500">
-                No posts to show. Follow some users to see their posts here!
+        return (            <div className="text-center p-4 text-gray-500">
+                Không có bài đăng nào để hiển thị. Hãy theo dõi một số người dùng để xem bài đăng của họ ở đây!
             </div>
         );
     }

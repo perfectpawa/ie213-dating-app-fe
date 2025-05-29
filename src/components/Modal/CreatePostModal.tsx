@@ -69,7 +69,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        placeholder="What's on your mind?"
+                        placeholder="Bạn đang nghĩ gì?"
                         className="w-full h-32 bg-gray-800 text-white rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
 
@@ -78,7 +78,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                         <div className="mt-4 relative">
                             <img
                                 src={imagePreview}
-                                alt="Preview"
+                                alt="Xem trước"
                                 className="w-full h-48 object-cover rounded-lg"
                             />
                             <button

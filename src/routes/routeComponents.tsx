@@ -59,8 +59,12 @@ export const routeComponents = {
     <ProtectedRoute>
       <Chat />
     </ProtectedRoute>
+  ),  discover: (
+    <ProtectedRoute>
+      <Matching />
+    </ProtectedRoute>
   ),
-  discover: (
+  matching: (
     <ProtectedRoute>
       <Matching />
     </ProtectedRoute>
