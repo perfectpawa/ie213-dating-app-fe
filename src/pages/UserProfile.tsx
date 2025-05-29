@@ -4,11 +4,12 @@ import Layout from "../components/layout/layout";
 import { useProfile } from "../hooks/useProfile";
 import PhotosSection from "../components/profile/PhotosSection";
 import LoadingSpinner from "../components/LoadingSpinner";
-import avatarPlaceholder from '../assets/avatar_holder.png';
+import avatarPlaceholder from "../assets/avatar_holder.png";
 
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
-  const { user, userPosts, loading, error, fetchUserPosts, fetchUserData } = useProfile();
+  const { user, userPosts, loading, error, fetchUserPosts, fetchUserData } =
+    useProfile();
 
   useEffect(() => {
     if (userId) {
@@ -22,17 +23,13 @@ const UserProfile: React.FC = () => {
   }
 
   if (error) {
-    return (
-      <div className="text-red-500 text-center p-4">
-        {error}
-      </div>
-    );
+    return <div className="text-red-500 text-center p-4">{error}</div>;
   }
 
   if (!user) {
     return (
       <div className="text-center p-4 text-gray-500">
-        User not found
+        Không tìm thấy người dùng
       </div>
     );
   }
@@ -59,10 +56,10 @@ const UserProfile: React.FC = () => {
             {/* Profile Details */}
             <div className="mt-12">
               <div className="flex items-baseline gap-3">
-                <h1 className="text-3xl font-bold text-white">{user.user_name}</h1>
-                <span className="text-gray-400">
-                  {user.full_name}
-                </span>
+                <h1 className="text-3xl font-bold text-white">
+                  {user.user_name}
+                </h1>
+                <span className="text-gray-400">{user.full_name}</span>
               </div>
 
               {/* Bio */}
@@ -80,4 +77,4 @@ const UserProfile: React.FC = () => {
   );
 };
 
-export default UserProfile; 
+export default UserProfile;

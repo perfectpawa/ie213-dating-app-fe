@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Home, Menu, User, Heart, MessageCircle, PlusCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Home, Menu, User, Heart, MessageCircle, PlusCircle, Search } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import CreatePostModal from "../Modal/CreatePostModal";
 import { useAuth } from "../../hooks/useAuth";
 import { usePosts } from "../../hooks/usePosts";
@@ -112,10 +112,9 @@ const Sidebar = () => {
       onClick: () => setIsCreateModalOpen(true)
     },
   ];
-  
-  return (
+    return (
     <>
-      <aside className={`relative bg-gray-900 shadow-md h-screen transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-48 sm:w-56 md:w-64'}`}>
+      <aside className={`relative bg-gray-900 shadow-md h-screen transition-all duration-300 z-20 ${isCollapsed ? 'w-16' : 'w-48 sm:w-56 md:w-64'}`}>
         <div className="p-3 sm:p-4 h-full flex flex-col">
           {/* Logo */}
           <div className="flex items-center gap-2 mb-6 ml-0.5">

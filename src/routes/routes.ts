@@ -44,6 +44,9 @@ export const routes = [
   {
     path: '/discover',
     element: routeComponents.discover,
+  },  {
+    path: '/matching',
+    element: routeComponents.matching,
   },
   {
     path: '/setting',

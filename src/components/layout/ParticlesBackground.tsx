@@ -19,7 +19,6 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
-
   const defaultOptions: ISourceOptions = {
     fpsLimit: 60,
     particles: {
@@ -28,9 +27,9 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
       },
       links: {
         color: "#4edcd8",
-        distance: 150,
+        distance: 120,
         enable: true,
-        opacity: 0.3,
+        opacity: 0.2,
         width: 1
       },
       move: {
@@ -39,35 +38,44 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
           default: "bounce"
         },
         random: true,
-        speed: 1,
+        speed: 0.8,
         straight: false
       },
       number: {
         density: {
           enable: true,
-          area: 800
+          area: 1000
         },
-        value: 40
+        value: 35
       },
       opacity: {
-        value: 0.5
+        value: 0.4
       },
       shape: {
         type: "circle"
       },
       size: {
-        value: { min: 1, max: 3 }
+        value: { min: 1, max: 2.5 }
       }
     },
-    detectRetina: true
+    detectRetina: true,
+    interactivity: {
+      events: {
+        onClick: {
+          enable: false
+        },
+        onHover: {
+          enable: false
+        }
+      }
+    }
   };
-
   return (
     <Particles
       id={id}
       init={particlesInit}
       options={options || defaultOptions}
-      className={className}
+      className={`${className} pointer-events-none`}
     />
   );
 };
