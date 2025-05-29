@@ -14,6 +14,7 @@ const Matching: React.FC = () => {
   const {
     currentProfile,
     matches,
+    swipedUsers,
     loading,
     refreshing,
     handleSwipe,
@@ -115,7 +116,7 @@ const Matching: React.FC = () => {
 
           {/* Matches sidebar */}
           <div>
-            <MatchList matches={matches} loading={loading} />
+            <MatchList swipedUsers={swipedUsers} matches={matches} loading={loading} />
           </div>
         </div>
 

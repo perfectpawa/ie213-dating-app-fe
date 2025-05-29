@@ -8,7 +8,7 @@ interface UserResponse {
     };
 }
 
-interface RecommendedUsersResponse {
+interface ListUserResponse {
     status: string;
     data: {
         users: User[];
@@ -22,7 +22,17 @@ export const userApi = {
         });
     },
     getOtherUsers: async () => {
-        return apiRequest<RecommendedUsersResponse>(`/users/other-users`, {
+        return apiRequest<ListUserResponse>(`/users/other-users`, {
+            method: 'GET',
+        });
+    },
+    getMatchedUsers: async () => {
+        return apiRequest<ListUserResponse>(`/users/matched-users`, {
+            method: 'GET',
+        });
+    },
+    getSwipedUsers: async () => {
+        return apiRequest<ListUserResponse>(`/users/swiped-users`, {
             method: 'GET',
         });
     }

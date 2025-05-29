@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react";
-import NotificationModal from "../notifications/notification";
+import NotificationModal from "../Modal/NotificationModal.tsx";
 import { useNotifications } from "@/hooks/useNotifications";
 
 interface NotificationBellProps {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Search, Bell, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import NotificationModal from "../notifications/notification";
+import NotificationModal from "../Modal/NotificationModal.tsx";
 import { useAuth } from "@/hooks/useAuth.ts";
 import { useNotifications } from "@/hooks/useNotifications.ts";
 import avatarPlaceholder from '../../assets/avatar_holder.png';

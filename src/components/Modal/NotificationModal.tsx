@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 
-interface Notification {
+interface NotificationModal {
   id: string;
   user: {
     name: string;
@@ -14,7 +14,7 @@ interface Notification {
 interface NotificationProps {
   isOpen: boolean;
   onClose: () => void;
-  notifications?: Notification[];
+  notifications?: NotificationModal[];
   onViewAll?: () => void;
   onNotificationClick?: (notificationId: string) => void;
   onMarkAllAsRead?: () => void;
@@ -29,14 +29,14 @@ const NotificationModal: React.FC<NotificationProps> = ({
   onMarkAllAsRead
 }) => {
   // Create a local state copy of notifications to manage read status
-  const [localNotifications, setLocalNotifications] = useState<Notification[]>([]);
+  const [localNotifications, setLocalNotifications] = useState<NotificationModal[]>([]);
   
   // Initialize local notifications when props change
   useEffect(() => {
     setLocalNotifications(notifications);
   }, [notifications]);
 
-  const getNotificationText = (type: Notification['type']) => {
+  const getNotificationText = (type: NotificationModal['type']) => {
     switch (type) {
       case 'like':
         return 'liked your post';
@@ -73,7 +73,7 @@ const NotificationModal: React.FC<NotificationProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
+    <div className="absolute z-300 right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg z-10 overflow-hidden">
       <div className="px-3 py-2 border-gray-700 flex justify-between items-center">
         <h3 className="font-bold text-lg text-white pl-1">Notifications</h3>
         <button 

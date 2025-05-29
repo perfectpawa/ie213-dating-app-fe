@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { swipeApi } from '../api/swipeApi';
+import { userApi } from '@/api/userApi';
 import { User } from '../types/user';
 import { Match, Swipe } from '../types/swipe';
 import { useAuth } from './useAuth';
-import { useNotifications } from '../contexts/NotificationContext';
+
 
 export const useSwipe = () => {
     const { user } = useAuth();
-    const { addSwipeNotification } = useNotifications();
     const [potentialMatches, setPotentialMatches] = useState<User[]>([]);
     const [matches, setMatches] = useState<Match[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -20,6 +20,8 @@ export const useSwipe = () => {
     const [page, setPage] = useState<number>(1);
     const [hasMoreProfiles, setHasMoreProfiles] = useState<boolean>(true);
     const [refreshing, setRefreshing] = useState<boolean>(false);
+
+    const [swipedUsers, setSwipedUsers] = useState<User[]>([]);
     
     // Add a ref to track initial load
     const initialLoadComplete = useRef(false);
@@ -86,9 +88,31 @@ export const useSwipe = () => {
             if (response.data?.data?.matches) {
                 setMatches(response.data.data.matches);
             }
+
+            console.log(await userApi.getMatchedUsers())
+
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch matches');
             console.error('Error fetching matches:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [user?._id]);
+
+    // Fetch matched users
+    const fetchSwipedUsers = useCallback(async () => {
+        if (!user?._id) return;
+
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await userApi.getSwipedUsers();
+            if (response.data?.data?.users) {
+                setSwipedUsers(response.data.data.users);
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to fetch matched users');
+            console.error('Error fetching matched users:', err);
         } finally {
             setLoading(false);
         }
@@ -123,8 +147,9 @@ export const useSwipe = () => {
             initialLoadComplete.current = true;
             fetchPotentialMatches(true);
             fetchMatches();
+            fetchSwipedUsers();
         }
-    }, [user?._id, fetchPotentialMatches, fetchMatches]);
+    }, [user?._id, fetchPotentialMatches, fetchMatches, fetchSwipedUsers]);
 
     // Check if we need to load more profiles when currentProfile changes
     useEffect(() => {
@@ -153,13 +178,7 @@ export const useSwipe = () => {
                     // Get the matched user details
                     const matchedUser = potentialMatches.find(p => p._id === swipedUserId);
                     if (matchedUser) {
-                        // Add match notification
-                        addSwipeNotification({
-                            type: 'match',
-                            senderId: swipedUserId,
-                            senderName: matchedUser.user_name || 'New Match',
-                            senderAvatar: matchedUser.profile_picture
-                        });
+                        // TODO: Add notification
                     }
                 } else if (status === 'like' || status === 'superlike') {
                     // Add like notification (for the other user) - in a real app this would be handled by the server
@@ -196,6 +215,7 @@ export const useSwipe = () => {
         potentialMatches,
         currentProfile,
         matches,
+        swipedUsers,
         loading,
         refreshing,
         error,
