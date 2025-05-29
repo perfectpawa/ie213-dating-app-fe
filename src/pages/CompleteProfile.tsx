@@ -1,7 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { authApi } from "../api/authApi";
+import debounce from "lodash/debounce";
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
@@ -12,11 +14,38 @@ const CompleteProfile = () => {
     full_name: user?.full_name || "",
     gender: user?.gender || "",
     bio: user?.bio || "",
+    birthday: user?.birthday || new Date().toISOString().split('T')[0],
     profile_picture: null as File | null,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(user?.profile_picture || null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+
+  // Debounced username validation
+  const validateUsername = debounce(async (username: string) => {
+    if (!username) {
+      setUsernameError(null);
+      return;
+    }
+    try {
+      const response = await authApi.CheckUserNameValidation(username);
+      if (response.data && !response.data.isValid) {
+        setUsernameError("Tên người dùng này đã được sử dụng");
+      } else {
+        setUsernameError(null);
+      }
+    } catch (err) {
+      setUsernameError("Không thể kiểm tra tên người dùng");
+    }
+  }, 500);
+
+  useEffect(() => {
+    validateUsername(formData.user_name);
+    return () => {
+      validateUsername.cancel();
+    };
+  }, [formData.user_name]);
 
   if (authLoading) {
     return <LoadingSpinner />;
@@ -24,6 +53,10 @@ const CompleteProfile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (usernameError) {
+      setError("Vui lòng chọn tên người dùng khác");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -33,6 +66,7 @@ const CompleteProfile = () => {
       submitData.append("full_name", formData.full_name);
       submitData.append("gender", formData.gender);
       submitData.append("bio", formData.bio);
+      submitData.append("birthday", formData.birthday);
       if (formData.profile_picture) {
         submitData.append("profile_picture", formData.profile_picture);
       }
@@ -121,8 +155,11 @@ const CompleteProfile = () => {
               value={formData.user_name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className={`w-full px-3 py-2 bg-gray-700 border ${usernameError ? 'border-red-500' : 'border-gray-600'} rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500`}
             />
+            {usernameError && (
+              <p className="mt-1 text-sm text-red-500">{usernameError}</p>
+            )}
           </div>
 
           <div>            <label htmlFor="full_name" className="block text-sm font-medium text-gray-300 mb-1">
@@ -169,6 +206,21 @@ const CompleteProfile = () => {
               rows={4}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
               placeholder="Hãy kể về bản thân bạn..."
+            />
+          </div>
+
+          <div>
+            <label htmlFor="birthday" className="block text-sm font-medium text-gray-300 mb-1">
+              Ngày sinh
+            </label>
+            <input
+              type="date"
+              id="birthday"
+              name="birthday"
+              value={formData.birthday}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
 

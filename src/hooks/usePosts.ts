@@ -13,6 +13,9 @@ export const usePosts = (userId: string) => {
             setError(null);
             const response = await postApi.getUserPosts(userId);
             setUserPosts(response.data.data.posts);
+
+            console.log("FECTH POST")
+
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch posts');
             console.error('Error fetching posts:', err);

@@ -17,6 +17,7 @@ interface AuthContextType {
     logout: () => Promise<void>;
     resendOTP: (email: string) => Promise<void>;
     completeProfile: (data: FormData) => Promise<void>;
+    updateUser: (user: User) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -157,6 +158,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const updateUser = (updatedUser: User) => {
+        setUser(updatedUser);
+        dispatch(setAuthUser(updatedUser));
+    };
+
     const value = {
         user,
         loading,
@@ -165,7 +171,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signUp,
         logout,
         resendOTP,
-        completeProfile
+        completeProfile,
+        updateUser
     };
 
     return (

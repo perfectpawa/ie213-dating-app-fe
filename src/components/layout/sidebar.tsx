@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Home, Menu, User, Heart, MessageCircle, PlusCircle, Search } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Home, Menu, User, Heart, MessageCircle, PlusCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import CreatePostModal from "../Modal/CreatePostModal";
 import { useAuth } from "../../hooks/useAuth";
-import { usePosts } from "../../hooks/usePosts";
+
+import { useModal } from "@/contexts/ModalContext";
 
 interface NavItemProps {
   to?: string;
@@ -88,18 +89,8 @@ const Footer: React.FC<FooterProps> = ({ isCollapsed }) => (
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { user } = useAuth();
-  const { createPost } = usePosts(user?._id || '');
+  const { openCreatePostModal } = useModal();
 
-  const handleCreatePost = async (content: string, image: File) => {
-    try {
-      await createPost(content, image);
-      setIsCreateModalOpen(false);
-    } catch (error) {
-      console.error('Error creating post:', error);
-    }
-  };
 
   const navigationItems = [
     { to: "/", icon: <Home size={20} />, label: "Trang chủ" },
@@ -109,7 +100,7 @@ const Sidebar = () => {
     { 
       icon: <PlusCircle size={20} />, 
       label: "Đăng ảnh mới",
-      onClick: () => setIsCreateModalOpen(true)
+      onClick: () => openCreatePostModal()
     },
   ];
     return (
@@ -151,14 +142,6 @@ const Sidebar = () => {
           <Footer isCollapsed={isCollapsed} />
         </div>
       </aside>
-
-      {user && (
-        <CreatePostModal
-          isOpen={isCreateModalOpen}
-          onClose={() => setIsCreateModalOpen(false)}
-          onCreatePost={handleCreatePost}
-        />
-      )}
     </>
   );
 };

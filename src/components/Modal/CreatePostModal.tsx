@@ -51,7 +51,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
             <div className="bg-gray-900 rounded-lg w-full max-w-lg mx-4">
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-800">

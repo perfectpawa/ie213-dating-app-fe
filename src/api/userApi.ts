@@ -1,5 +1,5 @@
 import { apiRequest } from '../utils/apiRequest';
-import { User, InteractedUser } from '../types/user';
+import { User, InteractedUser, UpdateUserDto } from '../types/user';
 import { get } from 'http';
 
 interface UserResponse {
@@ -49,5 +49,33 @@ export const userApi = {
         return apiRequest<InteractedUsersResponse>(`/users/interacted-users`, {
             method: 'GET',
         });
-    }
+    },
+    updateProfilePicture: async (image: File) => {
+        const formData = new FormData();
+        formData.append('profile_picture', image);
+        return apiRequest<UserResponse>(`/users/update-profile-picture`, {
+            method: 'POST',
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+    updateCoverPicture: async (image: File) => {
+        const formData = new FormData();
+        formData.append('cover_picture', image);
+        return apiRequest<UserResponse>(`/users/update-cover-picture`, {
+            method: 'POST',
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+    updateProfile: async (data: UpdateUserDto) => {
+        return apiRequest<UserResponse>(`/users/update-profile`, {
+            method: 'POST',
+            data,
+        });
+    },
 }; 

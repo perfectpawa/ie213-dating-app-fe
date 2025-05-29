@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Layout from "../components/layout/layout";
 import { Pencil, Camera } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import PhotosSection from "../components/profile/PhotosSection";
-
+import { userApi } from "../api/userApi";
 import avatarPlaceholder from '../assets/avatar_holder.png';
+import { useModal } from "../contexts/ModalContext";
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
+  const { user, updateUser } = useAuth();
+  const { openUpdateProfileModal } = useModal();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   
   // Array of interests with highlighted ones
   const userInterests = [
@@ -33,23 +38,72 @@ const Profile: React.FC = () => {
     return null; // or a loading state
   }
 
+  const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await userApi.updateProfilePicture(file);
+      if (response.data?.data?.user) {
+        updateUser(response.data.data.user);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update profile picture');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCoverPictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await userApi.updateCoverPicture(file);
+      if (response.data?.data?.user) {
+        updateUser(response.data.data.user);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update cover picture');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="profile-container max-w-4xl mx-auto">
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        )}
         <div className="bg-gray-900 rounded-lg shadow-lg overflow-hidden">
           {/* Cover Photo */}
           <div className="h-48 bg-gradient-to-r from-pink-500 to-purple-500 relative">
             <img
-              src="https://static1.srcdn.com/wordpress/wp-content/uploads/2023/04/ada-wong-resident-evil-4-helicopter.jpg"
+              src={user.cover_picture || "https://static1.srcdn.com/wordpress/wp-content/uploads/2023/04/ada-wong-resident-evil-4-helicopter.jpg"}
               alt="Cover Photo"
               className="w-full h-full object-cover"
             />
             {/* Edit button */}
             <button
               className="absolute top-4 right-4 bg-white text-gray-800 rounded-full p-1.25 flex items-center justify-center shadow-md opacity-60 cursor-pointer hover:bg-gray-300"
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={() => coverInputRef.current?.click()}
+              disabled={loading}
             >
-              {isEditing ? 'Save' : <Pencil size={20}/>}
+              <Camera size={20} />
+              <input
+                type="file"
+                ref={coverInputRef}
+                onChange={handleCoverPictureChange}
+                accept="image/*"
+                className="hidden"
+              />
             </button>
           </div>
 
@@ -62,9 +116,18 @@ const Profile: React.FC = () => {
                 alt={`${user.user_name}'s avatar`}
                 className="w-32 h-32 rounded-full border-4 border-gray-800 object-cover"
               />
-              <span className="absolute bottom-0 right-0 p-1.5 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700" onClick={() => document.getElementById('avatar-upload')?.click()}>
+              <span 
+                className="absolute bottom-0 right-0 p-1.5 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700" 
+                onClick={() => avatarInputRef.current?.click()}
+              >
                 <Camera size={18} className="text-white" />
-                <input type="file" id="avatar-upload" className="hidden" accept="image/*" />
+                <input
+                  type="file"
+                  ref={avatarInputRef}
+                  onChange={handleProfilePictureChange}
+                  accept="image/*"
+                  className="hidden"
+                />
               </span>
             </div>
 
@@ -75,11 +138,48 @@ const Profile: React.FC = () => {
                 <span className="text-gray-400">
                   {user.full_name}
                 </span>
+                <button
+                  onClick={() => openUpdateProfileModal(user, updateUser)}
+                  className="ml-4 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
+                >
+                  <Pencil size={16} />
+                  <span>Chỉnh sửa</span>
+                </button>
               </div>
 
               {/* Bio */}
               <div className="mt-3.5">
                 <p className="flex flex-row mt-8 text-white">{user.bio}</p>
+              </div>
+
+              {/* Additional Info */}
+              <div className="mt-6 grid grid-cols-2 gap-4">
+                {user.occupation && (
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <span className="font-medium">Nghề nghiệp:</span>
+                    <span>{user.occupation}</span>
+                  </div>
+                )}
+                {user.education && (
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <span className="font-medium">Học vấn:</span>
+                    <span>{user.education}</span>
+                  </div>
+                )}
+                {user.gender && (
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <span className="font-medium">Giới tính:</span>
+                    <span>
+                      {user.gender === 'male' ? 'Nam' : user.gender === 'female' ? 'Nữ' : 'Khác'}
+                    </span>
+                  </div>
+                )}
+                {user.birthday && (
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <span className="font-medium">Ngày sinh:</span>
+                    <span>{new Date(user.birthday).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -110,7 +210,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
 
-          {/* Photos Section */}
+        {/* Photos Section */}
         <PhotosSection userId={user._id} />
       </div>
     </Layout>

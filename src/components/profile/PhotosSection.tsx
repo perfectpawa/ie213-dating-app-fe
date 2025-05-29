@@ -1,25 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { Plus } from "lucide-react";
 import { usePosts } from "../../hooks/usePosts";
-import CreatePostModal from "../Modal/CreatePostModal";
+import { useModal } from "@/contexts/ModalContext";
 
 interface PhotosSectionProps {
   userId: string;
 }
 
 const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
-  const { posts, loading, error, createPost, refreshPosts } = usePosts(userId);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  const handleCreatePost = async (content: string, image: File) => {
-    try {
-      await createPost(content, image);
-      await refreshPosts(); // Force refresh the posts list
-      setIsCreateModalOpen(false);
-    } catch (error) {
-      console.error('Error creating post:', error);
-    }
-  };
+  const { loading, error } = usePosts(userId);
+  const { openCreatePostModal, posts } = useModal();
 
   return (
     <>
@@ -46,7 +36,7 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
                     alt={post.content}
                     className="w-full h-full object-cover rounded-lg"
                   />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="absolute inset-0 bg-black/80 group-hover:bg-opacity-30 transition-all duration-300 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <p className="text-white text-sm p-2 text-center">{post.content}</p>
                   </div>
                 </div>
@@ -56,7 +46,7 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
             <div className="flex flex-col items-center justify-center h-48 bg-gray-800 rounded-lg">
               <p className="text-gray-400 mb-4">No photos yet</p>
               <button 
-                onClick={() => setIsCreateModalOpen(true)}
+                onClick={() => openCreatePostModal()}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 text-black rounded-full hover:opacity-90 transition-opacity"
               >
                 <Plus size={20} />
@@ -66,12 +56,6 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
           )}
         </div>
       </div>
-
-      <CreatePostModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onCreatePost={handleCreatePost}
-      />
     </>
   );
 };

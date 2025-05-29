@@ -56,4 +56,10 @@ export const authApi = {
             },
         });
     },
+
+    CheckUserNameValidation: async (username: string) => {
+        return apiRequest<{ isValid: boolean }>(`/users/check-username/${username}`, {
+            method: 'GET',
+        });
+    }
 };

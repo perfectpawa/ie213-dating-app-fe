@@ -7,8 +7,10 @@ export interface User {
   user_name?: string;    // User's display name
   full_name?: string;   // User's full name
   gender?: string;      // User's gender
+  birthday?: string;    // User's birthday in YYYY-MM-DD format
   bio?: string;        // User's biography
   profile_picture?: string; // URL to user's profile picture
+  cover_picture?: string; // URL to user's cover picture
   age?: number;        // User's age
   location?: string;    // User's location
   interests?: string[]; // User's interests
@@ -27,25 +29,10 @@ export interface User {
 }
 
 export interface UpdateUserDto {
-  id?: string;
-  username?: string;
   full_name?: string;
   gender?: string;
+  birthday?: string;    // User's birthday in YYYY-MM-DD format
   bio?: string;
-  profile_picture?: string;
-  completeProfile?: boolean;
-  age?: number;
-  location?: string;
-  interests?: string[];
-  photos?: string[];
-  occupation?: string;
-  education?: string;
-  preferences?: {
-    minAge?: number;
-    maxAge?: number;
-    distance?: number;
-    genderPreference?: string[];
-  };
 }
 
 export interface InteractedUser {
