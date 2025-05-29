@@ -74,7 +74,7 @@ const Profile: React.FC = () => {
 
   return (
     <Layout>
-      <div className="profile-container max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         {error && (
           <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4">
             {error}
