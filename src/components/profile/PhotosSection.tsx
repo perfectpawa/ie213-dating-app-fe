@@ -1,15 +1,29 @@
-import React from "react";
-import { Plus } from "lucide-react";
+import React, { useState } from "react";
+import { Plus, Heart } from "lucide-react";
 import { usePosts } from "../../hooks/usePosts";
 import { useModal } from "@/contexts/ModalContext";
+import { useAuth } from "../../hooks/useAuth";
+import { PostModal } from "../Modal/PostModal";
+import { postApi } from "../../api/postApi";
 
 interface PhotosSectionProps {
   userId: string;
 }
 
 const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
-  const { loading, error } = usePosts(userId);
-  const { openCreatePostModal, posts } = useModal();
+  const { loading, error, posts, refreshPosts } = usePosts(userId);
+  const { openCreatePostModal } = useModal();
+  const { user } = useAuth();
+  const [selectedPost, setSelectedPost] = useState<string | null>(null);
+
+  const handleLikeToggle = async (postId: string) => {
+    try {
+      await postApi.toggleLike(postId);
+      await refreshPosts();
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
+  };
 
   return (
     <>
@@ -34,10 +48,30 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
                   <img
                     src={post.image}
                     alt={post.content}
-                    className="w-full h-full object-cover rounded-lg"
+                    className="w-full h-full object-cover rounded-lg cursor-pointer"
+                    onClick={() => setSelectedPost(post._id)}
                   />
                   <div className="absolute inset-0 bg-black/80 group-hover:bg-opacity-30 transition-all duration-300 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
-                    <p className="text-white text-sm p-2 text-center">{post.content}</p>
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="text-white text-sm p-2 text-center">{post.content}</p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLikeToggle(post._id);
+                          }}
+                          className={`flex items-center gap-1 hover:text-[#4edcd8] transition-colors ${
+                            user && post.likes.includes(user._id) ? 'text-red-500' : 'text-white'
+                          }`}
+                        >
+                          <Heart
+                            size={16}
+                            fill={user && post.likes.includes(user._id) ? 'currentColor' : 'none'}
+                          />
+                          <span className="text-sm">{post.likes.length}</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -56,6 +90,16 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
           )}
         </div>
       </div>
+
+      {selectedPost && (
+        <PostModal
+          post={posts.find(p => p._id === selectedPost)!}
+          isOpen={!!selectedPost}
+          onClose={() => setSelectedPost(null)}
+          onLikeToggle={handleLikeToggle}
+          onRefresh={refreshPosts}
+        />
+      )}
     </>
   );
 };
