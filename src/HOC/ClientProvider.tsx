@@ -16,8 +16,10 @@ const ClientProvider = ({ children }: { children: React.ReactNode }) => {
     const [persistor, setPersistor] = React.useState<Persistor | null>(null);
 
     useEffect(() => {
+        console.time('Redux Persist Initialization');
         const clientPersistor = persistStore(store);
         setPersistor(clientPersistor);
+        console.timeEnd('Redux Persist Initialization');
     }, [])
 
     if (!persistor) {
@@ -25,14 +27,27 @@ const ClientProvider = ({ children }: { children: React.ReactNode }) => {
     }
     
     return <Provider store={store}>
-        <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
-            <AuthProvider>
-                <ModalProvider>
-                    <NotificationProvider>
-                        {children}
-                    </NotificationProvider>
-                </ModalProvider>
-            </AuthProvider>
+        <PersistGate 
+            loading={<LoadingSpinner />} 
+            persistor={persistor}
+            onBeforeLift={() => {
+                console.time('Redux Persist Rehydration');
+                console.log('Starting Redux Persist rehydration...');
+            }}
+        >
+            {() => {
+                console.timeEnd('Redux Persist Rehydration');
+                console.log('Redux Persist rehydration complete');
+                return (
+                    <AuthProvider>
+                        <ModalProvider>
+                            <NotificationProvider>
+                                {children}
+                            </NotificationProvider>
+                        </ModalProvider>
+                    </AuthProvider>
+                );
+            }}
         </PersistGate>
     </Provider>
 }

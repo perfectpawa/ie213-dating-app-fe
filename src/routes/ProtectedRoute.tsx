@@ -12,9 +12,9 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { loading, user } = useAuth();
   const location = useLocation();
 
-  // if (loading) {
-  //   return <LoadingSpinner />;
-  // }
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   if (!user) {
     return <Navigate to="/signin" replace />;
