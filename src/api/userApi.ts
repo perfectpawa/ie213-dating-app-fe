@@ -21,7 +21,11 @@ interface InteractedUsersResponse {
     data: {
         users: InteractedUser[];
     };
+}
 
+interface RelationshipResponse {
+    status: string;
+    relationship: string;
 }
 
 export const userApi = {
@@ -76,6 +80,11 @@ export const userApi = {
         return apiRequest<UserResponse>(`/users/update-profile`, {
             method: 'POST',
             data,
+        });
+    },
+    getRelationship: async (userId: string) => {
+        return apiRequest<RelationshipResponse>(`/users/relationship/${userId}`, {
+            method: 'GET',
         });
     },
 }; 

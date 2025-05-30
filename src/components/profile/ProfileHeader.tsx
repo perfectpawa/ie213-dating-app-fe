@@ -1,7 +1,11 @@
-import React, { useRef } from 'react';
-import { Camera, Pencil, Mars, Venus, User as UserIcon } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Camera, Pencil, Mars, Venus, User as UserIcon, Heart, Clock, AlertCircle, ThumbsUp, X } from 'lucide-react';
 import { User } from '../../types/user';
 import avatarPlaceholder from '../../assets/avatar_holder.png';
+import { swipeApi } from '../../api/swipeApi';
+import MatchNotification from '../Matching/MatchNotification';
+import { Match } from '../../types/swipe';
+import { useAuth } from '../../hooks/useAuth';
 
 interface ProfileHeaderProps {
   user: User;
@@ -10,6 +14,8 @@ interface ProfileHeaderProps {
   onCoverPictureChange?: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   onEditClick?: () => void;
   loading?: boolean;
+  relationshipStatus?: string | null;
+  onSwipeComplete?: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -19,9 +25,73 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onCoverPictureChange,
   onEditClick,
   loading = false,
+  relationshipStatus,
+  onSwipeComplete,
 }) => {
+  const { user: currentUser } = useAuth();
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+  const [showMatchNotification, setShowMatchNotification] = useState(false);
+  const [matchData, setMatchData] = useState<Match | null>(null);
+  const [swipeLoading, setSwipeLoading] = useState(false);
+
+  const handleSwipe = async (status: 'like' | 'dislike') => {
+    if (!user._id || !currentUser?._id || swipeLoading) return;
+
+    try {
+      setSwipeLoading(true);
+      const response = await swipeApi.createSwipe(currentUser._id, user._id, status);
+      
+      if (response.data?.data?.match) {
+        setMatchData(response.data.data.match);
+        setShowMatchNotification(true);
+      }
+      
+      // Call onSwipeComplete after successful swipe
+      onSwipeComplete?.();
+    } catch (err) {
+      console.error('Error processing swipe:', err);
+    } finally {
+      setSwipeLoading(false);
+    }
+  };
+
+  const getRelationshipStatusDisplay = () => {
+    if (!relationshipStatus) return null;
+
+    const statusConfig = {
+      'match': {
+        icon: <Heart size={16} className="text-pink-500" />,
+        text: 'Đã match',
+        className: 'bg-pink-500/20 text-pink-400'
+      },
+      'wait_for_their_swipe': {
+        icon: <Clock size={16} className="text-yellow-500" />,
+        text: 'Đang chờ họ swipe',
+        className: 'bg-yellow-500/20 text-yellow-400'
+      },
+      'wait_for_your_swipe': {
+        icon: <AlertCircle size={16} className="text-blue-500" />,
+        text: 'Đang chờ bạn swipe',
+        className: 'bg-blue-500/20 text-blue-400'
+      },
+      'no_relevant': {
+        icon: null,
+        text: 'Chưa tương tác',
+        className: 'bg-gray-500/20 text-gray-400'
+      }
+    };
+
+    const config = statusConfig[relationshipStatus as keyof typeof statusConfig];
+    if (!config) return null;
+
+    return (
+      <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.className}`}>
+        {config.icon}
+        <span className="text-sm font-medium">{config.text}</span>
+      </span>
+    );
+  };
 
   return (
     <div className="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
@@ -77,23 +147,49 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
         {/* Profile Details */}
         <div className="mt-12">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-3xl font-bold text-white">{user.user_name}</h1>
-            <span className="text-gray-400">
-              {user.full_name}
-            </span>
-            {isOwnProfile && onEditClick && (
-              <button
-                onClick={onEditClick}
-                className="ml-4 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
-              >
-                <Pencil size={16} />
-                <span>Chỉnh sửa</span>
-              </button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-3xl font-bold text-white">{user.user_name}</h1>
+              <span className="text-gray-400">
+                {user.full_name}
+              </span>
+            </div>
+            {!isOwnProfile && (
+              relationshipStatus === 'no_relevant' ? (
+                <button
+                  onClick={() => handleSwipe('like')}
+                  disabled={swipeLoading}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90 transition-colors disabled:opacity-50"
+                >
+                  <ThumbsUp size={16} />
+                  <span className="text-sm font-medium">Thích</span>
+                </button>
+              ) : relationshipStatus === 'wait_for_your_swipe' ? (
+                <button
+                  onClick={() => handleSwipe('like')}
+                  disabled={swipeLoading}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors disabled:opacity-50"
+                >
+                  <AlertCircle size={16} />
+                  <span className="text-sm font-medium">Swipe ngay</span>
+                </button>
+              ) : (
+                getRelationshipStatusDisplay()
+              )
             )}
           </div>
 
-          {/* Gender and Age Info */}
+          {isOwnProfile && onEditClick && (
+            <button
+              onClick={onEditClick}
+              className="mt-2 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
+            >
+              <Pencil size={16} />
+              <span>Chỉnh sửa</span>
+            </button>
+          )}
+
+          {/* Gender and Age */}
           <div className="flex items-center gap-2 text-gray-300 mt-2">
             {user.gender && (
               <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${
@@ -129,6 +225,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Match Notification */}
+      {showMatchNotification && matchData && (
+        <MatchNotification
+          match={matchData}
+          onClose={() => setShowMatchNotification(false)}
+        />
+      )}
     </div>
   );
 };
