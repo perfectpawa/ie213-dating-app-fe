@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Camera, Pencil } from 'lucide-react';
+import { Camera, Pencil, Mars, Venus, User as UserIcon } from 'lucide-react';
 import { User } from '../../types/user';
 import avatarPlaceholder from '../../assets/avatar_holder.png';
 
@@ -93,39 +93,39 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             )}
           </div>
 
+          {/* Gender and Age Info */}
+          <div className="flex items-center gap-2 text-gray-300 mt-2">
+            {user.gender && (
+              <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${
+                user.gender === 'male' 
+                  ? 'bg-blue-500/20 text-blue-400' 
+                  : user.gender === 'female' 
+                  ? 'bg-pink-500/20 text-pink-400' 
+                  : 'bg-purple-500/20 text-purple-400'
+              }`}>
+                {user.gender === 'male' ? (
+                  <Mars size={16} />
+                ) : user.gender === 'female' ? (
+                  <Venus size={16} />
+                ) : (
+                  <UserIcon size={16} />
+                )}
+                {user.birthday && (
+                  <span className="text-sm font-medium">
+                    {Math.floor((new Date().getTime() - new Date(user.birthday).getTime()) / (1000 * 60 * 60 * 24 * 365.25))}
+                  </span>
+                )}
+              </span>
+            )}
+          </div>
+
           {/* Bio */}
           <div className="mt-3.5">
             <p className="flex flex-row mt-8 text-white">{user.bio}</p>
           </div>
 
           {/* Additional Info */}
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            {user.occupation && (
-              <div className="flex items-center gap-2 text-gray-300">
-                <span className="font-medium">Nghề nghiệp:</span>
-                <span>{user.occupation}</span>
-              </div>
-            )}
-            {user.education && (
-              <div className="flex items-center gap-2 text-gray-300">
-                <span className="font-medium">Học vấn:</span>
-                <span>{user.education}</span>
-              </div>
-            )}
-            {user.gender && (
-              <div className="flex items-center gap-2 text-gray-300">
-                <span className="font-medium">Giới tính:</span>
-                <span>
-                  {user.gender === 'male' ? 'Nam' : user.gender === 'female' ? 'Nữ' : 'Khác'}
-                </span>
-              </div>
-            )}
-            {user.birthday && (
-              <div className="flex items-center gap-2 text-gray-300">
-                <span className="font-medium">Ngày sinh:</span>
-                <span>{new Date(user.birthday).toLocaleDateString('vi-VN')}</span>
-              </div>
-            )}
+          <div className="mt-6 flex flex-col gap-4">
           </div>
         </div>
       </div>
