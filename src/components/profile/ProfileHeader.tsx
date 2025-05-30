@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Pencil, Mars, Venus, User as UserIcon, Heart, Clock, AlertCircle, ThumbsUp, X } from 'lucide-react';
+import { Camera, Pencil, Mars, Venus, User as UserIcon, Heart, Clock, AlertCircle, ThumbsUp, X, MessageCircle } from 'lucide-react';
 import { User } from '../../types/user';
 import avatarPlaceholder from '../../assets/avatar_holder.png';
 import { swipeApi } from '../../api/swipeApi';
 import MatchNotification from '../Matching/MatchNotification';
 import { Match } from '../../types/swipe';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileHeaderProps {
   user: User;
@@ -16,6 +17,13 @@ interface ProfileHeaderProps {
   loading?: boolean;
   relationshipStatus?: string | null;
   onSwipeComplete?: () => void;
+}
+
+interface StatusConfig {
+  icon: React.ReactNode;
+  text: string;
+  className: string;
+  onClick?: () => void;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -29,6 +37,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onSwipeComplete,
 }) => {
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const [showMatchNotification, setShowMatchNotification] = useState(false);
@@ -59,11 +68,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const getRelationshipStatusDisplay = () => {
     if (!relationshipStatus) return null;
 
-    const statusConfig = {
+    const statusConfig: Record<string, StatusConfig> = {
       'match': {
-        icon: <Heart size={16} className="text-pink-500" />,
-        text: 'Đã match',
-        className: 'bg-pink-500/20 text-pink-400'
+        icon: <MessageCircle size={16} className="text-pink-500" />,
+        text: 'Nhắn tin',
+        className: 'bg-pink-500/20 text-pink-400 hover:bg-pink-500/30 cursor-pointer',
+        onClick: () => navigate(`/messages/${user._id}`)
       },
       'wait_for_their_swipe': {
         icon: <Clock size={16} className="text-yellow-500" />,
@@ -82,11 +92,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       }
     };
 
-    const config = statusConfig[relationshipStatus as keyof typeof statusConfig];
+    const config = statusConfig[relationshipStatus];
     if (!config) return null;
 
     return (
-      <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.className}`}>
+      <span 
+        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${config.className}`}
+        onClick={config.onClick}
+      >
         {config.icon}
         <span className="text-sm font-medium">{config.text}</span>
       </span>

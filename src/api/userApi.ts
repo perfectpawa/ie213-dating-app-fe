@@ -25,6 +25,8 @@ interface InteractedUsersResponse {
 interface RelationshipResponse {
     status: string;
     relationship: string;
+}
+
 interface EnhancedMatchResponse {
     status: string;
     data: {
@@ -98,5 +100,4 @@ export const userApi = {
             method: 'GET',
         });
     },
-};
 };
