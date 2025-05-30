@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Plus, Heart } from "lucide-react";
+import { Plus, Heart, Edit2, Trash2 } from "lucide-react";
 import { usePosts } from "../../hooks/usePosts";
 import { useModal } from "@/contexts/ModalContext";
 import { useAuth } from "../../hooks/useAuth";
 import { PostModal } from "../Modal/PostModal";
+import DeletePostModal from "../Modal/DeletePostModal";
+import UpdatePostModal from "../Modal/UpdatePostModal";
 import { postApi } from "../../api/postApi";
 
 interface PhotosSectionProps {
@@ -15,6 +17,8 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
   const { openCreatePostModal } = useModal();
   const { user } = useAuth();
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
+  const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  const [postToEdit, setPostToEdit] = useState<string | null>(null);
 
   const handleLikeToggle = async (postId: string) => {
     try {
@@ -22,6 +26,31 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
       await refreshPosts();
     } catch (error) {
       console.error('Error toggling like:', error);
+    }
+  };
+
+  const handleEditPost = (postId: string) => {
+    setPostToEdit(postId);
+  };
+
+  const handleUpdatePost = async (content: string, image?: File) => {
+    try {
+      if (!postToEdit) return;
+      await postApi.updatePost(postToEdit, content, image);
+      await refreshPosts();
+      setPostToEdit(null);
+    } catch (error) {
+      console.error('Error updating post:', error);
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await postApi.deletePost(postId);
+      await refreshPosts();
+      setPostToDelete(null);
+    } catch (error) {
+      console.error('Error deleting post:', error);
     }
   };
 
@@ -33,11 +62,7 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
             Photos
           </h2>
           
-          {loading ? (
-            <div className="flex justify-center items-center h-48">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="flex justify-center items-center h-48">
               <p className="text-red-500">{error}</p>
             </div>
@@ -73,6 +98,28 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
                       </div>
                     </div>
                   </div>
+                  {user && post.user._id === user._id && (
+                    <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditPost(post._id);
+                        }}
+                        className="p-1.5 bg-black/50 rounded-full text-white hover:text-[#4edcd8] transition-colors"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPostToDelete(post._id);
+                        }}
+                        className="p-1.5 bg-black/50 rounded-full text-white hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -98,6 +145,21 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
           onClose={() => setSelectedPost(null)}
           onLikeToggle={handleLikeToggle}
           onRefresh={refreshPosts}
+        />
+      )}
+
+      <DeletePostModal
+        isOpen={!!postToDelete}
+        onClose={() => setPostToDelete(null)}
+        onConfirm={() => postToDelete && handleDeletePost(postToDelete)}
+      />
+
+      {postToEdit && (
+        <UpdatePostModal
+          isOpen={!!postToEdit}
+          onClose={() => setPostToEdit(null)}
+          onUpdatePost={handleUpdatePost}
+          post={posts.find(p => p._id === postToEdit)!}
         />
       )}
     </>

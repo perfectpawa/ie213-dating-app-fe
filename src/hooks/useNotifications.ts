@@ -14,10 +14,9 @@ interface Notification {
         full_name: string;
     };
     type: 'like' | 'message' | 'swipe' | 'match';
-    post?: {
-        _id: string;
-        image: string;
-    };
+    post?: string;
+    swipe?: string;
+    match?: string;
     read: boolean;
     createdAt: string;
 }
@@ -37,7 +36,6 @@ export const useNotifications = () => {
             const response = await notificationApi.getNotifications();
             // console.log('useNotifications: API response:', response);
             if (response?.data?.notifications) {
-                // console.log('useNotifications: Setting notifications:', response.data.notifications);
                 setNotifications(response.data.notifications);
             }
         } catch (err) {

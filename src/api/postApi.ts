@@ -42,6 +42,22 @@ export const postApi = {
         });
     },
 
+    updatePost: async (postId: string, content: string, image?: File) => {
+        const formData = new FormData();
+        formData.append('content', content);
+        if (image) {
+            formData.append('image', image);
+        }
+
+        return apiRequest<PostResponse>(`/posts/${postId}`, {
+            method: 'PUT',
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    },
+
     toggleLike: async (postId: string) => {
         return apiRequest<PostResponse>(`/posts/${postId}/like`, {
             method: 'GET',
@@ -59,5 +75,5 @@ export const postApi = {
             method: 'POST',
             data: { comment },
         });
-    },
+    }
 };

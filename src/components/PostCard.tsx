@@ -16,7 +16,7 @@ interface PostCardProps {
 export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefresh }) => {
     const { user } = useAuth();
     const { navigateToProfile } = useProfile();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleLike = async () => {
         await onLikeToggle(post._id);
@@ -28,31 +28,52 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
     return (
         <>
             <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:shadow-xl mx-auto w-[400px]">
-                {/* User Info */}
-                <div className="p-3 flex items-center gap-2">
-                    <div 
-                        className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => navigateToProfile(post.user._id)}
+                {/* User Info and Like Button */}
+                <div className="p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div 
+                            className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => navigateToProfile(post.user._id)}
+                        >
+                            <img 
+                                src={post.user.profile_picture || avatarHolder} 
+                                alt={`${post.user.user_name || post.user.full_name || 'Anonymous'}'s profile`}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div 
+                            className="cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => navigateToProfile(post.user._id)}
+                        >
+                            <h3 className="font-semibold text-white text-sm text-left">{post.user.user_name || post.user.full_name || 'Anonymous'}</h3>
+                            <p className="text-xs text-gray-400">{formatDate(post.createdAt)}</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleLike}
+                        className={`flex items-center gap-1 hover:text-[#4edcd8] transition-colors ${
+                            isLiked ? 'text-red-500' : 'text-gray-400'
+                        }`}
                     >
-                        <img 
-                            src={post.user.profile_picture || avatarHolder} 
-                            alt={`${post.user.user_name || post.user.full_name || 'Anonymous'}'s profile`}
-                            className="w-full h-full object-cover"
+                        <Heart
+                            className="w-4 h-4"
+                            fill={isLiked ? 'currentColor' : 'none'}
                         />
-                    </div>
-                    <div 
-                        className="cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => navigateToProfile(post.user._id)}
-                    >
-                        <h3 className="font-semibold text-white text-sm text-left">{post.user.user_name || post.user.full_name || 'Anonymous'}</h3>
-                        <p className="text-xs text-gray-400">{formatDate(post.createdAt)}</p>
-                    </div>
+                        <span className="text-sm">{post.likes.length}</span>
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div className="px-3 pb-3">
+                    <p className="text-white text-sm text-left">
+                        {post.content}
+                    </p>
                 </div>
 
                 {/* Post Image */}
                 <div 
                     className="bg-black cursor-pointer"
-                    onClick={() => setIsModalOpen(true)}
+                    // onClick={}
                 >
                     <div className="aspect-square">
                         <img 
@@ -62,44 +83,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
                         />
                     </div>
                 </div>
-
-                {/* Content */}
-                <div className="p-3">
-                    <div className="flex items-center gap-4 text-gray-400">
-                        <button
-                            onClick={handleLike}
-                            className={`flex items-center gap-1 hover:text-[#4edcd8] transition-colors ${
-                                isLiked ? 'text-red-500' : 'text-gray-400'
-                            }`}
-                        >
-                            <Heart
-                                className="w-4 h-4"
-                                fill={isLiked ? 'currentColor' : 'none'}
-                            />
-                            <span className="text-sm">{post.likes.length}</span>
-                        </button>
-                        <button 
-                            className="flex items-center gap-1 hover:text-[#4edcd8] transition-colors"
-                            onClick={() => setIsModalOpen(true)}
-                        >
-                            <MessageCircle className="w-4 h-4" />
-                            <span className="text-sm">{post.comments.length}</span>
-                        </button>
-                    </div>
-                    <p className="text-white text-sm mt-2 text-left">
-                        <span className="font-semibold mr-1">{post.user.user_name}</span>{" "}
-                        {post.content}
-                    </p>
-                </div>
             </div>
-
-            <PostModal
-                post={post}
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onLikeToggle={onLikeToggle}
-                onRefresh={onRefresh}
-            />
         </>
     );
 }; 

@@ -1,12 +1,17 @@
 import React, {useState, useEffect} from "react";
+import {formatDate} from "@/utils/date.ts";
 
 interface NotificationModal {
   id: string;
   user: {
+    id: string;
     name: string;
     avatar: string;
   };
   type: 'like' | 'message' | 'swipe' | 'match';
+  post?: string;
+  swipe?: string;
+  match?: string;
   time: string;
   read: boolean;
 }
@@ -16,7 +21,7 @@ interface NotificationProps {
   onClose: () => void;
   notifications?: NotificationModal[];
   onViewAll?: () => void;
-  onNotificationClick?: (notificationId: string) => void;
+  onNotificationClick?: (notificationId: string, status: string, postId: string, userId: string) => void;
   onMarkAllAsRead?: () => void;
 }
 
@@ -34,6 +39,7 @@ const NotificationModal: React.FC<NotificationProps> = ({
   // Initialize local notifications when props change
   useEffect(() => {
     setLocalNotifications(notifications);
+    // console.log('NotificationModal: Notifications updated', notifications);
   }, [notifications]);
 
   const getNotificationText = (type: NotificationModal['type']) => {
@@ -57,9 +63,9 @@ const NotificationModal: React.FC<NotificationProps> = ({
     }
   };
 
-  const handleNotificationClick = async (notificationId: string) => {
+  const handleNotificationClick = async (notificationId: string, status: string, postId: string, userId: string) => {
     if (onNotificationClick) {
-      await onNotificationClick(notificationId);
+      await onNotificationClick(notificationId, status, postId, userId);
     }
   };
 
@@ -111,7 +117,10 @@ const NotificationModal: React.FC<NotificationProps> = ({
             <div 
               key={notification.id} 
               className={`py-3 px-4 hover:bg-gray-700 border-b border-gray-700 cursor-pointer transition-all duration-200 ease-in-out ${!notification.read ? 'bg-gray-700/40' : ''}`}
-              onClick={() => handleNotificationClick(notification.id)}
+              onClick={() => handleNotificationClick(
+                notification.id, notification.type
+                , notification.post || '', notification.user.id
+              )}
             >
               <div className="flex items-start gap-3">
                 <img 
@@ -131,7 +140,7 @@ const NotificationModal: React.FC<NotificationProps> = ({
                     </span>{' '}
                     <span className="text-sm text-gray-100">{getNotificationText(notification.type)}</span>
                   </p>
-                  <p className="text-xs text-gray-400 text-left">{notification.time}</p>
+                  <p className="text-xs text-gray-400 text-left">{formatDate(notification.time)}</p>
                 </div>
               </div>
             </div>

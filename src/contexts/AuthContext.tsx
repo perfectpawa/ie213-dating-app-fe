@@ -105,6 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Clear both cookie and localStorage
             document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
             localStorage.removeItem('token');
+            dispatch(clearAuthUser());
         } catch (err) {
             console.error('Logout error:', err);
             setError(err instanceof Error ? err : new Error('Logout failed'));
