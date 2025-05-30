@@ -1,7 +1,6 @@
 import { Bell, Heart, User } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
-import avatarPlaceholder from '../../assets/avatar_holder.png';
 
 export interface SwipeNotification {
   id: string;

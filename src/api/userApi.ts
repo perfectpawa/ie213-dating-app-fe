@@ -1,6 +1,5 @@
 import { apiRequest } from '../utils/apiRequest';
 import { User, InteractedUser, UpdateUserDto } from '../types/user';
-import { get } from 'http';
 
 interface UserResponse {
     status: string;
@@ -26,6 +25,13 @@ interface InteractedUsersResponse {
 interface RelationshipResponse {
     status: string;
     relationship: string;
+interface EnhancedMatchResponse {
+    status: string;
+    data: {
+        outgoingLikes: InteractedUser[];
+        incomingLikes: InteractedUser[];
+        mutualMatches: InteractedUser[];
+    };
 }
 
 export const userApi = {
@@ -51,6 +57,11 @@ export const userApi = {
     },
     getInteractedUsers: async () => {
         return apiRequest<InteractedUsersResponse>(`/users/interacted-users`, {
+            method: 'GET',
+        });
+    },
+    getEnhancedMatchInfo: async () => {
+        return apiRequest<EnhancedMatchResponse>(`/users/enhanced-match-info`, {
             method: 'GET',
         });
     },
@@ -87,4 +98,5 @@ export const userApi = {
             method: 'GET',
         });
     },
-}; 
+};
+};

@@ -134,7 +134,7 @@ const NotificationModal: React.FC<NotificationProps> = ({
                   }}
                 />
                 <div>
-                  <p className="text-sm text-white">
+                  <p className="text-left text-sm text-white">
                     <span className="font-bold text-l">
                       {notification.user.name}
                     </span>{' '}

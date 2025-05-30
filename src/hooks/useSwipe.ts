@@ -24,6 +24,11 @@ export const useSwipe = () => {
     const [swipedUsers, setSwipedUsers] = useState<User[]>([]);
     const [interactedUsers, setInteractedUsers] = useState<InteractedUser[]>([]);
     
+    // Enhanced match data states
+    const [outgoingLikes, setOutgoingLikes] = useState<InteractedUser[]>([]);
+    const [incomingLikes, setIncomingLikes] = useState<InteractedUser[]>([]);
+    const [mutualMatches, setMutualMatches] = useState<InteractedUser[]>([]);
+    
     // Add a ref to track initial load
     const initialLoadComplete = useRef(false);
 
@@ -137,6 +142,27 @@ export const useSwipe = () => {
 
     }, [user?._id]);
 
+    // Fetch enhanced match information 
+    const fetchEnhancedMatchInfo = useCallback(async () => {
+        if (!user?._id) return;
+
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await userApi.getEnhancedMatchInfo();
+            if (response.data?.data) {
+                setOutgoingLikes(response.data.data.outgoingLikes || []);
+                setIncomingLikes(response.data.data.incomingLikes || []);
+                setMutualMatches(response.data.data.mutualMatches || []);
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to fetch enhanced match info');
+            console.error('Error fetching enhanced match info:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [user?._id]);
+
     // Load more profiles when running low - with debounce
     const loadMoreProfiles = useCallback(async () => {
         if (potentialMatches.length < 5 && hasMoreProfiles && !loading) {
@@ -158,9 +184,7 @@ export const useSwipe = () => {
         } finally {
             setRefreshing(false);
         }
-    };
-
-    // Initialize by fetching potential matches when user is available - BUT ONLY ONCE
+    };    // Initialize by fetching potential matches when user is available - BUT ONLY ONCE
     useEffect(() => {
         if (user?._id && !initialLoadComplete.current) {
             initialLoadComplete.current = true;
@@ -168,8 +192,9 @@ export const useSwipe = () => {
             fetchMatches();
             fetchSwipedUsers();
             fetchInteractedUsers();
+            fetchEnhancedMatchInfo();
         }
-    }, [user?._id, fetchPotentialMatches, fetchMatches, fetchSwipedUsers]);
+    }, [user?._id, fetchPotentialMatches, fetchMatches, fetchSwipedUsers, fetchInteractedUsers, fetchEnhancedMatchInfo]);
 
     // Check if we need to load more profiles when currentProfile changes
     useEffect(() => {
@@ -189,17 +214,20 @@ export const useSwipe = () => {
             
             if (response.data?.data) {
                 setSwipeResults(response.data.data);
-                
-                // If there was a match, update the matches list and add match notification
+                  // If there was a match, update the matches list and add match notification
                 if (response.data.data.match) {
                     const match = response.data.data.match;
-                    setMatches(prev => [match, ...prev]);
                     
-                    // Get the matched user details
+                    // Get the matched user details and attach to the match
                     const matchedUser = potentialMatches.find(p => p._id === swipedUserId);
                     if (matchedUser) {
-                        // TODO: Add notification
+                        // Add the matched user to the match object
+                        match.otherUser = matchedUser;
+                        console.log("Match with user details:", match);
                     }
+                    
+                    // Update matches state with the new match
+                    setMatches(prev => [match, ...prev]);
                 } else if (status === 'like' || status === 'superlike') {
                     // Add like notification (for the other user) - in a real app this would be handled by the server
                     // This is just for demo/testing purposes
@@ -229,14 +257,16 @@ export const useSwipe = () => {
         } finally {
             setLoading(false);
         }
-    };
-
-    return {
+    };    return {
         potentialMatches,
         currentProfile,
         matches,
         swipedUsers,
         interactedUsers,
+        // Enhanced match data
+        outgoingLikes,
+        incomingLikes,
+        mutualMatches,
         loading,
         refreshing,
         error,
@@ -245,6 +275,7 @@ export const useSwipe = () => {
         handleSwipe,
         refreshPotentialMatches,
         refreshMatches: fetchMatches,
+        refreshEnhancedMatchInfo: fetchEnhancedMatchInfo,
         loadMoreProfiles
     };
 };

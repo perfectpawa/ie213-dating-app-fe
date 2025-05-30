@@ -36,15 +36,18 @@ export const routes = [
   {
     path: '/profile/:userId',
     element: routeComponents.userProfile,
+  },  {
+    path: '/messages',
+    element: routeComponents.messages,
   },
   {
-    path: '/messages',
+    path: '/messages/:matchId',
     element: routeComponents.messages,
   },
   {
     path: '/discover',
     element: routeComponents.discover,
-  },  {
+  },{
     path: '/matching',
     element: routeComponents.matching,
   },
