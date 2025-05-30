@@ -61,5 +61,20 @@ export const authApi = {
         return apiRequest<{ isValid: boolean }>(`/users/check-username/${username}`, {
             method: 'GET',
         });
+    },
+
+    // Google authentication
+    initiateGoogleAuth: () => {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        window.location.href = `${apiUrl}/api/users/auth/google`;
+    },
+
+    handleGoogleCallback: async (token: string) => {
+        return apiRequest<AuthResponse>('/users/me', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     }
 };

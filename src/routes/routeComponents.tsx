@@ -10,6 +10,7 @@ import SignUp from '../pages/SignUp';
 import ForgotPassword from '../pages/ForgotPassword';
 import CompleteProfile from '../pages/CompleteProfile';
 import EmailVerification from '../pages/EmailVerification';
+import GoogleCallback from '../pages/GoogleCallback';
 import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -59,7 +60,8 @@ export const routeComponents = {
     <ProtectedRoute>
       <Chat />
     </ProtectedRoute>
-  ),  discover: (
+  ),
+  discover: (
     <ProtectedRoute>
       <Matching />
     </ProtectedRoute>
@@ -73,6 +75,11 @@ export const routeComponents = {
     <ProtectedRoute>
       <Setting />
     </ProtectedRoute>
+  ),
+  googleCallback: (
+    <PublicRoute>
+      <GoogleCallback />
+    </PublicRoute>
   ),
   notFound: <Navigate to="/home" replace />,
 }; 

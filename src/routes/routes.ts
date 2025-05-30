@@ -56,6 +56,10 @@ export const routes = [
     element: routeComponents.setting,
   },
   {
+    path: '/auth/google/callback',
+    element: routeComponents.googleCallback,
+  },
+  {
     path: '*',
     element: routeComponents.notFound,
   },
