@@ -37,5 +37,8 @@ export interface UpdateUserDto {
 
 export interface InteractedUser {
   user: User;           // The user object
-  status: 'swiped' | 'matched';
+  status: 'swiped' | 'matched' | 'liked_you';
+  swipeType?: 'like' | 'superlike';  // Optional swipe type
+  matchDate?: Date;     // Optional match date for mutual matches
+  matchId?: string;     // Match ID for navigation to chat conversation
 }

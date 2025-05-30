@@ -4,6 +4,7 @@ import ChatInput from "./ChatInput";
 import Message from "./Message";
 import { formatDate } from "../../utils/date";
 import { useAuth } from "../../hooks/useAuth";
+import avatarHolder from "../../assets/avatar_holder.png";
 
 interface ChatWindowProps {
   conversation: Conversation;
@@ -52,35 +53,57 @@ export default function ChatWindow({
   return (
     <div className="flex flex-col h-full bg-white">
       {" "}
-      {/* Chat Header */}
+      {/* Chat Header */}{" "}
       <div className="p-4 border-b bg-gray-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-gray-300 mr-3 flex items-center justify-center">
-              {conversation.user.profile?.profile_picture ? (
-                <img
-                  src={conversation.user.profile.profile_picture}
-                  alt={conversation.user.username}
-                  className="w-full h-full rounded-full object-cover"
-                />
-              ) : (
-                <span className="text-gray-600 font-semibold">
-                  {(conversation.user.profile?.full_name ||
-                    conversation.user.username ||
-                    "U")[0].toUpperCase()}
-                </span>
-              )}
+              {/* Get profile picture with complete fallbacks */}
+              {(() => {
+                const profilePicture =
+                  // Root level properties (new API)
+                  conversation.user.profile_picture ||
+                  // Legacy profile object properties
+                  conversation.user.profile?.profile_picture;
+
+                return profilePicture ? (
+                  <img
+                    src={profilePicture}
+                    alt={conversation.user.username}
+                    className="w-full h-full  rounded-full object-cover"
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      img.src = avatarHolder; // Fallback to default avatar
+                      console.log(
+                        "Chat window - Image load failed, using fallback"
+                      );
+                    }}
+                  />
+                ) : (
+                  <span className="text-gray-600 font-semibold">
+                    {(conversation.user.user_name ||
+                      conversation.user.full_name ||
+                      conversation.user.profile?.full_name ||
+                      conversation.user.profile?.user_name ||
+                      conversation.user.username ||
+                      "U")[0].toUpperCase()}
+                  </span>
+                );
+              })()}
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">
-                {conversation.user.profile?.full_name ||
-                  conversation.user.username ||
+              <h3 className="font-semibold text-left text-gray-900">
+                {/* Get the user information with full proper fallbacks */}
+                {conversation.user.full_name ||
+                  conversation.user.profile?.full_name ||
+                  conversation.user.profile?.user_name ||
                   "Người dùng"}
               </h3>
-              <p className="text-sm text-gray-500">{conversation.user.email}</p>
+              <p className="text-left text-sm text-gray-500">
+                {conversation.user.user_name}
+              </p>
             </div>
-          </div>
-          {/* Loading indicator for real-time updates */}
+          </div>          {/* Loading/Status indicators for real-time updates */}
           <div className="flex flex-col items-end">
             {loading && (
               <div className="flex items-center text-sm text-blue-500 mb-1">
@@ -88,8 +111,16 @@ export default function ChatWindow({
                 Đang cập nhật...
               </div>
             )}
+            {conversation.unreadCount === 0 && (
+              <div className="flex items-center text-sm text-[#4edcd8] mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Đã đọc
+              </div>
+            )}
             <div className="text-xs text-gray-400">
-              💬 Chỉ cập nhật khi gửi tin nhắn
+              💬 Tự động cập nhật khi có tin nhắn mới
             </div>
           </div>
         </div>
@@ -114,8 +145,33 @@ export default function ChatWindow({
                 return null;
               }
 
+              // Enhanced logging of message sender information
+              console.log("Message sender data:", {
+                id: message.sender?._id,
+                user_name: message.sender?.user_name,
+                profile_picture: message.sender?.profile_picture,
+              });
+
               const isMyMessage = user._id === message.sender?._id;
-              const messageTime = message.timestamp || message.createdAt;
+              const messageTime = message.timestamp || message.createdAt; // Get sender name and profile picture with fallbacks
+              const senderName = isMyMessage
+                ? null
+                : message.sender?.user_name ||
+                  message.sender?.profile?.full_name ||
+                  message.sender?.profile?.user_name ||
+                  conversation.user.user_name ||
+                  conversation.user.full_name ||
+                  conversation.user.profile?.full_name ||
+                  conversation.user.profile?.user_name ||
+                  conversation.user.username ||
+                  "Người dùng";
+
+              const senderImage = isMyMessage
+                ? null
+                : message.sender?.profile_picture ||
+                  message.sender?.profile?.profile_picture ||
+                  conversation.user.profile_picture ||
+                  conversation.user.profile?.profile_picture;
 
               return (
                 <Message
@@ -123,6 +179,8 @@ export default function ChatWindow({
                   isMyMessage={isMyMessage}
                   text={message.content || ""}
                   time={messageTime ? formatDate(messageTime) : ""}
+                  senderName={senderName}
+                  senderImage={senderImage}
                 />
               );
             })
@@ -134,7 +192,7 @@ export default function ChatWindow({
       <div className="px-4 py-2 bg-gray-50 border-t text-xs text-gray-500 flex items-center justify-between">
         <div className="flex items-center">
           <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-          Cập nhật khi tương tác
+          Hiện đang trực tuyến
         </div>
         <div>{messages.length} tin nhắn</div>
       </div>
