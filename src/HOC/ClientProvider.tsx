@@ -28,16 +28,15 @@ const ClientProvider = ({ children }: { children: React.ReactNode }) => {
     
     return <Provider store={store}>
         <PersistGate 
-            loading={<LoadingSpinner />} 
             persistor={persistor}
-            onBeforeLift={() => {
-                console.time('Redux Persist Rehydration');
-                console.log('Starting Redux Persist rehydration...');
-            }}
+            // onBeforeLift={() => {
+            //     console.time('Redux Persist Rehydration');
+            //     console.log('Starting Redux Persist rehydration...');
+            // }}
         >
             {() => {
-                console.timeEnd('Redux Persist Rehydration');
-                console.log('Redux Persist rehydration complete');
+                // console.timeEnd('Redux Persist Rehydration');
+                // console.log('Redux Persist rehydration complete');
                 return (
                     <AuthProvider>
                         <ModalProvider>
