@@ -28,7 +28,7 @@ class SocketService {
         this.userId = userId;
         // console.log('SocketService: Creating new socket connection');
         
-        this.socket = io(import.meta.env.VITE_API_URL || 'http://localhost:8000', {
+        this.socket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000', {
             withCredentials: true,
             reconnection: true,
             reconnectionAttempts: 5,
