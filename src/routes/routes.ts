@@ -1,56 +1,61 @@
-import { routeComponents } from './routeComponents';
+import path from "path";
+import { routeComponents } from "./routeComponents";
 
 export const routes = [
   {
-    path: '/',
+    path: "/",
     element: routeComponents.root,
   },
   {
-    path: '/signin',
+    path: "/signin",
     element: routeComponents.signin,
   },
   {
-    path: '/signup',
+    path: "/signup",
     element: routeComponents.signup,
   },
   {
-    path: '/forgot-password',
+    path: "/forgot-password",
     element: routeComponents.forgotPassword,
   },
   {
-    path: '/verify-email',
+    path: "/verify-email",
     element: routeComponents.emailVerification,
   },
   {
-    path: '/complete-profile',
+    path: "/complete-profile",
     element: routeComponents.completeProfile,
   },
   {
-    path: '/home',
+    path: "/complete-interest",
+    element: routeComponents.completeInterest,
+  },
+  {
+    path: "/home",
     element: routeComponents.home,
   },
   {
-    path: '/profile',
+    path: "/profile",
     element: routeComponents.profile,
   },
   {
-    path: '/profile/:userId',
+    path: "/profile/:userId",
     element: routeComponents.userProfile,
   },
   {
-    path: '/messages',
+    path: "/messages",
     element: routeComponents.messages,
   },
   {
-    path: '/discover',
+    path: "/discover",
     element: routeComponents.discover,
   },
   {
-    path: '/setting',
+    path: "/setting",
     element: routeComponents.setting,
   },
   {
-    path: '*',
+    path: "*",
     element: routeComponents.notFound,
   },
-]; 
+];

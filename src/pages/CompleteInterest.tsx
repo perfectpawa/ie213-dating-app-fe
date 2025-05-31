@@ -1,0 +1,105 @@
+import React, { useState, useEffect } from "react";
+import { useInterest } from "@/hooks/useInterest";
+import { Interest } from "../types/interest";
+import { useCategories } from "@/hooks/useCategory";
+
+const CompleteInterest = () => {
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  // const [groupedInterests, setGroupedInterests] = useState<
+  //   Record<string, string[]>
+  // >({});
+
+  const {
+    interests,
+    loading: loadingInterests,
+    error: errorInterests,
+  } = useInterest();
+  const {
+    categories,
+    loading: loadingCategories,
+    error: errorCategories,
+  } = useCategories();
+
+  const toggleInterest = (interest: string) => {
+    setSelectedInterests((prev) =>
+      prev.includes(interest)
+        ? prev.filter((i) => i !== interest)
+        : [...prev, interest]
+    );
+  };
+
+  // useEffect(() => {
+  //   if (interests.length > 0) {
+  //     const grouped: Record<string, string[]> = {};
+  //     interests.forEach((item: Interest) => {
+  //       grouped[item.category] = item.items;
+  //     });
+  //     setGroupedInterests(grouped);
+  //   }
+  // }, [interests]);
+
+  return (
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="bg-gray-800 rounded-lg shadow-lg p-6">
+        <h2 className="text-2xl font-bold text-white mb-4">
+          Select your interests
+        </h2>
+
+        {loadingCategories || loadingInterests ? (
+          <p className="text-gray-400">Đang tải dữ liệu sở thích...</p>
+        ) : errorCategories || errorInterests ? (
+          <p className="text-red-400">{errorCategories || errorInterests}</p>
+        ) : (
+          <div className="space-y-4 max-h-[400px] overflow-y-auto px-4">
+            {categories.map((cat) => {
+              const interestsInCategory = interests.filter(
+                (interest) => String(interest.category_id) === String(cat._id)
+              );
+
+              return (
+                <div key={cat._id}>
+                  <h3 className="text-lg font-semibold mb-1 text-gray-300">
+                    {cat.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {interestsInCategory.map((interest) => (
+                      <button
+                        key={interest._id}
+                        onClick={() => toggleInterest(interest._id)}
+                        className={`px-[18px] py-[8px] rounded-[20px] transition ${
+                          selectedInterests.includes(interest._id)
+                            ? "bg-teal-500 text-white"
+                            : "bg-gray-700 text-white hover:bg-gray-600"
+                        }`}
+                      >
+                        {interest.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="mt-8">
+          <button
+            disabled={selectedInterests.length === 0}
+            className={`w-full py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 transition
+    ${
+      selectedInterests.length === 0
+        ? "bg-gray-500 text-white cursor-not-allowed"
+        : "bg-teal-500 text-white hover:bg-teal-600 focus:ring-teal-500"
+    }`}
+          >
+            {selectedInterests.length === 0
+              ? "Please select at least one interest"
+              : `Save ${selectedInterests.length} interests`}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CompleteInterest;

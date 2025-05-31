@@ -1,17 +1,18 @@
-import { Navigate } from 'react-router-dom';
-import Home from '../pages/Home';
-import Profile from '../pages/Profile';
-import UserProfile from '../pages/UserProfile';
-import Matching from '../pages/Matching';
-import Setting from '../pages/Setting';
-import Chat from '../pages/Chat';
-import SignIn from '../pages/SignIn';
-import SignUp from '../pages/SignUp';
-import ForgotPassword from '../pages/ForgotPassword';
-import CompleteProfile from '../pages/CompleteProfile';
-import EmailVerification from '../pages/EmailVerification';
-import PublicRoute from './PublicRoute';
-import ProtectedRoute from './ProtectedRoute';
+import { Navigate } from "react-router-dom";
+import Home from "../pages/Home";
+import Profile from "../pages/Profile";
+import UserProfile from "../pages/UserProfile";
+import Matching from "../pages/Matching";
+import Setting from "../pages/Setting";
+import Chat from "../pages/Chat";
+import SignIn from "../pages/SignIn";
+import SignUp from "../pages/SignUp";
+import ForgotPassword from "../pages/ForgotPassword";
+import CompleteProfile from "../pages/CompleteProfile";
+import EmailVerification from "../pages/EmailVerification";
+import PublicRoute from "./PublicRoute";
+import ProtectedRoute from "./ProtectedRoute";
+import CompleteInterest from "@/pages/CompleteInterest";
 
 export const routeComponents = {
   root: <Navigate to="/home" replace />,
@@ -38,6 +39,11 @@ export const routeComponents = {
   completeProfile: (
     <ProtectedRoute>
       <CompleteProfile />
+    </ProtectedRoute>
+  ),
+  completeInterest: (
+    <ProtectedRoute>
+      <CompleteInterest />
     </ProtectedRoute>
   ),
   home: (
@@ -71,4 +77,4 @@ export const routeComponents = {
     </ProtectedRoute>
   ),
   notFound: <Navigate to="/home" replace />,
-}; 
+};

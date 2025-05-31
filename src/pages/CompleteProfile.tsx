@@ -16,7 +16,9 @@ const CompleteProfile = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(user?.profile_picture || null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    user?.profile_picture || null
+  );
 
   if (authLoading) {
     return <LoadingSpinner />;
@@ -38,7 +40,7 @@ const CompleteProfile = () => {
       }
 
       await completeProfile(submitData);
-      navigate("/home");
+      navigate("/complete-interest");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
@@ -46,11 +48,15 @@ const CompleteProfile = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -65,9 +71,9 @@ const CompleteProfile = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          profile_picture: file
+          profile_picture: file,
         }));
       };
       reader.readAsDataURL(file);
@@ -77,8 +83,10 @@ const CompleteProfile = () => {
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="bg-gray-800 rounded-lg shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-white mb-6">Complete Your Profile</h1>
-        
+        <h1 className="text-2xl font-bold text-white mb-6">
+          Complete Your Profile
+        </h1>
+
         {error && (
           <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded mb-4">
             {error}
@@ -88,14 +96,14 @@ const CompleteProfile = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Profile Picture Upload */}
           <div className="flex flex-col items-center mb-6">
-            <div 
+            <div
               onClick={handleImageClick}
               className="w-32 h-32 rounded-full bg-gray-700 cursor-pointer overflow-hidden flex items-center justify-center hover:opacity-90 transition-opacity"
             >
               {previewUrl ? (
-                <img 
-                  src={previewUrl} 
-                  alt="Profile preview" 
+                <img
+                  src={previewUrl}
+                  alt="Profile preview"
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -112,7 +120,10 @@ const CompleteProfile = () => {
           </div>
 
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-1">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Username
             </label>
             <input
@@ -127,7 +138,10 @@ const CompleteProfile = () => {
           </div>
 
           <div>
-            <label htmlFor="full_name" className="block text-sm font-medium text-gray-300 mb-1">
+            <label
+              htmlFor="full_name"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Full Name
             </label>
             <input
@@ -142,7 +156,10 @@ const CompleteProfile = () => {
           </div>
 
           <div>
-            <label htmlFor="gender" className="block text-sm font-medium text-gray-300 mb-1">
+            <label
+              htmlFor="gender"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Gender
             </label>
             <select
@@ -162,7 +179,10 @@ const CompleteProfile = () => {
           </div>
 
           <div>
-            <label htmlFor="bio" className="block text-sm font-medium text-gray-300 mb-1">
+            <label
+              htmlFor="bio"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Bio
             </label>
             <textarea
@@ -189,4 +209,4 @@ const CompleteProfile = () => {
   );
 };
 
-export default CompleteProfile; 
+export default CompleteProfile;
