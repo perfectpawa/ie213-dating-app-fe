@@ -1,5 +1,6 @@
-﻿import { createContext, useEffect, useState, ReactNode } from "react";
+﻿import { createContext, useEffect, useState, ReactNode, use } from "react";
 import {UpdateUserDto, User} from "../types/user";
+import { Interest } from "../types/interest";
 import { authApi } from "../api/authApi";
 import { useDispatch } from 'react-redux';
 import { setAuthUser, clearAuthUser } from "../store/authSlice";
@@ -7,9 +8,11 @@ import { setAuthUser, clearAuthUser } from "../store/authSlice";
 
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
+import { userApi } from "@/api/userApi";
 
 interface AuthContextType {
     user: User | null;
+    interests: Interest[] | null;
     loading: boolean;
     error: Error | null;
     login: (email: string, password: string) => Promise<void>;
@@ -17,6 +20,7 @@ interface AuthContextType {
     logout: () => Promise<void>;
     resendOTP: (email: string) => Promise<void>;
     completeProfile: (data: FormData) => Promise<void>;
+    completeInterest: (interests: string[]) => Promise<void>;
     updateUser: (user: User) => void;
 }
 
@@ -24,6 +28,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [interests, setInterests] = useState<Interest[] | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
@@ -159,13 +164,66 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
+    const completeInterest = async (interests: string[]) => {
+        try {
+            setError(null);
+            setLoading(true);
+
+            if (!user) throw new Error('User not found');
+
+            const { data, error: completeError } = await authApi.completeInterest(user._id, interests);
+
+            console.log('Complete interest response:', data);
+
+            if (completeError) throw completeError;
+            if (!data?.user) throw new Error('No user data received after completing interests');
+
+            // Update both local state and Redux store
+            const updatedUser = data.user as User;
+            setUser(updatedUser);
+            dispatch(setAuthUser(updatedUser));
+
+        } catch (err) {
+            console.error('Complete interest error:', err);
+            setError(err instanceof Error ? err : new Error('Failed to complete interests'));
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const updateUser = (updatedUser: User) => {
         setUser(updatedUser);
         dispatch(setAuthUser(updatedUser));
     };
 
+    useEffect(() => {
+        // fecth user interests when user changes
+        const fetchUserInterests = async () => {
+            if (!user || !user._id) return;
+
+            try {
+                setLoading(true);
+                const { data, error: interestsError } = await userApi.getUserInterests(user._id);
+
+                if (interestsError) throw interestsError;
+                if (!data?.data.interests) throw new Error('No interests data received');
+
+                setInterests(data.data.interests);
+
+            } catch (err) {
+                console.error('Fetch user interests error:', err);
+                setError(err instanceof Error ? err : new Error('Failed to fetch user interests'));
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchUserInterests();
+    }, [user]);
+
     const value = {
         user,
+        interests,
         loading,
         error,
         login,
@@ -173,6 +231,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
         resendOTP,
         completeProfile,
+        completeInterest,
         updateUser
     };
 

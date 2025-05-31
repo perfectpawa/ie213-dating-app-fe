@@ -1,5 +1,6 @@
 import { apiRequest } from '../utils/apiRequest';
 import { User, InteractedUser, UpdateUserDto } from '../types/user';
+import { Interest } from '../types/interest';
 
 interface UserResponse {
     status: string;
@@ -34,6 +35,14 @@ interface EnhancedMatchResponse {
         incomingLikes: InteractedUser[];
         mutualMatches: InteractedUser[];
     };
+}
+
+
+interface InterestsResponse {
+  status: string;
+  data: {
+    interests: Interest[];
+  };
 }
 
 export const userApi = {
@@ -100,4 +109,9 @@ export const userApi = {
             method: 'GET',
         });
     },
+    getUserInterests: async (userId: string) => {
+        return apiRequest<InterestsResponse>(`/users/${userId}/interests`, {
+            method: 'GET',
+        });
+    }
 };

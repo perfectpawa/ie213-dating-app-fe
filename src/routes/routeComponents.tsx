@@ -13,6 +13,7 @@ import EmailVerification from '../pages/EmailVerification';
 import GoogleCallback from '../pages/GoogleCallback';
 import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
+import CompleteInterest from '@/pages/CompleteInterest';
 
 export const routeComponents = {
   root: <Navigate to="/home" replace />,
@@ -39,6 +40,11 @@ export const routeComponents = {
   completeProfile: (
     <ProtectedRoute>
       <CompleteProfile />
+    </ProtectedRoute>
+  ),
+  completeInterest: (
+    <ProtectedRoute>
+      <CompleteInterest />
     </ProtectedRoute>
   ),
   home: (

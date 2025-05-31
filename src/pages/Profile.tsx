@@ -12,25 +12,6 @@ const Profile: React.FC = () => {
   const { openUpdateProfileModal } = useModal();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  // Array of interests with highlighted ones
-  const userInterests = [
-    { name: "gaming", highlighted: true },
-    { name: "anime", highlighted: true },
-    { name: "music", highlighted: false },
-    { name: "film", highlighted: false },
-    { name: "photo", highlighted: false },
-    { name: "leon", highlighted: false },
-    { name: "japan", highlighted: false },
-    { name: "vietnam", highlighted: false },
-    { name: "punch", highlighted: false },
-    { name: "kick", highlighted: false },
-    { name: "gun", highlighted: false },
-    { name: "knife", highlighted: false },
-    { name: "sport", highlighted: false },
-    { name: "football", highlighted: false },
-    { name: "isekai", highlighted: false },
-  ];
 
   if (!user) {
     return null;
@@ -90,7 +71,7 @@ const Profile: React.FC = () => {
           loading={loading}
         />
 
-        <InterestsSection interests={userInterests} />
+        <InterestsSection userId={user._id} />
         
         <PhotosSection userId={user._id} />
       </div>

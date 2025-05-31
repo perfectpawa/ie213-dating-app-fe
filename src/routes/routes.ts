@@ -26,6 +26,10 @@ export const routes = [
     element: routeComponents.completeProfile,
   },
   {
+    path: '/complete-interest',
+    element: routeComponents.completeInterest,
+  },
+  {
     path: '/home',
     element: routeComponents.home,
   },

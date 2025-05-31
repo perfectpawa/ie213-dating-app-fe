@@ -5,6 +5,8 @@ import { useProfile } from "../hooks/useProfile";
 import PhotosSection from "../components/profile/PhotosSection";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import LoadingSpinner from "../components/LoadingSpinner";
+import InterestsSection from "../components/profile/InterestsSection";
+
 import { userApi } from "../api/userApi";
 
 const UserProfile: React.FC = () => {
@@ -65,6 +67,8 @@ const UserProfile: React.FC = () => {
           relationshipStatus={relationshipStatus} 
           onSwipeComplete={handleSwipeComplete}
         />
+
+        {userId && <InterestsSection userId={userId} />}
         {userId && <PhotosSection userId={userId} />}
       </div>
     </Layout>

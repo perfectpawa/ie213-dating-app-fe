@@ -3,6 +3,7 @@ export interface User {
   email: string;
   auth_id?: string;      // Auth provider ID
   completeProfile: boolean;  // Flag to track if user has completed profile setup
+  completeInterest: boolean; // Flag to track if user has completed interest setup
   isVerified: boolean;  // Flag to track if user has verified their email
   user_name?: string;    // User's display name
   full_name?: string;   // User's full name

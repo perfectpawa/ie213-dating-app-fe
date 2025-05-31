@@ -57,6 +57,16 @@ export const authApi = {
         });
     },
 
+    completeInterest: async (user_id: string, interests: string[]) => {
+        return apiRequest<{ user: User }>(`/users/${user_id}/complete-interest`, {
+            method: 'POST',
+            data: { interestIds: interests },
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    },
+
     CheckUserNameValidation: async (username: string) => {
         return apiRequest<{ isValid: boolean }>(`/users/check-username/${username}`, {
             method: 'GET',
@@ -66,7 +76,7 @@ export const authApi = {
     // Google authentication
     initiateGoogleAuth: () => {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-        window.location.href = `${apiUrl}/api/users/auth/google`;
+        window.location.href = `${apiUrl}/users/auth/google`;
     },
 
     handleGoogleCallback: async (token: string) => {

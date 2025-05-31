@@ -20,9 +20,18 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/signin" replace />;
   }
 
-  // Don't redirect if we're already on the complete profile page
-  if (!user.completeProfile && location.pathname !== '/complete-profile') {
-    return <Navigate to="/complete-profile" replace />;
+  if (!user.completeProfile) {
+    if (location.pathname !== '/complete-profile') {
+      return <Navigate to="/complete-profile" replace />;
+    }
+    return <>{children}</>;
+  }
+
+  if (!user.completeInterest) {
+    if (location.pathname !== '/complete-interest') {
+      return <Navigate to="/complete-interest" replace />;
+    }
+    return <>{children}</>;
   }
 
   return <>{children}</>;
