@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { postApi } from '../api/postApi';
 import { Post } from '../types/post';
 
@@ -6,22 +6,43 @@ export const useFeed = () => {
     const [feedPosts, setFeedPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-    const fetchFeedPosts = async () => {
+    const fetchFeedPosts = async (page: number = 1, append: boolean = false) => {
         try {
-            setLoading(true);
+            if (page === 1) {
+                setLoading(true);
+            } else {
+                setIsLoadingMore(true);
+            }
             setError(null);
-            const response = await postApi.getFeedPosts();
+            
+            const response = await postApi.getFeedPosts(page);
             if (response.data?.data?.posts) {
-                setFeedPosts(response.data.data.posts);
+                const newPosts = response.data.data.posts;
+                setFeedPosts(prevPosts => append ? [...prevPosts, ...newPosts] : newPosts);
+                
+                // Update pagination state
+                if (response.data.data.pagination) {
+                    setHasMore(response.data.data.pagination.hasNextPage);
+                    setCurrentPage(response.data.data.pagination.currentPage);
+                }
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to fetch feed posts');
             console.error('Error fetching feed posts:', err);
         } finally {
             setLoading(false);
+            setIsLoadingMore(false);
         }
     };
+
+    const loadMore = useCallback(async () => {
+        if (!hasMore || isLoadingMore) return;
+        await fetchFeedPosts(currentPage + 1, true);
+    }, [currentPage, hasMore, isLoadingMore]);
 
     const toggleLike = async (postId: string) => {
         try {
@@ -41,8 +62,13 @@ export const useFeed = () => {
         }
     };
 
+    const refreshPosts = useCallback(() => {
+        setCurrentPage(1);
+        fetchFeedPosts(1, false);
+    }, []);
+
     useEffect(() => {
-        fetchFeedPosts();
+        fetchFeedPosts(1, false);
     }, []);
 
     return {
@@ -50,6 +76,9 @@ export const useFeed = () => {
         loading,
         error,
         toggleLike,
-        refreshPosts: fetchFeedPosts,
+        refreshPosts,
+        loadMore,
+        hasMore,
+        isLoadingMore
     };
 }; 

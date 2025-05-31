@@ -9,7 +9,7 @@ import { useProfile } from '../hooks/useProfile';
 interface PostCardProps {
     post: Post;
     onLikeToggle: (postId: string) => Promise<void>;
-    onRefresh: () => Promise<void>;
+    onRefresh?: () => Promise<void>;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefresh }) => {
@@ -19,7 +19,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
 
     const handleLike = async () => {
         await onLikeToggle(post._id);
-        await onRefresh();
     };
 
     const isLiked = user ? post.likes.includes(user._id) : false;

@@ -5,6 +5,13 @@ interface PostsResponse {
     status: string;
     data: {
         posts: Post[];
+        pagination?: {
+            currentPage: number;
+            totalPages: number;
+            totalPosts: number;
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+        };
     };
 }
 
@@ -64,8 +71,8 @@ export const postApi = {
         });
     },
 
-    getFeedPosts: async () => {
-        return apiRequest<PostsResponse>('/posts/except-own', {
+    getFeedPosts: async (page: number = 1, limit: number = 10) => {
+        return apiRequest<PostsResponse>(`/posts/similar-interests?page=${page}&limit=${limit}`, {
             method: 'GET',
         });
     },
