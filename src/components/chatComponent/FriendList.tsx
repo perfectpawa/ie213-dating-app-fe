@@ -13,7 +13,6 @@ export default function FriendList({
   conversations,
   onSelectConversation,
   selectedConversation,
-  loading,
 }: FriendListProps) {
   // if (loading) {
   //   return (

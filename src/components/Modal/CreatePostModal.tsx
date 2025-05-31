@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, Image as ImageIcon, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
-import ReactCrop, { Crop, PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
+import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 interface CreatePostModalProps {

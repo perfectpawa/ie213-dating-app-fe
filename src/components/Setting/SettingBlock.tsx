@@ -1,5 +1,3 @@
-import React from "react";
-
 const SettingBlock = () => {
   return (
     <div className="bg-black text-white w-[706px] text-left">

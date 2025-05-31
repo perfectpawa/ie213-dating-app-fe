@@ -70,26 +70,28 @@ class SocketService {
     }
 
     onNotification(callback: (notification: any) => void) {
-        // console.log('SocketService: Setting up notification listener');
+        console.log('SocketService: Setting up notification listener');
         if (this.socket) {
-            // Remove any existing listeners to prevent duplicates
-            this.socket.off('notification');
-            // Add the new listener
+            // Add the new listener without removing existing ones
             this.socket.on('notification', (notification) => {
                 console.log('SocketService: Received notification:', notification);
-                callback(notification);
+                try {
+                    callback(notification);
+                } catch (error) {
+                    console.error('SocketService: Error in notification callback:', error);
+                }
             });
-            // console.log('SocketService: Notification listener set up successfully');
+            console.log('SocketService: Notification listener set up successfully');
         } else {
             console.warn('SocketService: Cannot set up notification listener - socket is null');
         }
     }
 
     offNotification(callback: (notification: any) => void) {
-        // console.log('SocketService: Removing notification listener');
+        console.log('SocketService: Removing notification listener');
         if (this.socket) {
             this.socket.off('notification', callback);
-            // console.log('SocketService: Notification listener removed');
+            console.log('SocketService: Notification listener removed');
         }
     }
 

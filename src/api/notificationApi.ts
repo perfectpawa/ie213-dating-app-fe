@@ -10,7 +10,7 @@ interface Notification {
         profile_picture: string;
         full_name: string;
     };
-    type: 'like' | 'message' | 'connection' | 'match';
+    type: 'like' | 'message' | 'swipe' | 'match';
     post?: {
         _id: string;
         image: string;

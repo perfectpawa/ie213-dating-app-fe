@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import SettingProfile from "./SettingProfile";
 import SettingMessageRespond from "./SettingMessageRespond";
 import SettingPrivate from "./SettingPrivate";

@@ -27,10 +27,11 @@ export const useFeed = () => {
         try {
             setError(null);
             const response = await postApi.toggleLike(postId);
-            if (response.data?.data?.post) {
+            if (response?.data?.data?.post) {
+                const updatedPost = response.data.data.post;
                 setFeedPosts(prevPosts => 
                     prevPosts.map(post => 
-                        post._id === postId ? response.data.data.post : post
+                        post._id === postId ? updatedPost : post
                     )
                 );
             }

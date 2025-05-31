@@ -4,19 +4,19 @@ import Layout from "../components/layout/layout";
 import { useProfile } from "../hooks/useProfile";
 import PhotosSection from "../components/profile/PhotosSection";
 import ProfileHeader from "../components/profile/ProfileHeader";
-import LoadingSpinner from "../components/LoadingSpinner";
 import InterestsSection from "../components/profile/InterestsSection";
 
 import { userApi } from "../api/userApi";
 
 const UserProfile: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
-  const { user, loading, error, fetchUserPosts, fetchUserData } = useProfile();
+  const { user, error, fetchUserPosts, fetchUserData } = useProfile();
   const [relationshipStatus, setRelationshipStatus] = useState<string | null>(null);
   const [relationshipLoading, setRelationshipLoading] = useState(false);
 
   const fetchRelationshipStatus = useCallback(async (targetUserId: string) => {
     try {
+      console.log(relationshipLoading);
       setRelationshipLoading(true);
       const response = await userApi.getRelationship(targetUserId);
       if (response.data?.relationship) {

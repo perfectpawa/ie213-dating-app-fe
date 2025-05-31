@@ -102,7 +102,7 @@ const Navbar = () => {
                     name: notification.sender.user_name || notification.sender.full_name || 'Anonymous',
                     avatar: notification.sender.profile_picture || `https://ui-avatars.com/api/?name=${notification.sender.user_name || notification.sender.full_name}&background=1a3f3e&color=4edcd8`
                   },
-                  post: notification.post,
+                  post: notification.post?._id,
                   swipe: notification.swipe,
                   match: notification.match,
                   type: notification.type,

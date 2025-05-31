@@ -14,7 +14,10 @@ interface Notification {
         full_name: string;
     };
     type: 'like' | 'message' | 'swipe' | 'match';
-    post?: string;
+    post?: {
+        _id: string;
+        image: string;
+    };
     swipe?: string;
     match?: string;
     read: boolean;
@@ -34,7 +37,6 @@ export const useNotifications = () => {
             setLoading(true);
             setError(null);
             const response = await notificationApi.getNotifications();
-            // console.log('useNotifications: API response:', response);
             if (response?.data?.notifications) {
                 setNotifications(response.data.notifications);
             }
@@ -100,34 +102,39 @@ export const useNotifications = () => {
 
     // Handle real-time notifications
     useEffect(() => {
-        // console.log('useNotifications: Setting up real-time notifications for user:', user?._id);
+        console.log('useNotifications: Setting up real-time notifications for user:', user?._id);
         
         if (!user?._id) {
             console.log('useNotifications: No user ID, skipping setup socket');
             return;
         }
 
+        let isSubscribed = true;
+
         // Connect to socket
         socketService.connect(user._id);
 
         // Listen for new notifications
         const handleNewNotification = (notification: Notification) => {
-            // console.log('useNotifications: Received new notification:', notification);
+            console.log('useNotifications: Received new notification:', notification);
+            if (!isSubscribed) return;
+
             setNotifications(prev => {
                 // Check if notification already exists
                 const exists = prev.some(n => n._id === notification._id);
                 if (exists) {
-                    // console.log('useNotifications: Notification already exists, skipping');
+                    console.log('useNotifications: Notification already exists, skipping');
                     return prev;
                 }
                 // Add new notification to the beginning of the list
                 const updated = [notification, ...prev];
-                // console.log('useNotifications: Updated notifications with new notification:', updated);
+                console.log('useNotifications: Updated notifications with new notification:', updated);
                 return updated;
             });
+
             setUnreadCount(prev => {
                 const newCount = prev + 1;
-                // console.log('useNotifications: Updated unread count:', newCount);
+                console.log('useNotifications: Updated unread count:', newCount);
                 return newCount;
             });
         };
@@ -143,6 +150,7 @@ export const useNotifications = () => {
         // Cleanup
         return () => {
             console.log('useNotifications: Cleaning up notification listeners');
+            isSubscribed = false;
             socketService.offNotification(handleNewNotification);
             socketService.disconnect();
         };

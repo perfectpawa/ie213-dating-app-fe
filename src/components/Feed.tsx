@@ -2,10 +2,10 @@ import React from 'react';
 import { useFeed } from '../hooks/useFeed';
 import { Post } from '../types/post';
 import { PostCard } from './PostCard';
-import LoadingSpinner from './LoadingSpinner';
+// import LoadingSpinner from './LoadingSpinner';
 
 export const Feed: React.FC = () => {
-    const { posts, loading, error, toggleLike, refreshPosts } = useFeed();
+    const { posts, error, toggleLike, refreshPosts } = useFeed();
 
     // if (loading) {
     //     return <LoadingSpinner />;

@@ -70,6 +70,8 @@ const EmailVerification: React.FC = () => {
       const { data, error: verifyError } = await authApi.verifyAccount(otp);
       
       if (verifyError) throw verifyError;
+
+        if (!data?.user) throw new Error('Không nhận được dữ liệu người dùng từ xác thực');
       
       setSuccess(true);
       // Wait for 1 second before redirecting

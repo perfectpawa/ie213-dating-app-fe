@@ -1,5 +1,5 @@
-﻿import { createContext, useEffect, useState, ReactNode, use } from "react";
-import {UpdateUserDto, User} from "../types/user";
+﻿import { createContext, useEffect, useState, ReactNode } from "react";
+import { User} from "../types/user";
 import { Interest } from "../types/interest";
 import { authApi } from "../api/authApi";
 import { useDispatch } from 'react-redux';

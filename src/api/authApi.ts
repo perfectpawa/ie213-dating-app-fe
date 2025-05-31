@@ -1,5 +1,5 @@
 import { apiRequest } from '../utils/apiRequest';
-import {UpdateUserDto, User} from '../types/user';
+import {User} from '../types/user';
 
 interface AuthResponse {
     user: User;
@@ -11,6 +11,25 @@ interface CompleteProfileResponse {
     message: string;
     user: User;
 }
+
+// interface CompleteProfileData {
+//     user_name: string;
+//     full_name: string;
+//     gender: string;
+//     birthday: string;
+//     bio?: string;
+//     profile_picture?: File;
+//     cover_picture?: File;
+//     location?: string;
+//     occupation?: string;
+//     education?: string;
+//     preferences?: {
+//         minAge?: number;
+//         maxAge?: number;
+//         distance?: number;
+//         genderPreference?: string[];
+//     };
+// }
 
 export const authApi = {
     login: async (email: string, password: string) => {
@@ -47,7 +66,7 @@ export const authApi = {
         });
     },
 
-    completeProfile: async (user_id: string, data: any) => {
+    completeProfile: async (user_id: string, data: FormData) => {
         return apiRequest<CompleteProfileResponse>(`/users/${user_id}/complete-profile`, {
             method: 'POST',
             data: data,

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Pencil, Mars, Venus, User as UserIcon, Heart, Clock, AlertCircle, ThumbsUp, X, MessageCircle } from 'lucide-react';
+import { Camera, Pencil, Mars, Venus, User as UserIcon, Clock, AlertCircle, ThumbsUp, MessageCircle } from 'lucide-react';
 import { User } from '../../types/user';
 import avatarPlaceholder from '../../assets/avatar_holder.png';
 import { swipeApi } from '../../api/swipeApi';

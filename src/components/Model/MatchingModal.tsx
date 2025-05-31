@@ -1,4 +1,3 @@
-import React from "react";
 import MatchingModalItem from "./MatchingModalItem";
 import { IoCloseSharp } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";

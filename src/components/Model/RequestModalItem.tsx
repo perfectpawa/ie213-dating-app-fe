@@ -1,5 +1,3 @@
-import React from "react";
-
 const RequestModalItem = ({}) => {
   return (
     <div className="flex items-center justify-between mt-2 first:mt-0 h-[54px]">

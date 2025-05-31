@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Post } from '../types/post';
-import { Heart, MessageCircle } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { formatDate } from '../utils/date';
 import { useAuth } from '../hooks/useAuth';
 import avatarHolder from '../assets/avatar_holder.png';
 import { useProfile } from '../hooks/useProfile';
-import { PostModal } from './Modal/PostModal';
 
 interface PostCardProps {
     post: Post;

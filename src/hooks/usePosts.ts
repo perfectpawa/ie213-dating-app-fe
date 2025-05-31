@@ -64,12 +64,14 @@ export const usePosts = (userId: string) => {
         try {
             setError(null);
             const response = await postApi.toggleLike(postId);
-
-            setUserPosts(prevPosts => 
-                prevPosts.map(post => 
-                    post._id === postId ? response.data.posts[0] : post
-                )
-            );
+            if (response?.data?.data?.post) {
+                const updatedPost = response.data.data.post;
+                setUserPosts(prevPosts => 
+                    prevPosts.map(post => 
+                        post._id === postId ? updatedPost : post
+                    )
+                );
+            }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to toggle like');
             throw err;

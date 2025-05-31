@@ -13,7 +13,7 @@ interface PhotosSectionProps {
 }
 
 const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
-  const { loading, error, posts, refreshPosts } = usePosts(userId);
+  const { error, posts, refreshPosts } = usePosts(userId);
   const { openCreatePostModal } = useModal();
   const { user } = useAuth();
   const [selectedPost, setSelectedPost] = useState<string | null>(null);

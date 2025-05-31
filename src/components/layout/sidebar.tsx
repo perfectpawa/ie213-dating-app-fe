@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Home, Menu, User, Heart, MessageCircle, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import CreatePostModal from "../Modal/CreatePostModal";
-import { useAuth } from "../../hooks/useAuth";
 
 import { useModal } from "@/contexts/ModalContext";
 

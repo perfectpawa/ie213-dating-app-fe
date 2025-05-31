@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { chatApi, Conversation, ChatMessage } from '../api/chatApi';
 import { useAuth } from './useAuth';
-import { toast } from 'react-hot-toast';
 
 export const useChat = () => {
     const { user } = useAuth();

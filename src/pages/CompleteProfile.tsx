@@ -121,6 +121,7 @@ const CompleteProfile = () => {
       }
     } catch (err) {
       setUsernameError("Không thể kiểm tra tên người dùng");
+      console.error(err);
     }
   }, 500);
 
@@ -205,6 +206,8 @@ const CompleteProfile = () => {
       [name]: value
     }));
     setTouched(prev => ({ ...prev, [name]: true }));
+
+    console.log(touched)
     
     // Validate the field
     const error = validateField(name, value);
@@ -401,7 +404,7 @@ const CompleteProfile = () => {
                       let formatted = value.replace(/\D/g, '');
                       if (formatted.length > 0) {
                         if (formatted.length <= 2) {
-                          formatted = formatted;
+                          // formatted = formatted;
                         } else if (formatted.length <= 4) {
                           formatted = formatted.slice(0, 2) + '/' + formatted.slice(2);
                         } else {

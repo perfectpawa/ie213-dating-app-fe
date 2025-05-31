@@ -16,7 +16,7 @@ const NotificationBell = ({ isOpen, onToggle }: NotificationBellProps) => {
 
   const handleNotificationClick = async (notificationId: string, status: string, postId: string, userId: string) => {
     try {
-      // await markAsRead([notificationId]);
+      await markAsRead([notificationId]);
       console.log(`Notification clicked: ${notificationId}, Status: ${status}, Post ID: ${postId}, User ID: ${userId}`);
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
@@ -48,7 +48,7 @@ const NotificationBell = ({ isOpen, onToggle }: NotificationBellProps) => {
             name: notification.sender.user_name || notification.sender.full_name || 'Anonymous',
             avatar: notification.sender.profile_picture || `https://ui-avatars.com/api/?name=${notification.sender.user_name || notification.sender.full_name}&background=1a3f3e&color=4edcd8`
           },
-          post: notification.post,
+          post: notification.post?._id,
           swipe: notification.swipe,
           match: notification.match,
           type: notification.type,

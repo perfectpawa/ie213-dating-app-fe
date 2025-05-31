@@ -15,7 +15,6 @@ interface LeftSideSettingProps {
 }
 
 const LeftSideSetting: React.FC<LeftSideSettingProps> = ({
-  activeTab,
   setActiveTab,
 }) => {
   return (
