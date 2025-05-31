@@ -20,6 +20,8 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const [postToEdit, setPostToEdit] = useState<string | null>(null);
 
+  //make refreshPosts run after certain actions
+
   const handleLikeToggle = async (postId: string) => {
     try {
       await postApi.toggleLike(postId);

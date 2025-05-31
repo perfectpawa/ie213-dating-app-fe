@@ -12,6 +12,11 @@ export const usePosts = (userId: string) => {
             setLoading(true);
             setError(null);
             const response = await postApi.getUserPosts(userId);
+            
+            if (!response.data || !response.data.data || !response.data.data.posts) {
+                throw new Error('Invalid response structure');
+            }
+
             setUserPosts(response.data.data.posts);
 
             console.log("FECTH POST")
@@ -29,6 +34,10 @@ export const usePosts = (userId: string) => {
             setError(null);
 
             const response = await postApi.createPost(content, image);
+
+            if (!response.data || !response.data.data || !response.data.data.post) {
+                throw new Error('Invalid response structure');
+            }
 
             const post = response.data.data.post;
 
@@ -55,6 +64,7 @@ export const usePosts = (userId: string) => {
         try {
             setError(null);
             const response = await postApi.toggleLike(postId);
+
             setUserPosts(prevPosts => 
                 prevPosts.map(post => 
                     post._id === postId ? response.data.posts[0] : post
