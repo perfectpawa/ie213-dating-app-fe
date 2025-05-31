@@ -65,7 +65,7 @@ export const authApi = {
 
     // Google authentication
     initiateGoogleAuth: () => {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
         window.location.href = `${apiUrl}/api/users/auth/google`;
     },
 
