@@ -5,6 +5,7 @@ import PhotosSection from "../components/profile/PhotosSection";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import InterestsSection from "../components/profile/InterestsSection";
 import { userApi } from "../api/userApi";
+import { interestApi } from "../api/interestApi";
 import { useModal } from "../contexts/ModalContext";
 
 const Profile: React.FC = () => {
@@ -53,6 +54,21 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleUpdateInterests = async (interests: string[]) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await interestApi.updateInterests(interests);
+      if (response.data?.data?.user) {
+        updateUser(response.data.data.user);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update interests');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -71,7 +87,11 @@ const Profile: React.FC = () => {
           loading={loading}
         />
 
-        <InterestsSection userId={user._id} />
+        <InterestsSection 
+          userId={user._id} 
+          isOwnProfile={true}
+          onUpdateInterests={handleUpdateInterests}
+        />
         
         <PhotosSection userId={user._id} />
       </div>

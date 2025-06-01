@@ -1,62 +1,80 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { userApi } from '../../api/userApi';
 import { useAuth } from '@/hooks/useAuth';
+import { Edit2 } from 'lucide-react';
+import { useModal } from '@/contexts/ModalContext';
 
 interface Interest {
+  _id: string;
   name: string;
   highlighted: boolean;
 }
 
 interface InterestsSectionProps {
   userId: string;
+  isOwnProfile?: boolean;
+  onUpdateInterests?: (interestIds: string[]) => Promise<void>;
 }
 
-
-const InterestsSection: React.FC<InterestsSectionProps> = ({ userId }) => {
+const InterestsSection: React.FC<InterestsSectionProps> = ({ 
+  userId, 
+  isOwnProfile = false,
+  onUpdateInterests 
+}) => {
   const [interests, setInterests] = useState<Interest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { openUpdateInterestsModal } = useModal();
 
   const { interests: userInterests } = useAuth();
 
-  useEffect(() => {
-    const fetchInterests = async () => {
-      try {
-        setLoading(true);
-        const response = await userApi.getUserInterests(userId);
+  const fetchInterests = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await userApi.getUserInterests(userId);
 
-        console.log('Fetched interests:', response.data);
+      console.log('Fetched interests:', response.data);
 
-        const data = response.data;
+      const data = response.data;
 
-        if (!data || data.status !== 'success') {
-          throw new Error('Failed to fetch interests');
-        }
-
-        console.log('user:', userInterests);
-        console.log('Interests data:', data.data.interests);
-
-        if (data.status === 'success' && data.data.interests) {
-          const formattedInterests = data.data.interests.map((interest) => ({
-            name: interest.name,
-            highlighted: userInterests?.some((ui) => ui._id === interest._id) || false,
-          }));
-
-          formattedInterests.sort((a, b) => (b.highlighted ? 1 : 0) - (a.highlighted ? 1 : 0));
-
-          setInterests(formattedInterests);
-        }
-        
-      } catch (err) {
-        setError('Failed to load interests');
-        console.error('Error fetching interests:', err);
-      } finally {
-        setLoading(false);
+      if (!data || data.status !== 'success') {
+        throw new Error('Failed to fetch interests');
       }
-    };
 
+      console.log('user:', userInterests);
+      console.log('Interests data:', data.data.interests);
+
+      if (data.status === 'success' && data.data.interests) {
+        const formattedInterests = data.data.interests.map((interest) => ({
+          _id: interest._id,
+          name: interest.name,
+          highlighted: userInterests?.some((ui) => ui._id === interest._id) || false,
+        }));
+
+        formattedInterests.sort((a, b) => (b.highlighted ? 1 : 0) - (a.highlighted ? 1 : 0));
+
+        setInterests(formattedInterests);
+      }
+      
+    } catch (err) {
+      setError('Failed to load interests');
+      console.error('Error fetching interests:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, userInterests]);
+
+  useEffect(() => {
     fetchInterests();
-  }, [userId]);
+  }, [fetchInterests]);
+
+  const handleUpdateInterests = async (interestIds: string[]) => {
+    if (onUpdateInterests) {
+      await onUpdateInterests(interestIds);
+      // Refresh interests after update
+      await fetchInterests();
+    }
+  };
 
   if (loading) {
     return (
@@ -87,9 +105,23 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({ userId }) => {
   return (
     <div className="mt-6 bg-gray-900 rounded-lg shadow-lg overflow-hidden">
       <div className="px-6 py-5">
-        <h2 className="text-xl font-semibold text-white mb-4">
-          Sở thích
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-white">
+            Sở thích
+          </h2>
+          {isOwnProfile && onUpdateInterests && (
+            <button
+              onClick={() => openUpdateInterestsModal(
+                interests.map(i => ({ _id: i._id, name: i.name })),
+                handleUpdateInterests
+              )}
+              className="flex items-center gap-2 px-3 py-1.5 bg-gray-700 text-white rounded-md hover:bg-gray-600 transition-colors"
+            >
+              <Edit2 size={16} />
+              <span className="text-sm">Chỉnh sửa</span>
+            </button>
+          )}
+        </div>
         <div className="flex flex-wrap gap-2 mt-3">
           {interests.map((interest, index) => (
             <span
