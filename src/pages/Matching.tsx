@@ -8,9 +8,11 @@ import SwipeAnimation from "../components/Matching/SwipeAnimation";
 import { useSwipe } from "../hooks/useSwipe";
 import { Match } from "../types/swipe";
 import { Loader2, Heart, Users, Sparkles, RefreshCw } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 const Matching: React.FC = () => {
   const navigate = useNavigate();
+  const { interests: currentUserInterests } = useAuth();
   const {
     currentProfile,
     // Enhanced match data
@@ -69,9 +71,6 @@ const Matching: React.FC = () => {
       {/* Gradient Background */}
       <div className="min-h-screen rounded-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="max-w-7xl mx-auto px-4 py-8 rounded-4xl">
-
-
-
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Main swiping section */}
             <div className="xl:col-span-2">
@@ -114,16 +113,12 @@ const Matching: React.FC = () => {
                       onSwipe={onSwipe}
                       loading={loading}
                       onViewFullProfile={handleViewFullProfile}
+                      currentUserInterests={currentUserInterests || []}
                     />
                   </div>
                 )}
               </div>
             </div>
-
-
-
-
-
 
             {/* Enhanced Matches sidebar */}
             <div className="relative">

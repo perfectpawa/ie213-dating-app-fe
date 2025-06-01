@@ -76,4 +76,11 @@ export const swipeApi = {
             method: 'GET',
         });
     },
+
+    //delete a match
+    deleteMatch: async (matchId: string) => {
+        return apiRequest<{ status: string }>(`/matches/${matchId}`, {
+            method: 'DELETE',
+        });
+    }
 };

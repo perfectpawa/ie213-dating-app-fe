@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User } from "../../types/user";
 import {
   Heart,
@@ -18,15 +18,20 @@ import {
   Search,
   RefreshCw,
   Settings,
+  Mars,
+  Venus,
+  User as UserIcon,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import avatarPlaceholder from "../../assets/avatar_holder.png";
+import { userApi } from "../../api/userApi";
 
 interface UserProfileCardProps {
   profile: User | null;
   onSwipe: (status: "like" | "dislike" | "superlike") => void;
   loading?: boolean;
   onViewFullProfile?: () => void;
+  currentUserInterests?: { _id: string; name: string }[];
 }
 
 // Map interest strings to icons
@@ -44,12 +49,36 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
   onSwipe,
   loading = false,
   onViewFullProfile,
+  currentUserInterests = [],
 }) => {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [swipeAnimation, setSwipeAnimation] = useState<string | null>(null);
+  const [userInterests, setUserInterests] = useState<{ _id: string; name: string }[]>([]);
+  const [loadingInterests, setLoadingInterests] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchInterests = async () => {
+      if (profile?._id) {
+        try {
+          setLoadingInterests(true);
+          const response = await userApi.getUserInterests(profile._id);
+          if (response.data?.data?.interests) {
+            setUserInterests(response.data.data.interests);
+          }
+        } catch (error) {
+          console.error('Error fetching interests:', error);
+        } finally {
+          setLoadingInterests(false);
+        }
+      }
+    };
+
+    fetchInterests();
+  }, [profile?._id]);
+
   // If no profile is available
   if (!profile) {
     return (
@@ -147,83 +176,14 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
     setTouchEnd(null);
   };
 
-  // Parse interests from profile (or use dummy if none available)
-  const userInterests =
-    profile.interests && profile.interests.length > 0
-      ? profile.interests
-      : ["music", "coffee", "travel"];
-
-  // Cập nhật UserProfileCard.tsx để debug onSwipe
-  const handleSwipe = async (action: "like" | "dislike" | "superlike") => {
-    console.log("=== UserProfileCard handleSwipe START ===");
-    console.log("Action:", action);
-    console.log("Profile ID:", profile._id);
-    console.log("onSwipe function:", typeof onSwipe);
-
-    try {
-      if (typeof onSwipe !== "function") {
-        console.error("onSwipe is not a function!");
-        return;
-      }
-
-      console.log("Calling onSwipe...");
-      // Call onSwipe and don't await it
-      onSwipe(action);
-      
-      // Since we can't get the result from onSwipe, we'll have to assume
-      // for now that any 'like' action might result in a match
-      // This would need to be revised based on how the matching logic works
-      const isMatch = action === "like"; // Simplified logic
-      const matchId = profile._id; // Using profile ID as a fallback
-
-      console.log("=== SWIPE HANDLED ===");
-      console.log("Action completed:", action);
-
-      // Nếu là match thành công
-      // Nếu là like action - potentialy a match
-      if (isMatch) {
-        console.log("=== POTENTIAL MATCH DETECTED ===");
-
-        // Lưu thông tin profile ID as fallback
-        const matchIdToSave = matchId;
-        const userIdToSave = profile._id;
-        console.log("Saving to sessionStorage:", {
-          matchId: matchIdToSave,
-          userId: userIdToSave,
-        });
-
-        if (matchIdToSave) {
-          sessionStorage.setItem("activeMatchId", matchIdToSave);
-          sessionStorage.setItem("matchedUserId", userIdToSave);
-          sessionStorage.setItem("DEBUG_matchResult", JSON.stringify(result));
-
-          console.log("SessionStorage after save:", {
-            activeMatchId: sessionStorage.getItem("activeMatchId"),
-            matchedUserId: sessionStorage.getItem("matchedUserId"),
-          });
-
-          console.log("Navigating to:", `/messages/${matchIdToSave}`);
-
-          // Navigate ngay lập tức để test
-          navigate(`/messages/${matchIdToSave}`);
-        } else {
-          console.error("No matchId found in result to save!");
-        }
-      } else {
-        console.log("No match or not a like action:", {
-          isMatch: result?.isMatch,
-          action,
-        });
-      }
-    } catch (error) {
-      console.error("=== ERROR in handleSwipe ===");
-      console.error("Error:", error);
-    }
+  // Add this function to check if an interest matches
+  const isMatchingInterest = (interestId: string) => {
+    return currentUserInterests.some(userInterest => userInterest._id === interestId);
   };
 
   return (
     <div
-      className={`max-w-md mx-auto h-[36rem] overflow-hidden rounded-2xl bg-gray-800 shadow-xl relative ${swipeAnimation}`}
+      className={`max-w-md mx-auto h-[48rem] overflow-hidden rounded-2xl bg-gray-800 shadow-xl relative ${swipeAnimation}`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -281,10 +241,33 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
         <div className="absolute bottom-4 left-4 right-4">
           <div className="flex items-end justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-white">
-                {profile.user_name}
-                {profile.age ? `, ${profile.age}` : ""}
-              </h2>
+              <div className="flex items-baseline gap-3">
+                <h2 className="text-2xl font-bold text-white">
+                  {profile.user_name}
+                </h2>
+                {profile.gender && (
+                <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${
+                  profile.gender === 'male' 
+                    ? 'bg-blue-500/20 text-blue-400' 
+                    : profile.gender === 'female' 
+                    ? 'bg-pink-500/20 text-pink-400' 
+                    : 'bg-purple-500/20 text-purple-400'
+                }`}>
+                  {profile.gender === 'male' ? (
+                    <Mars size={16} />
+                  ) : profile.gender === 'female' ? (
+                    <Venus size={16} />
+                  ) : (
+                    <UserIcon size={16} />
+                  )}
+                  {profile.birthday && (
+                    <span className="text-sm font-medium">
+                      {Math.floor((new Date().getTime() - new Date(profile.birthday).getTime()) / (1000 * 60 * 60 * 24 * 365.25))}
+                    </span>
+                  )}
+                </span>
+              )}
+              </div>
 
               {profile.location && (
                 <div className="flex items-center gap-1 text-gray-200 mt-1">
@@ -333,24 +316,40 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
 
           {/* Interests */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {userInterests.map((interest, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-1 px-2 py-1 bg-gray-700 rounded-full text-xs text-gray-200"
-              >
-                {interestIcons[
-                  interest.toLowerCase() as keyof typeof interestIcons
-                ] || <Globe size={14} />}
-                <span>{interest}</span>
-              </div>
-            ))}
+            {loadingInterests ? (
+              <div className="text-gray-400 text-sm">Loading interests...</div>
+            ) : userInterests.length > 0 ? (
+              [...userInterests]
+                .sort((a, b) => {
+                  const aMatches = isMatchingInterest(a._id);
+                  const bMatches = isMatchingInterest(b._id);
+                  return bMatches ? 1 : aMatches ? -1 : 0;
+                })
+                .map((interest) => (
+                  <div
+                    key={interest._id}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+                      isMatchingInterest(interest._id)
+                        ? 'bg-[#48cbca] text-white'
+                        : 'bg-gray-700 text-gray-200'
+                    }`}
+                  >
+                    {interestIcons[
+                      interest.name.toLowerCase() as keyof typeof interestIcons
+                    ] || <Globe size={14} />}
+                    <span>{interest.name}</span>
+                  </div>
+                ))
+            ) : (
+              <div className="text-gray-400 text-sm">No interests listed</div>
+            )}
           </div>
         </div>
         {/* Swipe buttons - Layout: Left (dislike), Up (like), Right (superlike) */}
         <div className="flex justify-center items-center gap-4 mt-2">
           {/* Left - Dislike */}
           <button
-            onClick={() => handleSwipe("dislike")}
+            onClick={() => onSwipe("dislike")}
             disabled={loading}
             className="bg-gray-700 hover:bg-red-600 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
             aria-label="Không thích"
@@ -361,7 +360,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
           {/* Up - Like */}
           <div className="flex flex-col items-center">
             <button
-              onClick={() => handleSwipe("like")}
+              onClick={() => onSwipe("like")}
               disabled={loading}
               className="bg-gray-700 hover:bg-green-500 text-white p-4 mt-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none mb-2"
               aria-label="Thích"
@@ -375,7 +374,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
 
           {/* Right - Superlike */}
           <button
-            onClick={() => handleSwipe("superlike")}
+            onClick={() => onSwipe("superlike")}
             disabled={loading}
             className="bg-gray-700 hover:bg-blue-500 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
             aria-label="Siêu thích"

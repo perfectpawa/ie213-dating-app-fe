@@ -62,11 +62,11 @@ export const Feed: React.FC = () => {
                     />
                 </div>
             ))}
-            {isLoadingMore && (
+            {/* {isLoadingMore && (
                 <div className="flex justify-center p-4">
                     <LoadingSpinner />
                 </div>
-            )}
+            )} */}
         </div>
     );
 }; 
