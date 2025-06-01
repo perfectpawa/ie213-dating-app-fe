@@ -115,7 +115,8 @@ const Sidebar = () => {
             </button>
             <div className={`overflow-hidden transition-all duration-700 ease-in-out ${isCollapsed ? 'w-0' : 'w-auto'}`}>
               <span className={`text-lg sm:text-xl font-bold text-[#4edcd8] whitespace-nowrap transition-all duration-700 ${isCollapsed ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'}`}>
-                B00
+                <img src="/icon.png" alt="Logo" className="inline-block h-6 w-6 mr-1" />
+                 FAVOR
               </span>
             </div>
           </div>
