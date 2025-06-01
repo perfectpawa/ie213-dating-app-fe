@@ -19,7 +19,7 @@ import {
   RefreshCw,
   Settings,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import avatarPlaceholder from "../../assets/avatar_holder.png";
 
 interface UserProfileCardProps {
@@ -49,6 +49,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [swipeAnimation, setSwipeAnimation] = useState<string | null>(null);
+  const navigate = useNavigate();
   // If no profile is available
   if (!profile) {
     return (
@@ -151,6 +152,74 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
     profile.interests && profile.interests.length > 0
       ? profile.interests
       : ["music", "coffee", "travel"];
+
+  // Cập nhật UserProfileCard.tsx để debug onSwipe
+  const handleSwipe = async (action: "like" | "dislike" | "superlike") => {
+    console.log("=== UserProfileCard handleSwipe START ===");
+    console.log("Action:", action);
+    console.log("Profile ID:", profile._id);
+    console.log("onSwipe function:", typeof onSwipe);
+
+    try {
+      if (typeof onSwipe !== "function") {
+        console.error("onSwipe is not a function!");
+        return;
+      }
+
+      console.log("Calling onSwipe...");
+      // Call onSwipe and don't await it
+      onSwipe(action);
+      
+      // Since we can't get the result from onSwipe, we'll have to assume
+      // for now that any 'like' action might result in a match
+      // This would need to be revised based on how the matching logic works
+      const isMatch = action === "like"; // Simplified logic
+      const matchId = profile._id; // Using profile ID as a fallback
+
+      console.log("=== SWIPE HANDLED ===");
+      console.log("Action completed:", action);
+
+      // Nếu là match thành công
+      // Nếu là like action - potentialy a match
+      if (isMatch) {
+        console.log("=== POTENTIAL MATCH DETECTED ===");
+
+        // Lưu thông tin profile ID as fallback
+        const matchIdToSave = matchId;
+        const userIdToSave = profile._id;
+        console.log("Saving to sessionStorage:", {
+          matchId: matchIdToSave,
+          userId: userIdToSave,
+        });
+
+        if (matchIdToSave) {
+          sessionStorage.setItem("activeMatchId", matchIdToSave);
+          sessionStorage.setItem("matchedUserId", userIdToSave);
+          sessionStorage.setItem("DEBUG_matchResult", JSON.stringify(result));
+
+          console.log("SessionStorage after save:", {
+            activeMatchId: sessionStorage.getItem("activeMatchId"),
+            matchedUserId: sessionStorage.getItem("matchedUserId"),
+          });
+
+          console.log("Navigating to:", `/messages/${matchIdToSave}`);
+
+          // Navigate ngay lập tức để test
+          navigate(`/messages/${matchIdToSave}`);
+        } else {
+          console.error("No matchId found in result to save!");
+        }
+      } else {
+        console.log("No match or not a like action:", {
+          isMatch: result?.isMatch,
+          action,
+        });
+      }
+    } catch (error) {
+      console.error("=== ERROR in handleSwipe ===");
+      console.error("Error:", error);
+    }
+  };
 
   return (
     <div
@@ -281,7 +350,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
         <div className="flex justify-center items-center gap-4 mt-2">
           {/* Left - Dislike */}
           <button
-            onClick={() => onSwipe("dislike")}
+            onClick={() => handleSwipe("dislike")}
             disabled={loading}
             className="bg-gray-700 hover:bg-red-600 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
             aria-label="Không thích"
@@ -292,7 +361,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
           {/* Up - Like */}
           <div className="flex flex-col items-center">
             <button
-              onClick={() => onSwipe("like")}
+              onClick={() => handleSwipe("like")}
               disabled={loading}
               className="bg-gray-700 hover:bg-green-500 text-white p-4 mt-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none mb-2"
               aria-label="Thích"
@@ -304,9 +373,9 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
             </button>
           </div>
 
-          {/* Right - Superlike (Love) */}
+          {/* Right - Superlike */}
           <button
-            onClick={() => onSwipe("superlike")}
+            onClick={() => handleSwipe("superlike")}
             disabled={loading}
             className="bg-gray-700 hover:bg-blue-500 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
             aria-label="Siêu thích"
