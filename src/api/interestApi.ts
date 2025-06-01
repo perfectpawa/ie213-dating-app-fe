@@ -8,10 +8,24 @@ interface InterestsResponse {
   };
 }
 
+interface UpdateInterestsResponse {
+  status: string;
+  data: {
+    user: any;
+  };
+}
+
 export const interestApi = {
   getAll: async () => {
     return apiRequest<InterestsResponse>("/interests", {
       method: "GET",
+    });
+  },
+
+  updateInterests: async (interests: string[]) => {
+    return apiRequest<UpdateInterestsResponse>("/users/update-interests", {
+      method: "POST",
+      data: { interests },
     });
   },
 };
