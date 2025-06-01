@@ -2,6 +2,9 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 const API_BASE_URL =  import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+console.log('ENV:', import.meta.env);
+console.log('API_BASE_URL:', import.meta.env.VITE_API_URL);
+
 interface ApiResponse<T> {
   data?: T;
   error?: Error;
