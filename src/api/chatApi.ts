@@ -133,5 +133,25 @@ export const chatApi = {
       console.error('Error in markAsRead API call:', error);
       throw error;
     }
+  },
+  // Create or get a conversation
+  createOrGetConversation: async (userId: string, otherUserId: string, matchId: string) => {
+    console.log('Creating or getting conversation:', { userId, otherUserId, matchId });
+    
+    const response = await apiRequest<{
+      status: string;
+      data: {
+        conversation: Conversation;
+      };
+    }>('/messages/conversation/create', {
+      method: 'POST',
+      body: JSON.stringify({
+        userId,
+        otherUserId,
+        matchId
+      })
+    });
+    
+    return response;
   }
 };

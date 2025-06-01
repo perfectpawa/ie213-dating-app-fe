@@ -376,22 +376,94 @@ export const useChat = () => {
         };
     }, [fetchConversations, fetchConversationsWithoutResetUnread, selectedConversation]);
     
-    return {
-        conversations,
-        messages,
-        selectedConversation,
-        loading,
-        error,
-        fetchConversations,
-        fetchMessages,        
-        sendMessage,
-        selectConversation,
-        selectConversationByMatchId,
-        setError,
-        refreshCurrentConversation,
-        newMessageAlert,
-        setNewMessageAlert,
-        clearAlert,
-        markMessagesAsRead, // Export the new function
-    };
+    const createNewConversation = useCallback(async (userId: string, matchId: string) => {
+        if (!user) return;
+        
+        try {
+            console.log('Creating new conversation:', { userId, matchId });
+            
+            // Gọi API để tạo conversation mới hoặc lấy conversation hiện có
+            const response = await chatApi.getConversation(user._id, userId);
+            
+            console.log('Create conversation response:', response);
+            
+            if (response.data?.status === 'success') {
+              const messages = response.data.data.messages || [];
+              
+              // Fetch user info để có thông tin đầy đủ
+              let userInfo = {
+                _id: userId,
+                user_name: 'New Match',
+                profile_picture: null
+              };
+              
+              // Try to get user info from existing conversations or from messages
+              if (messages.length > 0) {
+                const sampleMessage = messages[0];
+                if (sampleMessage.sender === userId) {
+                  // Get sender info
+                  userInfo = {
+                    _id: userId,
+                    user_name: sampleMessage.senderInfo?.user_name || sampleMessage.senderInfo?.username || 'New Match',
+                    profile_picture: sampleMessage.senderInfo?.profile_picture || null
+                  };
+                }
+              }
+              
+              const newConversation: Conversation = {
+                matchId: matchId,
+                user: userInfo,
+                lastMessage: messages.length > 0 ? messages[messages.length - 1] : null,
+                unreadCount: 0,
+                matchDate: new Date().toISOString()
+              };
+              
+              // Thêm vào danh sách conversations nếu chưa có
+              setConversations(prev => {
+                const exists = prev.find(conv => conv.user._id === userId);
+                if (exists) {
+                  console.log('Conversation already exists, selecting existing one');
+                  return prev;
+                }
+                console.log('Adding new conversation to list');
+                return [newConversation, ...prev];
+              });
+              
+              // Chọn conversation mới
+              console.log('Selecting new conversation');
+              setSelectedConversation(newConversation);
+              setMessages(messages);
+              
+              // Clear sessionStorage
+              sessionStorage.removeItem('activeMatchId');
+              sessionStorage.removeItem('matchedUserId');
+              
+              console.log('New conversation created and selected successfully');
+              return true;
+            }
+        } catch (error) {
+            console.error('Error creating conversation:', error);
+            return false;
+        }
+    }, [user, setMessages, setSelectedConversation, setConversations]);
+
+  return {
+    conversations,
+    messages,
+    selectedConversation,
+    loading,
+    error,
+    fetchConversations,
+    fetchMessages,        
+    sendMessage,
+    selectConversation,
+    selectConversationByMatchId,
+    setError,
+    refreshCurrentConversation,
+    newMessageAlert,
+    setNewMessageAlert,
+    clearAlert,
+    markMessagesAsRead, // Export the new function
+    createNewConversation,
+  };
 };
