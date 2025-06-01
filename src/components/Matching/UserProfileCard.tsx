@@ -183,7 +183,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
 
   return (
     <div
-      className={`max-w-md mx-auto h-[48rem] overflow-hidden rounded-2xl bg-gray-800 shadow-xl relative ${swipeAnimation}`}
+      className={`max-w-md mx-auto overflow-hidden rounded-2xl bg-gray-800 shadow-xl relative ${swipeAnimation}`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
