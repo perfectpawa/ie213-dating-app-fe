@@ -38,7 +38,7 @@ const Navbar = () => {
       }
 
       if (status === 'match') {
-        navigate(`/chat/${userId}`);
+        navigate(`/messages/${userId}`);
       }
 
     } catch (error) {
