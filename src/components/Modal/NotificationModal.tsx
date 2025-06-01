@@ -45,13 +45,13 @@ const NotificationModal: React.FC<NotificationProps> = ({
   const getNotificationText = (type: NotificationModal['type']) => {
     switch (type) {
       case 'like':
-        return 'liked your post';
+        return 'đã thích ảnh của bạn';
       case 'message':
         return 'sent you a message';
       case 'swipe':
-        return 'swiped on your profile';
+        return 'muốn kết nối với bạn';
       case 'match':
-        return 'matched with you';
+        return 'đã kết nối với bạn';
       default:
         return 'interacted with you';
     }

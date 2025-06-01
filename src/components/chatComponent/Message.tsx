@@ -27,14 +27,14 @@ export default function Message({ isMyMessage, text, time, edited, senderName, s
             )}
             <div
                 className={`px-4 py-2 rounded-lg max-w-xs text-sm shadow ${
-                    isMyMessage ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+                    isMyMessage ? "bg-blue-500/90 text-white" : "bg-gray-700/90 text-white"
                 }`}
             >
                 {/* {!isMyMessage && senderName && (
                     <p className="font-semibold text-xs mb-1">{senderName}</p>
                 )} */}
                 <p className="text-left">{text}</p>
-                <div className="text-left text-xs text-gray-500 flex justify-between">
+                <div className="text-left text-xs text-gray-300 flex justify-between">
                     <span>{time}</span>
                     {edited && <span className="italic">Edited</span>}
                 </div>

@@ -4,6 +4,8 @@ import { Post } from '../types/post';
 import { PostCard } from './PostCard';
 import LoadingSpinner from './LoadingSpinner';
 
+import { useAuth } from '../hooks/useAuth';
+
 export const Feed: React.FC = () => {
     const { 
         posts, 
@@ -13,7 +15,10 @@ export const Feed: React.FC = () => {
         hasMore,
         toggleLike, 
         loadMore 
+
     } = useFeed();
+
+    const { user } = useAuth();
 
     const observer = useRef<IntersectionObserver | undefined>(undefined);
     const lastPostElementRef = useCallback((node: HTMLDivElement | null) => {
@@ -29,7 +34,8 @@ export const Feed: React.FC = () => {
         if (node) observer.current.observe(node);
     }, [loading, isLoadingMore, hasMore, loadMore]);
 
-    if (loading) {
+    // Show loading spinner if either posts are loading or user data is not yet available
+    if (loading || !user) {
         return <LoadingSpinner />;
     }
 
@@ -59,14 +65,15 @@ export const Feed: React.FC = () => {
                     <PostCard
                         post={post}
                         onLikeToggle={toggleLike}
+                        isLiked={post.likes.includes(user._id)}
                     />
                 </div>
             ))}
-            {/* {isLoadingMore && (
+            {isLoadingMore && (
                 <div className="flex justify-center p-4">
                     <LoadingSpinner />
                 </div>
-            )} */}
+            )}
         </div>
     );
 }; 

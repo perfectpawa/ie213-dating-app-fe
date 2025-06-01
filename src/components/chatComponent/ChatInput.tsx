@@ -36,18 +36,19 @@ export default function ChatInput({
   };
 
   return (
-    <div className="p-4 text-black border-t bg-white flex">
+    <div className="p-4 text-white border-t flex">
       <Input
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyPress={handleKeyPress}
         placeholder="Nhập tin nhắn..."
-        className="flex-1 mr-2"
+        className="flex-1 mr-2 text-white placeholder-gray-400"
         disabled={disabled || sending}
       />
       <Button
         onClick={handleSend}
         disabled={disabled || sending || !input.trim()}
+        className="text-white"
       >
         {sending ? "Đang gửi..." : "Gửi"}
       </Button>

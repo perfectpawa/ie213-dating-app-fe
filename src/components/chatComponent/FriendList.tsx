@@ -26,9 +26,9 @@ export default function FriendList({
 
   if (conversations.length === 0) {
     return (
-      <div className="flex flex-col h-full bg-white">
+      <div className="flex flex-col h-full">
         <div className="flex items-center justify-center h-full">
-          <div className="text-center text-gray-500">
+          <div className="text-center text-white">
             <p>Chưa có cuộc trò chuyện nào</p>
             <p className="text-sm mt-2">
               Hãy ghép đôi với ai đó để bắt đầu trò chuyện!
@@ -40,9 +40,9 @@ export default function FriendList({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full">
       <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold text-black">Tin nhắn</h2>
+        <h2 className="text-lg font-semibold text-white">Tin nhắn</h2>
       </div>      
       <ul className="flex-1 overflow-y-auto">
         {conversations.map((conversation) => {
@@ -88,8 +88,8 @@ export default function FriendList({
                 // Không làm thay đổi trực tiếp đối tượng conversation, useChat hook sẽ xử lý việc này
                 onSelectConversation(conversation);
               }}
-              className={`flex items-center justify-between p-4 cursor-pointer text-black hover:bg-gray-200 border-b transition-colors ${
-                isSelected ? "bg-blue-50 border-blue-200" : ""
+              className={`flex items-center justify-between p-4 cursor-pointer text-white hover:bg-gray-200/20 border-b transition-colors ${
+                isSelected ? "bg-blue-50/20 border-blue-200/20" : ""
               }`}
             >
               <div className="flex items-center">
@@ -114,7 +114,7 @@ export default function FriendList({
                   )}
                 </div>                  <div className="ml-3 flex-1 min-w-0">
                     <div className="flex items-center">
-                      <p className="font-medium text-left truncate">
+                      <p className="font-medium text-left truncate text-white">
                         {displayName}
                       </p>
                       {conversation.unreadCount > 0 && (
@@ -126,12 +126,12 @@ export default function FriendList({
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 text-left truncate">
+                    <p className="text-sm text-gray-300 text-left truncate">
                       {lastMessageText}
                     </p>
                   </div>
               </div>
-              <div className="text-xs text-gray-500 ml-2">{timestamp}</div>
+              <div className="text-xs text-gray-300 ml-2">{timestamp}</div>
             </li>
           );
         })}

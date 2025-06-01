@@ -224,42 +224,41 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   {user.full_name}
                 </span>
               </div>
-              {!isOwnProfile && (
-                relationshipStatus === 'no_relevant' ? (
+              <div className="flex items-center gap-2">
+                {isOwnProfile && onEditClick && (
                   <button
-                    onClick={() => handleSwipe('like')}
-                    disabled={swipeLoading}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90 transition-colors disabled:opacity-50"
+                    onClick={onEditClick}
+                    className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
                   >
-                    <ThumbsUp size={16} />
-                    <span className="text-sm font-medium">Thích</span>
+                    <Pencil size={16} />
+                    <span>Chỉnh sửa</span>
                   </button>
-                ) : relationshipStatus === 'wait_for_your_swipe' ? (
-                  <button
-                    onClick={() => handleSwipe('like')}
-                    disabled={swipeLoading}
-                    // className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors disabled:opacity-50"
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500 text-blue-100 hover:bg-blue-500/30 transition-colors"
-
-                  >
-                    <AlertCircle size={16} />
-                    <span className="text-sm font-medium">Swipe ngay</span>
-                  </button>
-                ) : (
-                  getRelationshipStatusDisplay()
-                )
-              )}
+                )}
+                {!isOwnProfile && (
+                  relationshipStatus === 'no_relevant' ? (
+                    <button
+                      onClick={() => handleSwipe('like')}
+                      disabled={swipeLoading}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90 transition-colors disabled:opacity-50"
+                    >
+                      <ThumbsUp size={16} />
+                      <span className="text-sm font-medium">Thích</span>
+                    </button>
+                  ) : relationshipStatus === 'wait_for_your_swipe' ? (
+                    <button
+                      onClick={() => handleSwipe('like')}
+                      disabled={swipeLoading}
+                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500 text-blue-100 hover:bg-blue-500/30 transition-colors"
+                    >
+                      <AlertCircle size={16} />
+                      <span className="text-sm font-medium">Swipe ngay</span>
+                    </button>
+                  ) : (
+                    getRelationshipStatusDisplay()
+                  )
+                )}
+              </div>
             </div>
-
-            {isOwnProfile && onEditClick && (
-              <button
-                onClick={onEditClick}
-                className="mt-2 px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
-              >
-                <Pencil size={16} />
-                <span>Chỉnh sửa</span>
-              </button>
-            )}
 
             {/* Gender and Age */}
             <div className="flex items-center gap-2 text-gray-300 mt-2">

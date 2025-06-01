@@ -10,10 +10,11 @@ interface PostCardProps {
     post: Post;
     onLikeToggle: (postId: string) => Promise<void>;
     onRefresh?: () => Promise<void>;
+    isLiked: boolean;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefresh }) => {
-    const { user } = useAuth();
+export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefresh, isLiked }) => {
+    // const { user } = useAuth();
     const { navigateToProfile } = useProfile();
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -21,7 +22,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
         await onLikeToggle(post._id);
     };
 
-    const isLiked = user ? post.likes.includes(user._id) : false;
+    // const isLiked = user ? post.likes.includes(user._id) : false;
 
     return (
         <>

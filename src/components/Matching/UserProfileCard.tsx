@@ -189,7 +189,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
       onTouchEnd={handleTouchEnd}
     >
       {/* Main image with carousel navigation */}
-      <div className="h-4/6 relative">
+      <div className="aspect-square relative">
         <img
           src={photos[currentPhotoIndex]}
           alt={`${profile.user_name}'s profile`}

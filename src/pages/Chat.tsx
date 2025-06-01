@@ -292,7 +292,7 @@ export default function Chat() {
               loading={loading}
             />
           ) : (
-            <div className="h-full flex items-center justify-center bg-gray-50">
+            <div className="h-full flex items-center justify-center">
               <div className="text-center text-gray-500">
                 <p className="text-lg">Chọn một cuộc trò chuyện để bắt đầu</p>
               </div>
