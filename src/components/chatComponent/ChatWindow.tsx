@@ -4,6 +4,7 @@ import ChatInput from "./ChatInput";
 import Message from "./Message";
 import { formatDate } from "../../utils/date";
 import { useAuth } from "../../hooks/useAuth";
+import { useProfile } from "../../hooks/useProfile";
 import avatarHolder from "../../assets/avatar_holder.png";
 
 interface ChatWindowProps {
@@ -20,6 +21,7 @@ export default function ChatWindow({
   loading,
 }: ChatWindowProps) {
   const { user } = useAuth();
+  const { navigateToProfile } = useProfile();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [sending, setSending] = useState(false);
 
@@ -57,7 +59,10 @@ export default function ChatWindow({
       <div className="p-4 border-b border-gray-700/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-gray-700/50 mr-3 flex items-center justify-center">
+            <div 
+              className="w-10 h-10 rounded-full bg-gray-700/50 mr-3 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigateToProfile(conversation.user._id)}
+            >
               {/* Get profile picture with complete fallbacks */}
               {(() => {
                 const profilePicture =
@@ -70,7 +75,7 @@ export default function ChatWindow({
                   <img
                     src={profilePicture}
                     alt={conversation.user.username}
-                    className="w-full h-full  rounded-full object-cover"
+                    className="w-full h-full rounded-full object-cover"
                     onError={(e) => {
                       const img = e.target as HTMLImageElement;
                       img.src = avatarHolder; // Fallback to default avatar
@@ -91,7 +96,10 @@ export default function ChatWindow({
                 );
               })()}
             </div>
-            <div>
+            <div 
+              className="cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => navigateToProfile(conversation.user._id)}
+            >
               <h3 className="font-semibold text-left text-white">
                 {/* Get the user information with full proper fallbacks */}
                 {conversation.user.full_name ||
@@ -105,12 +113,12 @@ export default function ChatWindow({
             </div>
           </div>          {/* Loading/Status indicators for real-time updates */}
           <div className="flex flex-col items-end">
-            {loading && (
+            {/* {loading && (
               <div className="flex items-center text-sm text-blue-300 mb-1">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-300 mr-2"></div>
                 Đang cập nhật...
               </div>
-            )}
+            )} */}
             {conversation.unreadCount === 0 && (
               <div className="flex items-center text-sm text-[#4edcd8] mb-1">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,9 +127,9 @@ export default function ChatWindow({
                 Đã đọc
               </div>
             )}
-            <div className="text-xs text-gray-300">
+            {/* <div className="text-xs text-gray-300">
               💬 Tự động cập nhật khi có tin nhắn mới
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

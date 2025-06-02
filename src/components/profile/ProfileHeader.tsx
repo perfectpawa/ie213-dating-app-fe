@@ -111,12 +111,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       },
       'wait_for_their_swipe': {
         icon: <Clock size={16} className="text-yellow-500" />,
-        text: 'Đang chờ họ swipe',
+        text: 'Hãy đợi họ đồng ý kết nối với bạn',
         className: 'bg-yellow-500/20 text-yellow-400'
       },
       'wait_for_your_swipe': {
         icon: <AlertCircle size={16} className="text-blue-500" />,
-        text: 'Đang chờ bạn swipe',
+        text: 'Đang đợi lời đồny ý của bạn. Kết nối với họ ngay',
         className: 'bg-blue-500/20 text-blue-400'
       },
       'no_relevant': {
@@ -145,7 +145,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
             >
               <X size={16} />
-              <span className="text-sm font-medium">Unmatch</span>
+              <span className="text-sm font-medium">Mất kết nối</span>
             </button>
           </>
         )}
@@ -242,7 +242,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90 transition-colors disabled:opacity-50"
                     >
                       <ThumbsUp size={16} />
-                      <span className="text-sm font-medium">Thích</span>
+                      <span className="text-sm font-medium">Kết nối ngay</span>
                     </button>
                   ) : relationshipStatus === 'wait_for_your_swipe' ? (
                     <button
@@ -251,7 +251,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500 text-blue-100 hover:bg-blue-500/30 transition-colors"
                     >
                       <AlertCircle size={16} />
-                      <span className="text-sm font-medium">Swipe ngay</span>
+                      <span className="text-sm font-medium">Đang đợi lời đồny ý của bạn. Kết nối với họ ngay</span>
                     </button>
                   ) : (
                     getRelationshipStatusDisplay()

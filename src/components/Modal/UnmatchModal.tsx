@@ -20,7 +20,7 @@ const UnmatchModal: React.FC<UnmatchModalProps> = ({
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
       <div className="bg-gray-800 rounded-xl max-w-md w-full p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-white">Unmatch</h2>
+          <h2 className="text-xl font-semibold text-white">Mất kết nối với {userName}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -30,7 +30,8 @@ const UnmatchModal: React.FC<UnmatchModalProps> = ({
         </div>
         
         <p className="text-gray-300 mb-6">
-          Are you sure you want to unmatch with {userName}? This action cannot be undone and you will no longer be able to chat with them.
+          Bạn có chắc chắn muốn mất kết nối với {userName} không?
+          Hành động này không thể hoàn tác. Hai bạn sẽ không còn nhắn tin được với nhau và mối quan hệ sẽ trở lại người lạ.
         </p>
 
         <div className="flex justify-end gap-3">
@@ -38,13 +39,13 @@ const UnmatchModal: React.FC<UnmatchModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
           >
-            Cancel
+            Không, tôi đã nghĩ lại
           </button>
           <button
             onClick={onConfirm}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
           >
-            Unmatch
+            Có, chấm dứt kết nối
           </button>
         </div>
       </div>

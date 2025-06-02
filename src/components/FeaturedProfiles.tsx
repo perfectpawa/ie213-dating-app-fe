@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { userApi } from '../api/userApi';
+import { interestApi } from '../api/interestApi';
 import { User } from '../types/user';
+import { Interest } from '../types/interest';
 import {Link} from "react-router-dom";
-
 
 interface ProfileCardProps {
   user: User;
+  interestMap: Map<string, string>;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ user }) => {
-
+const ProfileCard: React.FC<ProfileCardProps> = ({ user, interestMap }) => {
   return (
     <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-105 hover:shadow-xl">
       <div className="aspect-[3/4] bg-gray-700 relative">
@@ -25,13 +26,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ user }) => {
         </div>
       </div>
       <div className="p-2">
-        {/*<div className="flex flex-wrap gap-1 mb-1">*/}
-        {/*  {tags.slice(index, index + 1).map((tag, i) => (*/}
-        {/*    <span key={i} className="px-1.5 py-0.5 bg-[#1a3f3e] text-[#4edcd8] rounded-full text-xs font-medium">*/}
-        {/*      {tag}*/}
-        {/*    </span>*/}
-        {/*  ))}*/}
-        {/*</div>*/}
+        <div className="flex flex-wrap gap-1 mb-1">
+          {user.interests?.slice(0, 2).map((interestId, i) => (
+            <span key={i} className="px-1.5 py-0.5 bg-[#1a3f3e] text-[#4edcd8] rounded-full text-xs font-medium">
+              {interestMap.get(interestId) || 'Loading...'}
+            </span>
+          ))}
+        </div>
         <Link to={`/profile/${user._id}`}>
           <div className="w-full px-2 py-1.5 bg-[#4edcd8] text-white rounded-lg text-xs font-medium hover:bg-[#3bc0bd] transition-colors duration-300">
             Xem Hồ Sơ
@@ -52,33 +53,41 @@ const LoadingSpinner: React.FC = () => (
 export const FeaturedProfiles: React.FC = () => {
   const [recommendedUsers, setRecommendedUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [interestMap, setInterestMap] = useState<Map<string, string>>(new Map());
 
   useEffect(() => {
-    const fetchRecommendedUsers = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch interests first
+        const interestsResponse = await interestApi.getAll();
+        if (interestsResponse.data?.status === 'success') {
+          const interests = interestsResponse.data.data.interests;
+          const newInterestMap = new Map(interests.map(interest => [interest._id, interest.name]));
+          setInterestMap(newInterestMap);
+        }
+
+        // Then fetch users
         const { data } = await userApi.getOtherUsers();
-
-        console.log(data);
-
         if (data?.status === 'success') {
-          setRecommendedUsers(data.data.users);
+          const shuffled = [...data.data.users].sort(() => 0.5 - Math.random());
+          const selected = shuffled.slice(0, 6);
+          setRecommendedUsers(selected);
         } else {
           setError('Không thể tải người dùng nổi bật');
         }
       } catch (error) {
-        console.error('Error fetching recommended users:', error);
+        console.error('Error fetching data:', error);
+        setError('Có lỗi xảy ra khi tải dữ liệu');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRecommendedUsers().catch(
-        (error) => console.error('Error in useEffect:', error)
+    fetchData().catch(
+      (error) => console.error('Error in useEffect:', error)
     );
   }, []);
-
-
 
   return (
     <section className="col-span-1">
@@ -95,7 +104,7 @@ export const FeaturedProfiles: React.FC = () => {
           <div className="col-span-2 text-red-500 text-center p-4">{error}</div>
         ) : (
           recommendedUsers.map((user, index) => (
-            <ProfileCard key={index} user={user} />
+            <ProfileCard key={index} user={user} interestMap={interestMap} />
           ))
         )}
       </div>
