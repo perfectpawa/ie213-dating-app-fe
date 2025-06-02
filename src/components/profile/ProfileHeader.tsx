@@ -165,16 +165,24 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   return (
     <>
       <div className="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
-        {/* Cover Photo */}
-        <div className="h-48 bg-gradient-to-r from-pink-500 to-purple-500 relative">
-          <img
-            src={user.cover_picture || "https://static1.srcdn.com/wordpress/wp-content/uploads/2023/04/ada-wong-resident-evil-4-helicopter.jpg"}
-            alt="Cover Photo"
-            className="w-full h-full object-cover"
-          />
+        {/* Cover Photo with better gradient */}
+        <div className="h-56 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 relative">
+          {!user.cover_picture ? (
+            <div className="w-full h-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500"></div>
+          ) : (
+            <div className="relative w-full h-full">
+              <img
+                src={user.cover_picture}
+                alt="Cover Photo"
+                className="w-full h-full object-cover"
+              />
+              {/* Overlay gradient for better text visibility */}
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 to-transparent"></div>
+            </div>
+          )}
           {isOwnProfile && onCoverPictureChange && (
             <button
-              className="absolute top-4 right-4 bg-white text-gray-800 rounded-full p-1.25 flex items-center justify-center shadow-md opacity-60 cursor-pointer hover:bg-gray-300"
+              className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white rounded-full p-2 flex items-center justify-center shadow-md hover:bg-white/30 transition-all"
               onClick={() => coverInputRef.current?.click()}
               disabled={loading}
             >
@@ -191,16 +199,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
 
         <div className="px-6 py-8 relative">
-          {/* Avatar */}
-          <div className="absolute -top-16 left-6">
-            <img
-              src={user.profile_picture || avatarPlaceholder}
-              alt={`${user.user_name}'s avatar`}
-              className="w-32 h-32 rounded-full border-4 border-gray-800 object-cover"
-            />
+          {/* Avatar with improved styling */}
+          <div className="absolute -top-20 left-6">
+            <div className="w-36 h-36 rounded-full border-4 border-gray-800 overflow-hidden shadow-lg">
+              <img
+                src={user.profile_picture || avatarPlaceholder}
+                alt={`${user.user_name}'s avatar`}
+                className="w-full h-full object-cover"
+              />
+            </div>
             {isOwnProfile && onProfilePictureChange && (
               <span 
-                className="absolute bottom-0 right-0 p-1.5 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700" 
+                className="absolute bottom-1 right-1 p-2 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700 transition-all shadow-md"
                 onClick={() => avatarInputRef.current?.click()}
               >
                 <Camera size={18} className="text-white" />
@@ -215,20 +225,51 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             )}
           </div>
 
-          {/* Profile Details */}
-          <div className="mt-12">
-            <div className="flex items-center justify-between">
-              <div className="flex items-baseline gap-3">
-                <h1 className="text-3xl font-bold text-white">{user.user_name}</h1>
-                <span className="text-gray-400">
-                  {user.full_name}
-                </span>
+          {/* Profile Details with improved layout */}
+          <div className="mt-16">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div className="flex items-baseline flex-wrap gap-3">
+                  <h1 className="text-3xl font-bold text-white">{user.user_name}</h1>
+                  {/* Better styled user full name */}
+                  <span className="text-lg text-gray-400 font-light">
+                    {user.full_name}
+                  </span>
+                </div>
+
+                {/* Gender and Age with improved badges */}
+                <div className="flex items-center gap-2 text-gray-300 mt-3">
+                  {user.gender && (
+                    <span className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
+                      user.gender === 'male' 
+                        ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' 
+                        : user.gender === 'female' 
+                        ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' 
+                        : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                    }`}>
+                      {user.gender === 'male' ? (
+                        <Mars size={16} />
+                      ) : user.gender === 'female' ? (
+                        <Venus size={16} />
+                      ) : (
+                        <UserIcon size={16} />
+                      )}
+                      {user.birthday && (
+                        <span className="text-sm font-medium">
+                          {Math.floor((new Date().getTime() - new Date(user.birthday).getTime()) / (1000 * 60 * 60 * 24 * 365.25))}
+                        </span>
+                      )}
+                    </span>
+                  )}
+                </div>
               </div>
+
+              {/* Action buttons with better styling */}
               <div className="flex items-center gap-2">
                 {isOwnProfile && onEditClick && (
                   <button
                     onClick={onEditClick}
-                    className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center gap-2"
+                    className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600 flex items-center gap-2 transition-all shadow-sm hover:shadow-md"
                   >
                     <Pencil size={16} />
                     <span>Chỉnh sửa</span>
@@ -239,7 +280,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     <button
                       onClick={() => handleSwipe('like')}
                       disabled={swipeLoading}
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:opacity-90 transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
                     >
                       <ThumbsUp size={16} />
                       <span className="text-sm font-medium">Kết nối ngay</span>
@@ -248,10 +289,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     <button
                       onClick={() => handleSwipe('like')}
                       disabled={swipeLoading}
-                      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500 text-blue-100 hover:bg-blue-500/30 transition-colors"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-blue-500 text-blue-100 hover:bg-blue-600 transition-all shadow-sm hover:shadow-md"
                     >
                       <AlertCircle size={16} />
-                      <span className="text-sm font-medium">Đang đợi lời đồny ý của bạn. Kết nối với họ ngay</span>
+                      <span className="text-sm font-medium">Đồng ý kết nối</span>
                     </button>
                   ) : (
                     getRelationshipStatusDisplay()
@@ -260,39 +301,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               </div>
             </div>
 
-            {/* Gender and Age */}
-            <div className="flex items-center gap-2 text-gray-300 mt-2">
-              {user.gender && (
-                <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${
-                  user.gender === 'male' 
-                    ? 'bg-blue-500/20 text-blue-400' 
-                    : user.gender === 'female' 
-                    ? 'bg-pink-500/20 text-pink-400' 
-                    : 'bg-purple-500/20 text-purple-400'
-                }`}>
-                  {user.gender === 'male' ? (
-                    <Mars size={16} />
-                  ) : user.gender === 'female' ? (
-                    <Venus size={16} />
-                  ) : (
-                    <UserIcon size={16} />
-                  )}
-                  {user.birthday && (
-                    <span className="text-sm font-medium">
-                      {Math.floor((new Date().getTime() - new Date(user.birthday).getTime()) / (1000 * 60 * 60 * 24 * 365.25))}
-                    </span>
-                  )}
-                </span>
-              )}
+            {/* Bio with improved styling */}
+            <div className="mt-6 bg-gray-700/30 p-4 rounded-lg">
+              <p className="text-white leading-relaxed">{user.bio || "Chưa có thông tin giới thiệu."}</p>
             </div>
 
-            {/* Bio */}
-            <div className="mt-3.5">
-              <p className="flex flex-row mt-8 text-white">{user.bio}</p>
-            </div>
-
-            {/* Additional Info */}
-            <div className="mt-6 flex flex-col gap-4">
+            {/* Additional Info section */}
+            <div className="mt-4 flex flex-col gap-4">
+              {/* Có thể thêm thông tin khác ở đây */}
             </div>
           </div>
         </div>
@@ -317,4 +333,4 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   );
 };
 
-export default ProfileHeader; 
+export default ProfileHeader;

@@ -309,9 +309,15 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
           </div>
 
           {profile.bio && (
-            <p className="text-gray-200 mb-3 text-sm line-clamp-2">
-              {profile.bio}
-            </p>
+            <div className="mb-6">
+              <div className="relative">
+                <div className="absolute left-0 top-0 text-[#48cbca] text-xl font-serif">"</div>
+                <p className="text-gray-200 text-sm pl-4 pr-4 py-1 line-clamp-2 bg-gray-700/30 rounded-lg">
+                  {profile.bio}
+                </p>
+                <div className="absolute right-0 bottom-0 text-[#48cbca] text-xl font-serif">"</div>
+              </div>
+            </div>
           )}
 
           {/* Interests */}
@@ -351,7 +357,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
           <button
             onClick={() => onSwipe("dislike")}
             disabled={loading}
-            className="bg-gray-700 hover:bg-red-600 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
+            className="group bg-gray-700 hover:bg-red-600 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
             aria-label="Không thích"
           >
             <X size={24} className="text-red-500 group-hover:text-white" />
@@ -362,7 +368,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
             <button
               onClick={() => onSwipe("like")}
               disabled={loading}
-              className="bg-gray-700 hover:bg-green-500 text-white p-4 mt-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none mb-2"
+              className="group bg-gray-700 hover:bg-green-500 text-white p-4 mt-2 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none mb-2"
               aria-label="Thích"
             >
               <Heart
@@ -376,7 +382,7 @@ const UserProfileCard: React.FC<UserProfileCardProps> = ({
           <button
             onClick={() => onSwipe("superlike")}
             disabled={loading}
-            className="bg-gray-700 hover:bg-blue-500 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
+            className="group bg-gray-700 hover:bg-blue-500 text-white p-4 rounded-full shadow-lg transition-all hover:scale-110 disabled:opacity-50 disabled:pointer-events-none"
             aria-label="Siêu thích"
           >
             <Star size={24} className="text-blue-500 group-hover:text-white" />

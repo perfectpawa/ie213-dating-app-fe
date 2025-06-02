@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Home, Menu, User, Heart, MessageCircle, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -46,23 +46,8 @@ const Footer: React.FC<FooterProps> = ({ isCollapsed }) => (
     <div className={`transition-all duration-700 ease-in-out transform ${isCollapsed ? '-translate-x-4 opacity-0' : 'translate-x-0 opacity-100'}`}>
       {/* App Store Links */}
       <div className="flex gap-2 mb-4 justify-center">
-        <a href="#" className="bg-gray-800 rounded-full p-2 w-10 h-10 flex items-center justify-center">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className="text-white"
-          >
-            <path d="M9 7V2.13a4 4 0 0 1 0 7.75"/>
-            <path d="M17 17v4.87a4 4 0 0 1 0-7.75"/>
-            <path d="M12.85 17.15a5 5 0 0 0 .17-7.32 1 1 0 0 0-1.41-.12 4 4 0 0 0 0 5.66 1 1 0 0 0 1.24-.22z"/>
-          </svg>
+        <a href="https://github.com/perfectpawa/ie213-dating-app-fe" target="_blank" rel="noopener noreferrer" className="bg-gray-800 rounded-full p-2 w-10 h-10 flex items-center justify-center">
+          <img src="https://images.icon-icons.com/2351/PNG/512/logo_github_icon_143196.png" alt="Github" className="w-full h-full white object-cover" />
         </a>
       </div>
       
@@ -88,7 +73,21 @@ const Footer: React.FC<FooterProps> = ({ isCollapsed }) => (
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { openCreatePostModal } = useModal();
+  // Thêm state để kiểm soát hiển thị sidebar trên mobile
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // UseEffect để tự động collapse sidebar trên màn hình nhỏ
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsCollapsed(true);
+      }
+    };
+    
+    handleResize(); // Kiểm tra lúc init
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const navigationItems = [
     { to: "/", icon: <Home size={20} />, label: "Trang chủ" },
@@ -101,14 +100,27 @@ const Sidebar = () => {
       onClick: () => openCreatePostModal()
     },
   ];
-    return (
+
+  return (
     <>
-      <aside className={`relative bg-gray-900 shadow-md h-screen transition-all duration-300 z-20 ${isCollapsed ? 'w-16' : 'w-48 sm:w-56 md:w-64'}`}>
+      {/* Overlay for mobile menu */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-10 md:hidden" 
+          onClick={() => setIsMobileMenuOpen(false)}
+        ></div>
+      )}
+      
+      <aside 
+        className={`fixed md:relative bg-gray-900 shadow-md h-screen transition-all duration-300 z-20
+          ${isCollapsed ? 'w-16' : 'w-48 sm:w-56 md:w-64'}
+          ${isMobileMenuOpen ? 'left-0' : '-left-full md:left-0'}`}
+      >
         <div className="p-3 sm:p-4 h-full flex flex-col">
           {/* Logo */}
           <div className="flex items-center gap-2 mb-6 ml-0.5">
             <button 
-              className="-right-3 top-12 bg-gray-800 rounded-full p-1 z-10"
+              className="bg-gray-800 rounded-full p-1 z-10"
               onClick={() => setIsCollapsed(!isCollapsed)}
             >
               <Menu size={24} className="cursor-pointer text-gray-300 hover:text-[#4edcd8]" />
@@ -141,6 +153,14 @@ const Sidebar = () => {
           <Footer isCollapsed={isCollapsed} />
         </div>
       </aside>
+      
+      {/* Mobile menu toggle button - hiển thị ở navbar trên mobile */}
+      <button
+        className="fixed top-4 left-4 z-30 md:hidden bg-gray-800 rounded-full p-2"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        <Menu size={24} className="text-gray-300" />
+      </button>
     </>
   );
 };

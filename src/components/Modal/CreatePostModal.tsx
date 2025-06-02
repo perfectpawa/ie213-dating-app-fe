@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Image as ImageIcon, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { X, Image as ImageIcon, Loader2, ArrowLeft, ArrowRight, PlusCircle } from 'lucide-react';
 import ReactCrop, { Crop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -177,40 +177,43 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-            <div className="bg-gray-900 rounded-lg w-full max-w-lg mx-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+            <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-700/50">
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-gray-800">
+                <div className="bg-gray-800 flex items-center justify-between p-5 border-b border-gray-700/50">
                     <div className="flex items-center gap-2">
                         {currentStep !== 'upload' && (
                             <button
                                 onClick={handlePreviousStep}
-                                className="text-gray-400 hover:text-white transition-colors"
+                                className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700/50 transition-all"
                             >
-                                <ArrowLeft size={24} />
+                                <ArrowLeft size={20} />
                             </button>
                         )}
-                        <h2 className="text-xl font-semibold text-white">
-                            {currentStep === 'upload' ? 'Upload Image' : 
-                             currentStep === 'crop' ? 'Crop Image' : 'Write Content'}
+                        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                            <span className="text-[#4edcd8]">
+                                <PlusCircle size={20} />
+                            </span>
+                            {currentStep === 'upload' ? 'Tải ảnh lên' : 
+                             currentStep === 'crop' ? 'Cắt ảnh' : 'Tạo bài viết'}
                         </h2>
                     </div>
                     <button
                         onClick={handleClose}
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700/50 transition-all"
                     >
-                        <X size={24} />
+                        <X size={20} />
                     </button>
                 </div>
 
                 {/* Content */}
-                <form onSubmit={handleSubmit} className="p-4">
+                <form onSubmit={handleSubmit} className="p-6 space-y-5">
                     {currentStep === 'upload' ? (
-                        <div className="space-y-4">
+                        <div className="space-y-5">
                             {/* Image Upload Area */}
                             <div 
                                 onClick={() => fileInputRef.current?.click()}
-                                className="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center cursor-pointer hover:border-teal-500 transition-colors"
+                                className="border-2 border-dashed border-gray-700/50 rounded-lg p-8 text-center cursor-pointer hover:border-[#4edcd8]/50 transition-colors bg-gray-800/30 hover:bg-gray-800/50"
                             >
                                 {imagePreview ? (
                                     <div className="relative">
@@ -226,15 +229,20 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                                                 setImage(null);
                                                 setImagePreview('');
                                             }}
-                                            className="absolute top-2 right-2 bg-black bg-opacity-50 rounded-full p-1 hover:bg-opacity-70"
+                                            className="absolute top-2 right-2 bg-black/70 rounded-full p-1.5 hover:bg-black/90 transition-all shadow-lg"
                                         >
-                                            <X size={20} className="text-white" />
+                                            <X size={16} className="text-white" />
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center gap-2">
-                                        <ImageIcon size={48} className="text-gray-400" />
-                                        <p className="text-gray-400">Click to upload an image</p>
+                                    <div className="flex flex-col items-center gap-3 py-10">
+                                        <div className="bg-gray-700/50 rounded-full p-3">
+                                            <ImageIcon size={32} className="text-[#4edcd8]" />
+                                        </div>
+                                        <div>
+                                            <p className="text-white font-medium">Kéo thả hoặc nhấp để tải ảnh lên</p>
+                                            <p className="text-gray-400 text-sm mt-1">PNG, JPG, JPEG (tối đa 10MB)</p>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -252,21 +260,21 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                                 onClick={handleNextStep}
                                 disabled={!image}
                                 className={`
-                                    w-full px-6 py-2 rounded-full font-medium
+                                    w-full px-6 py-2.5 rounded-lg font-medium
                                     ${!image
                                         ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                        : 'bg-gradient-to-r from-teal-400 to-teal-500 text-black hover:opacity-90'
+                                        : 'bg-gradient-to-r from-[#4edcd8] to-[#3bc0bd] text-black hover:shadow-lg hover:shadow-[#4edcd8]/20'
                                     }
-                                    flex items-center justify-center gap-2
+                                    flex items-center justify-center gap-2 transition-all
                                 `}
                             >
-                                Next Step
-                                <ArrowRight size={20} />
+                                Tiếp theo
+                                <ArrowRight size={18} />
                             </button>
                         </div>
                     ) : currentStep === 'crop' ? (
-                        <div className="space-y-4">
-                            <div className="relative">
+                        <div className="space-y-5">
+                            <div className="relative bg-gray-800/50 rounded-lg p-4 border border-gray-700/30">
                                 <ReactCrop
                                     crop={crop}
                                     onChange={(c) => setCrop(c)}
@@ -274,7 +282,6 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                                     minWidth={100}
                                     minHeight={100}
                                     className="w-full"
-                                    style={{ maxHeight: '400px' }}
                                 >
                                     <img
                                         ref={imgRef}
@@ -282,65 +289,78 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                                         alt="Preview"
                                         className="w-full h-auto max-h-[400px] object-contain rounded-lg"
                                         onLoad={onImageLoad}
-                                        style={{ maxWidth: '100%', maxHeight: '400px' }}
                                     />
                                 </ReactCrop>
                             </div>
+
+                            <p className="text-sm text-gray-400 text-center italic">
+                                Kéo và điều chỉnh khung để cắt ảnh theo ý muốn
+                            </p>
 
                             <button
                                 type="button"
                                 onClick={handleNextStep}
                                 disabled={!completedCrop}
                                 className={`
-                                    w-full px-6 py-2 rounded-full font-medium
+                                    w-full px-6 py-2.5 rounded-lg font-medium
                                     ${!completedCrop
                                         ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                        : 'bg-gradient-to-r from-teal-400 to-teal-500 text-black hover:opacity-90'
+                                        : 'bg-gradient-to-r from-[#4edcd8] to-[#3bc0bd] text-black hover:shadow-lg hover:shadow-[#4edcd8]/20'
                                     }
-                                    flex items-center justify-center gap-2
+                                    flex items-center justify-center gap-2 transition-all
                                 `}
                             >
-                                Next Step
-                                <ArrowRight size={20} />
+                                Tiếp theo
+                                <ArrowRight size={18} />
                             </button>
                         </div>
                     ) : (
-                        <div className="space-y-4">
-                            <textarea
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                placeholder="Bạn đang nghĩ gì?"
-                                className="w-full h-32 bg-gray-800 text-white rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-teal-500"
-                            />
+                        <div className="space-y-5">
+                            <div className="space-y-1">
+                                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                                    Nội dung bài viết
+                                </label>
+                                <textarea
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                    placeholder="Bạn đang nghĩ gì?"
+                                    className="w-full px-4 py-2.5 bg-gray-800/70 text-white rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#4edcd8]/50 border border-gray-700/50 transition-all h-28"
+                                />
+                            </div>
 
                             {/* Cropped Image Preview */}
-                            <div className="relative">
-                                <img
-                                    src={croppedPreview}
-                                    alt="Cropped Preview"
-                                    className="w-full h-64 object-contain rounded-lg"
-                                />
+                            <div className="space-y-1">
+                                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                                    Xem trước
+                                </label>
+                                <div className="relative bg-gray-800/50 rounded-lg overflow-hidden border border-gray-700/30 flex items-center justify-center">
+                                    <img
+                                        src={croppedPreview}
+                                        alt="Cropped Preview"
+                                        className="w-full h-64 object-contain"
+                                    />
+                                </div>
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={!content || !completedCrop || isSubmitting}
                                 className={`
-                                    w-full px-6 py-2 rounded-full font-medium
+                                    w-full px-6 py-2.5 rounded-lg font-medium
                                     ${(!content || !completedCrop || isSubmitting)
                                         ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                                        : 'bg-gradient-to-r from-teal-400 to-teal-500 text-black hover:opacity-90'
+                                        : 'bg-gradient-to-r from-[#4edcd8] to-[#3bc0bd] text-black hover:shadow-lg hover:shadow-[#4edcd8]/20'
                                     }
-                                    flex items-center justify-center gap-2
+                                    flex items-center justify-center gap-2 transition-all
                                 `}
                             >
                                 {isSubmitting ? (
                                     <>
                                         <Loader2 size={20} className="animate-spin" />
-                                        Creating...
+                                        Đang tạo...
                                     </>
                                 ) : (
-                                    'Create Post'
+                                    'Đăng bài'
                                 )}
                             </button>
                         </div>
@@ -351,4 +371,4 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
     );
 };
 
-export default CreatePostModal; 
+export default CreatePostModal;
