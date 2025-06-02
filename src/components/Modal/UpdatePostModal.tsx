@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { X, Image as ImageIcon, Loader2, Edit3 } from 'lucide-react';
 import { Post } from '../../types/post';
 
 interface UpdatePostModalProps {
@@ -19,6 +19,7 @@ const UpdatePostModal: React.FC<UpdatePostModalProps> = ({
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>(post.image);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,53 +40,94 @@ const UpdatePostModal: React.FC<UpdatePostModalProps> = ({
 
     try {
       setIsLoading(true);
+      setError(null);
       await onUpdatePost(content, image || undefined);
       onClose();
     } catch (error) {
       console.error('Error updating post:', error);
+      setError('Có lỗi xảy ra khi cập nhật bài viết');
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleClose = () => {
+    setContent(post.content);
+    setPreviewUrl(post.image);
+    setImage(null);
+    setError(null);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-xl max-w-2xl w-full">
-        <div className="p-4 border-b border-gray-700 flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-white">Edit Post</h2>
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+      <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-700/50">
+        {/* Header */}
+        <div className="bg-gray-800 flex items-center justify-between p-5 border-b border-gray-700/50">
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <span className="text-[#4edcd8]">
+              <Edit3 size={20} />
+            </span>
+            Chỉnh sửa bài viết
+          </h2>
           <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            onClick={handleClose}
+            className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-gray-700/50 transition-all"
+            aria-label="Close"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4">
-          <div className="mb-4">
+        {/* Content */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2 text-sm">
+              <span className="rounded-full bg-red-500/20 p-1">
+                <X size={14} className="text-red-400" />
+              </span>
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Nội dung
+            </label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="What's on your mind?"
-              className="w-full h-24 bg-gray-700 text-white rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-[#4edcd8]"
+              placeholder="Bạn đang nghĩ gì?"
+              className="w-full px-4 py-2.5 bg-gray-800/70 text-white rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#4edcd8]/50 border border-gray-700/50 transition-all h-28"
             />
           </div>
 
-          <div className="mb-4">
-            <div className="relative w-full aspect-square max-h-[400px] bg-gray-700 rounded-lg overflow-hidden flex items-center justify-center">
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-300 mb-1.5 flex justify-between items-center">
+              <span>Ảnh đính kèm</span>
+              <button 
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs text-[#4edcd8] hover:underline"
+              >
+                Thay đổi ảnh
+              </button>
+            </label>
+            <div className="relative w-full max-h-[300px] bg-gray-800/50 rounded-lg overflow-hidden border border-gray-700/30 flex items-center justify-center">
               {previewUrl ? (
                 <div className="w-full h-full flex items-center justify-center">
                   <img
                     src={previewUrl}
-                    alt="Post preview"
-                    className="max-w-full max-h-full object-contain"
+                    alt="Preview"
+                    className="max-w-full max-h-[300px] object-contain"
                   />
                 </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <div className="w-full h-64 flex items-center justify-center text-gray-400 flex-col gap-2">
                   <ImageIcon size={48} />
+                  <p className="text-sm">Chưa có ảnh</p>
                 </div>
               )}
               <input
@@ -95,36 +137,37 @@ const UpdatePostModal: React.FC<UpdatePostModalProps> = ({
                 accept="image/*"
                 className="hidden"
               />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-4 right-4 p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors"
-              >
-                <ImageIcon size={20} />
-              </button>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3">
+          {/* Buttons */}
+          <div className="mt-6 flex justify-between">
             <button
               type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
+              onClick={handleClose}
+              className="px-6 py-2.5 rounded-lg font-medium border border-gray-700 text-gray-300 hover:bg-gray-800 transition-all"
             >
-              Cancel
+              Hủy
             </button>
             <button
               type="submit"
               disabled={isLoading || !content.trim()}
-              className="px-4 py-2 bg-[#4edcd8] text-black rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className={`
+                px-6 py-2.5 rounded-lg font-medium
+                ${isLoading || !content.trim()
+                  ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#4edcd8] to-[#3bc0bd] text-black hover:shadow-lg hover:shadow-[#4edcd8]/20'
+                }
+                flex items-center gap-2 transition-all
+              `}
             >
               {isLoading ? (
                 <>
                   <Loader2 size={20} className="animate-spin" />
-                  Updating...
+                  Đang cập nhật...
                 </>
               ) : (
-                'Update Post'
+                'Cập nhật'
               )}
             </button>
           </div>
@@ -134,4 +177,4 @@ const UpdatePostModal: React.FC<UpdatePostModalProps> = ({
   );
 };
 
-export default UpdatePostModal; 
+export default UpdatePostModal;

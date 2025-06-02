@@ -49,7 +49,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
                             onClick={() => navigateToProfile(post.user._id)}
                         >
                             <h3 className="font-semibold text-white text-sm text-left">{post.user.user_name || post.user.full_name || 'Anonymous'}</h3>
-                            <p className="text-xs text-gray-400">{formatDate(post.createdAt)}</p>
+                            <p className="text-xs text-left text-gray-400">{formatDate(post.createdAt)}</p>
                         </div>
                     </div>
                     <button
@@ -62,7 +62,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
                             className="w-4 h-4"
                             fill={isLiked ? 'currentColor' : 'none'}
                         />
-                        <span className="text-sm">{post.likes.length}</span>
+                        <span className="text-sm pr-2">{post.likes.length}</span>
                     </button>
                 </div>
 

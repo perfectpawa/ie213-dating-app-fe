@@ -90,24 +90,56 @@ export const FeaturedProfiles: React.FC = () => {
   }, []);
 
   return (
-    <section className="col-span-1">
-      <h2 className="text-2xl font-semibold mb-4 text-white inline-flex items-center">
-        <p className="text-[#4edcd8] mr-2" />
-        Hồ Sơ Nổi Bật
-      </h2>
-      <div className="grid grid-cols-2 gap-3">
-        {loading ? (
-          <div className="col-span-2">
-            <LoadingSpinner />
+    <div>
+      {loading ? (
+        <LoadingSpinner />
+      ) : error ? (
+        <div className="text-red-500 text-center p-4">{error}</div>
+      ) : (
+        <>
+          {/* Top Profile - Hồ sơ nổi bật nhất */}
+          {recommendedUsers.length > 0 && (
+            <div className="mb-4">
+              <div className="bg-gradient-to-br from-[#1a3f3e] to-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:transform hover:scale-105 cursor-pointer">
+                <div className="aspect-[3/2] relative">
+                  <img
+                    src={recommendedUsers[0].profile_picture}
+                    alt={`${recommendedUsers[0].full_name}'s profile`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 right-2 bg-[#4edcd8] text-white rounded-full p-2 shadow">
+                    <span className="text-xs font-bold">#1</span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                    <h3 className="font-semibold text-lg text-white">
+                      {recommendedUsers[0].full_name}
+                    </h3>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {recommendedUsers[0].interests?.slice(0, 3).map((interestId, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-[#1a3f3e] text-[#4edcd8] rounded-full text-xs font-medium">
+                          {interestMap.get(interestId) || '...'}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <Link to={`/profile/${recommendedUsers[0]._id}`} className="block p-3 text-center">
+                  <div className="w-full px-3 py-2 bg-[#4edcd8] text-white rounded-lg text-sm font-medium hover:bg-[#3bc0bd] transition-colors duration-300">
+                    Xem hồ sơ
+                  </div>
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Other Profiles */}
+          <div className="grid grid-cols-2 gap-3">
+            {recommendedUsers.slice(1, 5).map((user, index) => (
+              <ProfileCard key={index} user={user} interestMap={interestMap} />
+            ))}
           </div>
-        ) : error ? (
-          <div className="col-span-2 text-red-500 text-center p-4">{error}</div>
-        ) : (
-          recommendedUsers.map((user, index) => (
-            <ProfileCard key={index} user={user} interestMap={interestMap} />
-          ))
-        )}
-      </div>
-    </section>
+        </>
+      )}
+    </div>
   );
-}; 
+};
