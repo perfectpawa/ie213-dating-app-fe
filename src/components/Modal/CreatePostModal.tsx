@@ -24,6 +24,7 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
         y: 5
     });
     const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
+    const [aspectRatio, setAspectRatio] = useState<number | undefined>(undefined);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
@@ -41,21 +42,34 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
 
     const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
         const { width, height } = e.currentTarget;
-        // Set initial crop to match full image dimensions
-        const fullCrop: Crop = {
+        
+        // Tính toán kích thước crop ban đầu - nhỏ hơn nhiều so với kích thước ảnh
+        // Giới hạn ở mức tối đa 300px cho chiều rộng và chiều cao ban đầu
+        const maxInitialSize = 300;
+        
+        // Tính toán kích thước crop ban đầu, đảm bảo không quá lớn
+        const initialWidth = Math.min(width * 0.5, maxInitialSize);
+        const initialHeight = Math.min(height * 0.5, maxInitialSize);
+        
+        // Đặt vị trí crop ở chính giữa ảnh
+        const initialX = (width - initialWidth) / 2;
+        const initialY = (height - initialHeight) / 2;
+        
+        const initialCrop: Crop = {
             unit: 'px',
-            width: width,
-            height: height,
-            x: 0,
-            y: 0
+            width: initialWidth,
+            height: initialHeight,
+            x: initialX,
+            y: initialY
         };
-        setCrop(fullCrop);
+        
+        setCrop(initialCrop);
         setCompletedCrop({
             unit: 'px',
-            width: width,
-            height: height,
-            x: 0,
-            y: 0
+            width: initialWidth,
+            height: initialHeight,
+            x: initialX,
+            y: initialY
         });
     };
 
@@ -177,10 +191,11 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-            <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-700/50">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={handleClose}></div>
+            <div className="bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-700/50 z-10 max-h-[90vh] flex flex-col">
                 {/* Header */}
-                <div className="bg-gray-800 flex items-center justify-between p-5 border-b border-gray-700/50">
+                <div className="bg-gray-800 flex items-center justify-between p-5 border-b border-gray-700/50 flex-shrink-0">
                     <div className="flex items-center gap-2">
                         {currentStep !== 'upload' && (
                             <button
@@ -206,8 +221,8 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                     </button>
                 </div>
 
-                {/* Content */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-5">
+                {/* Content - Thêm max-h và overflow-auto cho phần content */}
+                <form onSubmit={handleSubmit} className="p-6 space-y-5 flex-1 overflow-y-auto">
                     {currentStep === 'upload' ? (
                         <div className="space-y-5">
                             {/* Image Upload Area */}
@@ -274,23 +289,104 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onCr
                         </div>
                     ) : currentStep === 'crop' ? (
                         <div className="space-y-5">
-                            <div className="relative bg-gray-800/50 rounded-lg p-4 border border-gray-700/30">
+                            {/* Thêm các nút tỷ lệ khung hình */}
+                            <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-sm font-medium text-white">Tỷ lệ khung hình:</h3>
+                                <div className="flex gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setAspectRatio(1)}
+                                        className={`px-2 py-1 text-xs rounded ${
+                                            aspectRatio === 1 
+                                                ? 'bg-[#4edcd8] text-black' 
+                                                : 'bg-gray-700 text-gray-300'
+                                        }`}
+                                    >
+                                        1:1
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setAspectRatio(4/3)}
+                                        className={`px-2 py-1 text-xs rounded ${
+                                            aspectRatio === 4/3 
+                                                ? 'bg-[#4edcd8] text-black' 
+                                                : 'bg-gray-700 text-gray-300'
+                                        }`}
+                                    >
+                                        4:3
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setAspectRatio(16/9)}
+                                        className={`px-2 py-1 text-xs rounded ${
+                                            aspectRatio === 16/9 
+                                                ? 'bg-[#4edcd8] text-black' 
+                                                : 'bg-gray-700 text-gray-300'
+                                        }`}
+                                    >
+                                        16:9
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setAspectRatio(undefined)}
+                                        className={`px-2 py-1 text-xs rounded ${
+                                            aspectRatio === undefined 
+                                                ? 'bg-[#4edcd8] text-black' 
+                                                : 'bg-gray-700 text-gray-300'
+                                        }`}
+                                    >
+                                        Tự do
+                                    </button>
+                                </div>
+                            </div>
+                                
+                            <div className="relative bg-gray-800/50 rounded-lg p-4 border border-gray-700/30 overflow-auto max-h-[400px]">
                                 <ReactCrop
                                     crop={crop}
                                     onChange={(c) => setCrop(c)}
                                     onComplete={(c) => setCompletedCrop(c)}
-                                    minWidth={100}
-                                    minHeight={100}
+                                    aspect={aspectRatio}
+                                    minWidth={50}
+                                    minHeight={50}
+                                    maxWidth={500}
+                                    maxHeight={500}
                                     className="w-full"
                                 >
                                     <img
                                         ref={imgRef}
                                         src={imagePreview}
                                         alt="Preview"
-                                        className="w-full h-auto max-h-[400px] object-contain rounded-lg"
+                                        className="max-w-full h-auto object-contain rounded-lg"
                                         onLoad={onImageLoad}
+                                        style={{ maxHeight: '350px' }}
                                     />
                                 </ReactCrop>
+                            </div>
+                                
+                            {/* Thêm nút reset crop */}
+                            <div className="flex justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (imgRef.current) {
+                                            const { width, height } = imgRef.current;
+                                            const maxSize = 300;
+                                            const initialWidth = Math.min(width * 0.5, maxSize);
+                                            const initialHeight = Math.min(height * 0.5, maxSize);
+                                            
+                                            setCrop({
+                                                unit: 'px',
+                                                width: initialWidth,
+                                                height: initialHeight,
+                                                x: (width - initialWidth) / 2,
+                                                y: (height - initialHeight) / 2
+                                            });
+                                        }
+                                    }}
+                                    className="px-4 py-2 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                                >
+                                    Khôi phục khung cắt
+                                </button>
                             </div>
 
                             <p className="text-sm text-gray-400 text-center italic">
