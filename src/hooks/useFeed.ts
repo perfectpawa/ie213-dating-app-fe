@@ -22,7 +22,14 @@ export const useFeed = () => {
             const response = await postApi.getFeedPosts(page);
             if (response.data?.data?.posts) {
                 const newPosts = response.data.data.posts;
-                setFeedPosts(prevPosts => append ? [...prevPosts, ...newPosts] : newPosts);
+
+                //change posts.likes from [Object] to [String]
+                const formattedPosts = newPosts.map(post => ({
+                    ...post,
+                    likes: post.likes.map(like => like._id) // Assuming like._id is the string identifier
+                }));
+
+                setFeedPosts(prevPosts => append ? [...prevPosts, ...formattedPosts] : formattedPosts);
                 
                 // Update pagination state
                 if (response.data.data.pagination) {

@@ -57,7 +57,7 @@ export const Feed: React.FC = () => {
 
     return (
         <div className="space-y-4">
-            {posts.map((post: Post, index: number) => (
+            {posts.map((post: Post, index: number) => (            
                 <div
                     key={post._id}
                     ref={index === posts.length - 1 ? lastPostElementRef : undefined}
