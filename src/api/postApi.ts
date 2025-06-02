@@ -72,7 +72,13 @@ export const postApi = {
     },
 
     getFeedPosts: async (page: number = 1, limit: number = 10) => {
-        return apiRequest<PostsResponse>(`/posts/similar-interests?page=${page}&limit=${limit}`, {
+        return apiRequest<PostsResponse>(`/posts/get-post/similar-interests?page=${page}&limit=${limit}`, {
+            method: 'GET',
+        });
+    },
+
+    getPost: async (postId: string) => {
+        return apiRequest<PostResponse>(`/posts/${postId}`, {
             method: 'GET',
         });
     },

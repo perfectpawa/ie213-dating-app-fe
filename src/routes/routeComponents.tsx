@@ -14,6 +14,7 @@ import GoogleCallback from '../pages/GoogleCallback';
 import PublicRoute from './PublicRoute';
 import ProtectedRoute from './ProtectedRoute';
 import CompleteInterest from '@/pages/CompleteInterest';
+import Post from '@/pages/Post';
 
 export const routeComponents = {
   root: <Navigate to="/home" replace />,
@@ -60,6 +61,11 @@ export const routeComponents = {
   userProfile: (
     <ProtectedRoute>
       <UserProfile />
+    </ProtectedRoute>
+  ),
+  post: (
+    <ProtectedRoute>
+      <Post />
     </ProtectedRoute>
   ),
   messages: (

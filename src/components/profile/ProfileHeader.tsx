@@ -8,6 +8,7 @@ import { Match } from '../../types/swipe';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import UnmatchModal from '../Modal/UnmatchModal';
+import ImageCropModal from '../Modal/ImageCropModal';
 
 interface ProfileHeaderProps {
   user: User;
@@ -46,6 +47,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const [swipeLoading, setSwipeLoading] = useState(false);
   const [showUnmatchModal, setShowUnmatchModal] = useState(false);
   const [unmatchLoading, setUnmatchLoading] = useState(false);
+  const [showAvatarCropModal, setShowAvatarCropModal] = useState(false);
+  const [showCoverCropModal, setShowCoverCropModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
   const handleSwipe = async (status: 'like' | 'dislike') => {
     if (!user._id || !currentUser?._id || swipeLoading) return;
@@ -162,6 +166,38 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     );
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'avatar' | 'cover') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      if (type === 'avatar') {
+        setShowAvatarCropModal(true);
+      } else {
+        setShowCoverCropModal(true);
+      }
+    }
+  };
+
+  const handleCropComplete = async (croppedFile: File, type: 'avatar' | 'cover') => {
+    if (type === 'avatar' && onProfilePictureChange) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.files = new DataTransfer().files;
+      const event = new Event('change', { bubbles: true }) as unknown as React.ChangeEvent<HTMLInputElement>;
+      Object.defineProperty(event, 'target', { value: input });
+      Object.defineProperty(input, 'files', { value: [croppedFile] });
+      await onProfilePictureChange(event);
+    } else if (type === 'cover' && onCoverPictureChange) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.files = new DataTransfer().files;
+      const event = new Event('change', { bubbles: true }) as unknown as React.ChangeEvent<HTMLInputElement>;
+      Object.defineProperty(event, 'target', { value: input });
+      Object.defineProperty(input, 'files', { value: [croppedFile] });
+      await onCoverPictureChange(event);
+    }
+  };
+
   return (
     <>
       <div className="bg-gray-800 rounded-xl shadow-lg overflow-hidden">
@@ -182,7 +218,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               <input
                 type="file"
                 ref={coverInputRef}
-                onChange={onCoverPictureChange}
+                onChange={(e) => handleImageSelect(e, 'cover')}
                 accept="image/*"
                 className="hidden"
               />
@@ -207,7 +243,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <input
                   type="file"
                   ref={avatarInputRef}
-                  onChange={onProfilePictureChange}
+                  onChange={(e) => handleImageSelect(e, 'avatar')}
                   accept="image/*"
                   className="hidden"
                 />
@@ -312,6 +348,32 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         onClose={() => setShowUnmatchModal(false)}
         onConfirm={handleUnmatch}
         userName={user.user_name || user.full_name || 'this user'}
+      />
+
+      {/* Avatar Crop Modal */}
+      <ImageCropModal
+        isOpen={showAvatarCropModal}
+        onClose={() => {
+          setShowAvatarCropModal(false);
+          setSelectedImage(null);
+        }}
+        onCropComplete={(croppedFile) => handleCropComplete(croppedFile, 'avatar')}
+        aspectRatio={1}
+        imageFile={selectedImage}
+        title="Crop Profile Picture"
+      />
+
+      {/* Cover Photo Crop Modal */}
+      <ImageCropModal
+        isOpen={showCoverCropModal}
+        onClose={() => {
+          setShowCoverCropModal(false);
+          setSelectedImage(null);
+        }}
+        onCropComplete={(croppedFile) => handleCropComplete(croppedFile, 'cover')}
+        aspectRatio={16/4}
+        imageFile={selectedImage}
+        title="Crop Cover Photo"
       />
     </>
   );

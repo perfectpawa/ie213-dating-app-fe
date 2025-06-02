@@ -12,7 +12,7 @@ const Navbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
-  
+
   const handleViewAllNotifications = () => {
     console.log("View all notifications clicked");
   };
@@ -39,6 +39,10 @@ const Navbar = () => {
 
       if (status === 'match') {
         navigate(`/messages/${userId}`);
+      }
+
+      if (status === 'like'){
+        navigate(`/post/${postId}`);
       }
 
     } catch (error) {

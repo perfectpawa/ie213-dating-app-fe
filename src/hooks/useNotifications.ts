@@ -37,6 +37,7 @@ export const useNotifications = () => {
             setLoading(true);
             setError(null);
             const response = await notificationApi.getNotifications();
+            console.log('useNotifications: Notifications response:', response);
             if (response?.data?.notifications) {
                 setNotifications(response.data.notifications);
             }

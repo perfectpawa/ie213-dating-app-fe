@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { PostModal } from "../Modal/PostModal";
 import DeletePostModal from "../Modal/DeletePostModal";
 import UpdatePostModal from "../Modal/UpdatePostModal";
+import CreatePostModal from "../Modal/CreatePostModal";
 import { postApi } from "../../api/postApi";
 
 interface PhotosSectionProps {
@@ -19,6 +20,7 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
   const [postToEdit, setPostToEdit] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   //make refreshPosts run after certain actions
 
@@ -56,13 +58,32 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
     }
   };
 
+  const handleCreatePost = async (content: string, image: File) => {
+    try {
+      await postApi.createPost(content, image);
+      await refreshPosts();
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error('Error creating post:', error);
+    }
+  };
+
   return (
     <>
       <div className="mt-6 bg-gray-900 rounded-lg shadow-lg overflow-hidden">
         <div className="px-6 py-5">
-          <h2 className="text-xl font-semibold text-white mb-4">
-            Photos
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-white">
+              Photos
+            </h2>
+            <button 
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 text-black rounded-full hover:opacity-90 transition-opacity"
+            >
+              <Plus size={20} />
+              Thêm ảnh mới
+            </button>
+          </div>
           
           {error ? (
             <div className="flex justify-center items-center h-48">
@@ -164,6 +185,12 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
           post={posts.find(p => p._id === postToEdit)!}
         />
       )}
+
+      <CreatePostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreatePost={handleCreatePost}
+      />
     </>
   );
 };

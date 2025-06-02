@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Post } from '../types/post';
 import { Heart } from 'lucide-react';
 import { formatDate } from '../utils/date';
 import { useAuth } from '../hooks/useAuth';
 import avatarHolder from '../assets/avatar_holder.png';
 import { useProfile } from '../hooks/useProfile';
+import { PostModal } from './Modal/PostModal';
 
 interface PostCardProps {
     post: Post;
@@ -16,10 +17,13 @@ interface PostCardProps {
 export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefresh, isLiked }) => {
     // const { user } = useAuth();
     const { navigateToProfile } = useProfile();
-    // const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleLike = async () => {
         await onLikeToggle(post._id);
+        if (onRefresh) {
+            await onRefresh();
+        }
     };
 
     // const isLiked = user ? post.likes.includes(user._id) : false;
@@ -72,7 +76,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
                 {/* Post Image */}
                 <div 
                     className="bg-black cursor-pointer"
-                    // onClick={}
+                    onClick={() => setIsModalOpen(true)}
                 >
                     <div className="aspect-square">
                         <img 
@@ -83,6 +87,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onLikeToggle, onRefres
                     </div>
                 </div>
             </div>
+
+            <PostModal
+                post={post}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onLikeToggle={onLikeToggle}
+                onRefresh={onRefresh || (async () => {})}
+            />
         </>
     );
 }; 

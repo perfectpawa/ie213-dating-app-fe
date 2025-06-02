@@ -40,7 +40,12 @@ export const routes = [
   {
     path: '/profile/:userId',
     element: routeComponents.userProfile,
-  },  {
+  },
+  {
+    path: '/post/:postId',
+    element: routeComponents.post,
+  },
+  {
     path: '/messages',
     element: routeComponents.messages,
   },
@@ -51,7 +56,8 @@ export const routes = [
   {
     path: '/discover',
     element: routeComponents.discover,
-  },{
+  },
+  {
     path: '/matching',
     element: routeComponents.matching,
   },

@@ -39,7 +39,7 @@ const NotificationModal: React.FC<NotificationProps> = ({
   // Initialize local notifications when props change
   useEffect(() => {
     setLocalNotifications(notifications);
-    // console.log('NotificationModal: Notifications updated', notifications);
+    console.log('NotificationModal: Notifications updated', notifications);
   }, [notifications]);
 
   const getNotificationText = (type: NotificationModal['type']) => {
@@ -64,6 +64,9 @@ const NotificationModal: React.FC<NotificationProps> = ({
   };
 
   const handleNotificationClick = async (notificationId: string, status: string, postId: string, userId: string) => {
+
+    console.log(notifications);
+
     if (onNotificationClick) {
       await onNotificationClick(notificationId, status, postId, userId);
     }
@@ -119,7 +122,7 @@ const NotificationModal: React.FC<NotificationProps> = ({
               className={`py-3 px-4 hover:bg-gray-700 border-b border-gray-700 cursor-pointer transition-all duration-200 ease-in-out ${!notification.read ? 'bg-gray-700/40' : ''}`}
               onClick={() => handleNotificationClick(
                 notification.id, notification.type
-                , notification.post || '', notification.user.id
+                , notification?.post || '', notification.user.id
               )}
             >
               <div className="flex items-start gap-3">
