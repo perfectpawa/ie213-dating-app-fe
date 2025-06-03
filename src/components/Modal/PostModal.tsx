@@ -37,7 +37,7 @@ export const PostModal: React.FC<PostModalProps> = ({
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
             <div className="bg-gray-800 rounded-xl max-w-5xl w-full max-h-[90vh] flex flex-col">
                 {/* Header */}
-                <div className="p-4 border-b border-gray-700 flex justify-between items-center">
+                <div className="p-4 border-b max-h-[80vh] border-gray-700 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div 
                             className="w-10 h-10 rounded-full overflow-hidden bg-gray-700 cursor-pointer hover:opacity-80 transition-opacity"

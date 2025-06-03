@@ -76,13 +76,15 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
             <h2 className="text-xl font-semibold text-white">
               Photos
             </h2>
-            <button 
-              onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 text-black rounded-full hover:opacity-90 transition-opacity"
-            >
-              <Plus size={20} />
-              Thêm ảnh mới
-            </button>
+            {user && user._id === userId && (
+              <button 
+                onClick={() => setIsCreateModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 text-black rounded-full hover:opacity-90 transition-opacity"
+              >
+                <Plus size={20} />
+                Thêm ảnh mới
+              </button>
+            )}
           </div>
           
           {error ? (
