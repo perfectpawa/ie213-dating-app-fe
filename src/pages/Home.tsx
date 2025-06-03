@@ -1,7 +1,6 @@
 import Layout from "../components/layout/layout";
 import { Feed } from "../components/Feed";
 import { FeaturedProfiles } from "../components/FeaturedProfiles";
-import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -19,11 +18,9 @@ const Home = () => {
                 Kết nối, chia sẻ và tìm kiếm người đặc biệt của bạn
               </p>
             </div>
-            <Link to="/discover">
-              <button className="px-4 py-2 bg-[#4edcd8] hover:bg-[#3bc0bd] text-white rounded-lg transition-all">
-                Khám phá ngay
-              </button>
-            </Link>
+            <button className="px-4 py-2 bg-[#4edcd8] hover:bg-[#3bc0bd] text-white rounded-lg transition-all">
+              Khám phá ngay
+            </button>
           </div>
         </div>
 
