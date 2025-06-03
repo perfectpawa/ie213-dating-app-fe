@@ -78,7 +78,7 @@ const Post: React.FC = () => {
 
     return (
         <Layout>
-            <div className="max-w-2xl mx-auto py-8 px-4">
+            <div className="max-w-2xl mx-auto max-h-[70vh] py-8 px-4">
                 <div className="bg-gray-800 rounded-xl shadow-md overflow-hidden">
                     {/* User Info and Like Button */}
                     <div className="p-3 flex items-center justify-between">
@@ -130,7 +130,7 @@ const Post: React.FC = () => {
                             <img 
                                 src={post.image} 
                                 alt="Post content"
-                                className="w-full h-full object-cover"
+                                className="w-full max-h-[70vh] object-cover"
                             />
                         </div>
                     </div>

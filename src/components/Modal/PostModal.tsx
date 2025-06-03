@@ -46,7 +46,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                             <img 
                                 src={post.user.profile_picture || avatarHolder} 
                                 alt={`${post.user.user_name || post.user.full_name || 'Anonymous'}'s profile`}
-                                className="h-max object-cover"
+                                className="w-full h-full object-cover"
                             />
                         </div>
                         <div 
@@ -70,7 +70,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                     <img 
                         src={post.image} 
                         alt="Post content"
-                        className="w-full h-full object-contain"
+                        className="w-full max-h-[70vh] object-contain"
                     />
                 </div>
 
