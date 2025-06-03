@@ -150,13 +150,13 @@ const PhotosSection: React.FC<PhotosSectionProps> = ({ userId }) => {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-48 bg-gray-800 rounded-lg">
-              <p className="text-gray-400 mb-4">No photos yet</p>
+              <p className="text-gray-400 mb-4">Chưa có ảnh</p>
               <button 
                 onClick={() => openCreatePostModal()}
                 className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-400 to-teal-500 text-black rounded-full hover:opacity-90 transition-opacity"
               >
                 <Plus size={20} />
-                Create Post
+                Thêm ảnh mới
               </button>
             </div>
           )}
