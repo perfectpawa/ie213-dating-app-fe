@@ -105,5 +105,19 @@ export const authApi = {
                 Authorization: `Bearer ${token}`,
             },
         });
+    },
+
+    forgotPassword: async (email: string) => {
+        return apiRequest<void>('/users/forgot-password', {
+            method: 'POST',
+            data: { email },
+        });
+    },
+
+    resetPassword: async (email: string, otp: string, password: string) => {
+        return apiRequest<AuthResponse>('/users/reset-password', {
+            method: 'POST',
+            data: { email, otp, password },
+        });
     }
 };

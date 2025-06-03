@@ -59,12 +59,12 @@ const Footer: React.FC<FooterProps> = ({ isCollapsed }) => (
           Chúng tôi đại diện cho tình yêu. ❤️
         </p>
         <div className="flex justify-between text-xs text-gray-500 mb-2">
-          <span>Điều...</span>
+          {/* <span>Điều...</span>
           <span>Quyền...</span>
           <span>Hỗi...</span>
-          <span>Mẹo An...</span>
+          <span>Mẹo An...</span> */}
         </div>
-        <p className="text-xs text-gray-500">© 2025 Boo Enterprises, Inc.</p>
+        <p className="text-xs text-gray-500">© 2025 Favor Enterprises, Inc.</p>
       </div>
     </div>
   </div>

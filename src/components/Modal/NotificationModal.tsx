@@ -35,12 +35,21 @@ const NotificationModal: React.FC<NotificationProps> = ({
 }) => {
   // Create a local state copy of notifications to manage read status
   const [localNotifications, setLocalNotifications] = useState<NotificationModal[]>([]);
+  const [activeTab, setActiveTab] = useState<'unread' | 'read' | 'all'>('all');
   
   // Initialize local notifications when props change
   useEffect(() => {
     setLocalNotifications(notifications);
     console.log('NotificationModal: Notifications updated', notifications);
   }, [notifications]);
+
+  // Filter notifications based on active tab
+  const filteredNotifications = localNotifications.filter(notification => {
+    if (activeTab === 'all') return true;
+    if (activeTab === 'unread') return !notification.read;
+    if (activeTab === 'read') return notification.read;
+    return true;
+  });
 
   const getNotificationText = (type: NotificationModal['type']) => {
     switch (type) {
@@ -93,17 +102,23 @@ const NotificationModal: React.FC<NotificationProps> = ({
         </button>
       </div>
       
-      <div className="px-4 py-1 border-b border-gray-700 flex flex-row items-center">
-        <div className="flex gap-6 pb-1">
+      <div className="px-4 py-1 border-b border-gray-700">
+        <div className="flex gap-4 pb-1">
           <button 
-            className="pl-1 cursor-pointer hover:text-[#4edcd8] font-semibold text-white text-xs flex items-center gap-1"
-            onClick={handleMarkAllAsRead}
+            className={`pl-1 cursor-pointer hover:text-[#4edcd8] font-semibold text-xs flex items-center gap-1 ${activeTab === 'all' ? 'text-[#4edcd8]' : 'text-white'}`}
+            onClick={() => setActiveTab('all')}
           > 
             All
           </button>
           <button 
-            className="cursor-pointer hover:text-[#4edcd8] font-semibold text-white text-xs flex items-center gap-1"
-            onClick={handleMarkAllAsRead}
+            className={`cursor-pointer hover:text-[#4edcd8] font-semibold text-xs flex items-center gap-1 ${activeTab === 'unread' ? 'text-[#4edcd8]' : 'text-white'}`}
+            onClick={() => setActiveTab('unread')}
+          > 
+            Unread
+          </button>
+          <button 
+            className={`cursor-pointer hover:text-[#4edcd8] font-semibold text-xs flex items-center gap-1 ${activeTab === 'read' ? 'text-[#4edcd8]' : 'text-white'}`}
+            onClick={() => setActiveTab('read')}
           > 
             Read
           </button>
@@ -111,12 +126,12 @@ const NotificationModal: React.FC<NotificationProps> = ({
       </div>
 
       <div className="max-h-80 overflow-y-auto">
-        {localNotifications.length === 0 ? (
+        {filteredNotifications.length === 0 ? (
           <div className="p-6 text-center text-gray-400">
-            No new notifications
+            No {activeTab} notifications
           </div>
         ) : (
-          localNotifications.map((notification) => (
+          filteredNotifications.map((notification) => (
             <div 
               key={notification.id} 
               className={`py-3 px-4 hover:bg-gray-700 border-b border-gray-700 cursor-pointer transition-all duration-200 ease-in-out ${!notification.read ? 'bg-gray-700/40' : ''}`}
@@ -149,15 +164,6 @@ const NotificationModal: React.FC<NotificationProps> = ({
             </div>
           ))
         )}
-      </div>
-      
-      <div className="p-2 text-center border-t border-gray-700">
-        <button 
-          className="text-sm text-[#4edcd8] hover:underline w-full py-1 cursor-pointer"
-          onClick={handleViewAll}
-        >
-          View all notifications
-        </button>
       </div>
     </div>
   );
