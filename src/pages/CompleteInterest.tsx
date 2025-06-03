@@ -48,10 +48,10 @@ const CompleteInterest = () => {
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-gray-700/50">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-white mb-2">
-              Select Your Interests
+              Lựa chọn sở thích của bạn
             </h2>
             <p className="text-gray-400">
-              Choose the topics that interest you to help us find better matches
+              Lựa chọn sở thích của bạn để giúp chúng tôi hiểu bạn hơn và kết nối với những người có cùng sở thích.
             </p>
           </div>
 
