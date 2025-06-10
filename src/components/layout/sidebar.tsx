@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Home, Menu, User, Heart, MessageCircle, PlusCircle } from "lucide-react";
+import { Home, Menu, User, Heart, MessageCircle, PlusCircle, Bot } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { useModal } from "@/contexts/ModalContext";
@@ -98,6 +98,11 @@ const Sidebar = () => {
       icon: <PlusCircle size={20} />, 
       label: "Đăng ảnh mới",
       onClick: () => openCreatePostModal()
+    },
+    {
+      to: "/ai-assistant",
+      icon: <Bot size={24} />,
+      label: "Trợ lý AI"
     },
   ];
 
